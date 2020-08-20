@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-pg/pg"
+	"github.com/go-pg/pg/orm"
 )
 
 // Config struct holds all the configurations required the datastore package
@@ -47,8 +48,12 @@ func (cfg *Config) ConnURL() string {
 	)
 }
 
+type Datastore struct {
+	DB *pg.DB
+}
+
 // NewService returns a new instance of PG
-func NewService(cfg *Config) (*pg.DB, error) {
+func NewService(cfg *Config) (*Datastore, error) {
 	databaseURL := strings.TrimSpace(os.Getenv("DATABASE_URL"))
 	if databaseURL == "" {
 		databaseURL = cfg.ConnURL()
@@ -61,5 +66,17 @@ func NewService(cfg *Config) (*pg.DB, error) {
 
 	db := pg.Connect(opt)
 
-	return db, nil
+	datastore := Datastore{db}
+
+	return &datastore, nil
+}
+
+func (datastore *Datastore) CreateSchema(models []interface{}) error {
+	for _, model := range models {
+		err := datastore.DB.Model(model).CreateTable(&orm.CreateTableOptions{IfNotExists: true})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
