@@ -22,6 +22,7 @@ type Server struct {
 
 func NewService(config *Config) (*Server, error) {
 	e := echo.New()
+	e.HideBanner = true
 
 	server := Server{e, config}
 

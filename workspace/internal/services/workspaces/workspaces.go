@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/gofrs/uuid"
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 )
@@ -13,14 +13,14 @@ import (
 type Workspace struct {
 	tableName struct{} `sql:"workspaces"`
 
-	ID     uuid.UUID `json:"-" pg:"id, type:uuid, default:gen_random_uuid()"`
-	Name   string    `json:"firstName" pg:",notnull,unique"`
-	Active bool      `json:"active" pg:"default: FALSE"`
+	ID     uuid.UUID `json:"-" sql:",type:uuid, pk"`
+	Name   string    `json:"firstName" sql:",notnull,unique"`
+	Active bool      `json:"active" sql:"default: FALSE"`
 
-	Users []*users.User `json:"users" pg:"many2many:workspace_user,join_fk:user_id"`
+	Users []*users.User `json:"users" sql:",many2many:workspace_user,join_fk:user_id"`
 
-	CreatedAt time.Time `json:"createdAt" pg:",default:now()"`
-	UpdatedAt time.Time `json:"updatedAt" pg:",default:now()"`
+	CreatedAt time.Time `json:"createdAt" sql:",default:now()"`
+	UpdatedAt time.Time `json:"updatedAt" sql:",default:now()"`
 }
 
 // Sanitize cleans up some fields on the workspace which may have "unclean" values
@@ -36,26 +36,33 @@ func (w *Workspace) Validate() error {
 // Workspaces struct holds all the dependencies required for the workspaces package. And exposes all services
 // provided by this package as its methods
 type Workspaces struct {
-	store store
+	datastore  *datastore.Datastore
+	Repository *WorkspaceRepository
 }
 
 // NewService creates a new Workspaces service
 func NewService(datastore *datastore.Datastore) (*Workspaces, error) {
-	store := store{datastore}
+	repository := &WorkspaceRepository{datastore.DB}
 
-	w := &Workspaces{store}
+	w := &Workspaces{datastore, repository}
 
 	return w, nil
 }
 
 // Create creates a new workspace
 func (w *Workspaces) Create(workspace *Workspace) (*Workspace, error) {
-	return w.store.create(workspace)
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+
+	workspace.ID = id
+	return w.Repository.create(workspace)
 }
 
 // Get returns the Workspace with a given id
 func (w *Workspaces) Get(id uuid.UUID) (*Workspace, error) {
-	return w.store.getByID(id)
+	return w.Repository.getByID(id)
 }
 
 // SetName updates the name of a workspace
@@ -66,7 +73,7 @@ func (w *Workspaces) SetName(workspace *Workspace, newName string) error {
 
 	workspace.Name = newName
 
-	return w.store.update(workspace)
+	return w.Repository.update(workspace)
 }
 
 // SetActive updates the active state of a workspace
@@ -77,7 +84,7 @@ func (w *Workspaces) SetActive(workspace *Workspace, isActive bool) error {
 
 	workspace.Active = isActive
 
-	return w.store.update(workspace)
+	return w.Repository.update(workspace)
 }
 
 // AddUser associates a user with a workspace

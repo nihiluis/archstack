@@ -1,28 +1,49 @@
 package users
 
 import (
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/gofrs/uuid"
+	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 )
 
 // User represents a user of the apps
 type User struct {
 	tableName struct{} `sql:"users"`
 
-	ID        uuid.UUID `json:"-" pg:"id, type:uuid, pk"`
-	FirstName string    `json:"firstName" pg:",notnull"`
-	LastName  string    `json:"lastName" pg:",notnull"`
-	Mail      string    `json:"mail" pg:",notnull"`
-	Level     int       `json:"level" pg:",notnull"`
+	ID        uuid.UUID `sql:",pk,type:uuid"`
+	FirstName string    `json:"firstName" sql:",notnull"`
+	LastName  string    `json:"lastName" sql:",notnull"`
+	Mail      string    `json:"mail" sql:",notnull"`
+	Level     int       `json:"level" sql:",notnull,default:0"`
 
-	InvitedBy   *User     `json:"invitedBy" pg:"-"`
-	InvitedByID uuid.UUID `json:"-" pg:",notnull"`
+	Password string `json:"-" sql:",notnull"`
+
+	InvitedBy   *User     `json:"invitedBy" sql:"-"`
+	InvitedByID uuid.UUID `json:"-" sql:",type:uuid"`
 }
 
-// MapUsersToIDs turns an array of users into an array of uuids by their ids
-func MapUsersToIDs(vs []User) []uuid.UUID {
-	vsm := make([]uuid.UUID, len(vs))
-	for i, v := range vs {
-		vsm[i] = v.ID
+// Users struct holds all the dependencies required for the workspaces package. And exposes all services
+// provided by this package as its methods
+type Users struct {
+	Store Store
+}
+
+// NewService creates a new Users service
+func NewService(datastore *datastore.Datastore) (*Users, error) {
+	store := Store{datastore}
+
+	w := &Users{store}
+
+	return w, nil
+}
+
+// Create creates a new user
+func (u *Users) Create(user *User) (*User, error) {
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
 	}
-	return vsm
+
+	user.ID = id
+
+	return u.Store.create(user)
 }

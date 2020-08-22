@@ -3,7 +3,7 @@ package invites
 import (
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/gofrs/uuid"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 )
 
