@@ -5,8 +5,7 @@ import (
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 	"gitlab.com/archstack/workspace-api/internal/server/http"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
-	"gitlab.com/archstack/workspace-api/internal/services/users"
-	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
+	"gitlab.com/archstack/workspace-api/models"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 	httpConfig, err := configs.HTTP()
 	pgConfig, err := configs.Datastore()
 
-	models := []interface{}{(*workspaces.Workspace)(nil), (*users.User)(nil), (*relationships.WorkspaceAndUser)(nil)}
+	models := []interface{}{(*models.Workspace)(nil), (*models.User)(nil), (*relationships.WorkspaceAndUser)(nil)}
 
 	datastore, err := datastore.NewService(pgConfig)
 	if err != nil {

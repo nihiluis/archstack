@@ -1,19 +1,20 @@
 package workspaces
 
 import (
-	"github.com/go-pg/pg/orm"
+	"github.com/go-pg/pg/v10/orm"
 	uuid "github.com/gofrs/uuid"
+	"gitlab.com/archstack/workspace-api/models"
 )
 
+// WorkspaceRepository enables CRUD ops on the db for the Workspace objects.
 type WorkspaceRepository struct {
 	db orm.DB
 }
 
-func (r *WorkspaceRepository) getByID(id uuid.UUID) (*Workspace, error) {
-	workspace := new(Workspace)
+func (r *WorkspaceRepository) getByID(id uuid.UUID) (*models.Workspace, error) {
+	workspace := new(models.Workspace)
 
 	err := r.db.Model(workspace).
-		Column("workspace.*").
 		Relation("Users").
 		Where("id = ?", id).
 		Select()
@@ -21,7 +22,7 @@ func (r *WorkspaceRepository) getByID(id uuid.UUID) (*Workspace, error) {
 	return workspace, err
 }
 
-func (r *WorkspaceRepository) create(workspace *Workspace) (*Workspace, error) {
+func (r *WorkspaceRepository) create(workspace *models.Workspace) (*models.Workspace, error) {
 	_, err := r.db.Model(workspace).Returning("*").Insert()
 	if err != nil {
 		return nil, err
@@ -30,13 +31,13 @@ func (r *WorkspaceRepository) create(workspace *Workspace) (*Workspace, error) {
 	return workspace, nil
 }
 
-func (r *WorkspaceRepository) remove(workspace *Workspace) error {
+func (r *WorkspaceRepository) remove(workspace *models.Workspace) error {
 	_, err := r.db.Model(workspace).Where("id = ?", workspace.ID).Delete()
 
 	return err
 }
 
-func (r *WorkspaceRepository) update(workspace *Workspace) error {
+func (r *WorkspaceRepository) update(workspace *models.Workspace) error {
 	_, err := r.db.Model(workspace).Update()
 
 	return err

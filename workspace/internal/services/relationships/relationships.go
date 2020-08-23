@@ -3,8 +3,7 @@ package relationships
 import (
 	uuid "github.com/gofrs/uuid"
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
-	"gitlab.com/archstack/workspace-api/internal/services/users"
-	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
+	"gitlab.com/archstack/workspace-api/models"
 )
 
 // Relationships struct holds all the dependencies required for the relationships package. And exposes all services
@@ -24,13 +23,13 @@ func NewService(datastore *datastore.Datastore) (*Relationships, error) {
 
 // WorkspaceAndUser represents a many to many relationship between workspaces and users
 type WorkspaceAndUser struct {
-	tableName struct{} `sql:"workspace_user"`
+	tableName struct{} `pg:"workspaces_users"`
 
-	WorkspaceID uuid.UUID `sql:",type:uuid,unique:idx_workspace_id_user_id"`
-	UserID      uuid.UUID `sql:",type:uuid,unique:idx_workspace_id_user_id"`
+	WorkspaceID uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
+	UserID      uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
 }
 
 // NewWorkspaceAndUser returns an instance of the WorkspaceAndUser many to many relationship
-func NewWorkspaceAndUser(workspace *workspaces.Workspace, user *users.User) WorkspaceAndUser {
+func NewWorkspaceAndUser(workspace *models.Workspace, user *models.User) WorkspaceAndUser {
 	return WorkspaceAndUser{WorkspaceID: workspace.ID, UserID: user.ID}
 }

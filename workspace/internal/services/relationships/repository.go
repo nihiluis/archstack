@@ -3,7 +3,7 @@ package relationships
 import (
 	"errors"
 
-	"github.com/go-pg/pg/orm"
+	"github.com/go-pg/pg/v10/orm"
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 )
 

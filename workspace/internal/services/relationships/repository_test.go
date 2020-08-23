@@ -1,7 +1,7 @@
 package relationships_test
 
 import (
-	"github.com/go-pg/pg"
+	"github.com/go-pg/pg/v10"
 	uuid "github.com/gofrs/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -9,16 +9,15 @@ import (
 	"gitlab.com/archstack/workspace-api/internal/configs"
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
-	"gitlab.com/archstack/workspace-api/internal/services/users"
-	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
+	"gitlab.com/archstack/workspace-api/models"
 )
 
 var _ = Describe("Repository", func() {
 	var (
 		db            *pg.DB
 		tx            *pg.Tx
-		user          *users.User
-		workspace     *workspaces.Workspace
+		user          *models.User
+		workspace     *models.Workspace
 		workspaceUser *relationships.WorkspaceAndUser
 		err           error
 	)
@@ -29,24 +28,32 @@ var _ = Describe("Repository", func() {
 
 		datastoreConfig, _ := configs.Datastore()
 
-		datastore, err := datastore.NewService(datastoreConfig)
+		store, err := datastore.NewService(datastoreConfig)
 		Expect(err).To(BeNil())
 
 		workspaceID, err := uuid.NewV4()
-		workspace = &workspaces.Workspace{ID: workspaceID, Name: "test"}
+		if err != nil {
+			Expect(err).To(BeNil())
+		}
+		workspace = &models.Workspace{ID: workspaceID, Name: "test"}
 
 		userID, err := uuid.NewV4()
-		user = &users.User{
+		if err != nil {
+			Expect(err).To(BeNil())
+		}
+		user = &models.User{
 			ID:        userID,
 			FirstName: "Rolf",
 			LastName:  "Rolf",
+			Password:  "Test",
 			Mail:      "test@test.com",
 		}
 
 		tmpWorkspaceUser := relationships.NewWorkspaceAndUser(workspace, user)
 		workspaceUser = &tmpWorkspaceUser
 
-		db = datastore.DB
+		db = store.DB
+		//db.AddQueryHook(datastore.DBLoggerHook{})
 
 		tx, err = db.Begin()
 		Expect(err).To(BeNil())
@@ -55,25 +62,41 @@ var _ = Describe("Repository", func() {
 	Describe("AddRelation", func() {
 		Context("with no records in the database", func() {
 			BeforeEach(func() {
-				err = tx.Insert(workspace)
+				_, err = tx.Model(workspace).Insert()
 				Expect(err).To(BeNil())
 
-				var workspaces []workspaces.Workspace
+				var workspaces []models.Workspace
 				err = tx.Model(&workspaces).Select()
 				Expect(err).To(BeNil())
+				Expect(len(workspaces)).To(Equal(1))
 
-				err = tx.Insert(user)
+				_, err = tx.Model(user).Insert()
 				Expect(err).To(BeNil())
 
-				err = tx.Insert(workspaceUser)
+				var users []models.User
+				err = tx.Model(&users).Select()
 				Expect(err).To(BeNil())
+				Expect(len(users)).To(Equal(1))
+
+				_, err = tx.Model(workspaceUser).Insert()
+				Expect(err).To(BeNil())
+
+				var workspaceUsers []relationships.WorkspaceAndUser
+				err = tx.Model(&workspaceUsers).Select()
+				Expect(err).To(BeNil())
+				Expect(len(workspaceUsers)).To(Equal(1))
 			})
 
 			It("return workspace with users from db", func() {
-				var tmpWorkspace workspaces.Workspace
-				err := db.Model(&tmpWorkspace).Column("workspace.*").Relation("").Where("id = ?", workspace.ID).First()
+				tmpWorkspace := new(models.Workspace)
+
+				err := tx.Model(tmpWorkspace).
+					Relation("Users").
+					Where("workspace.id = ?", workspace.ID).
+					First()
+
 				Expect(err).To(BeNil())
-				Expect(len(tmpWorkspace.Users)).To(Equal(0))
+				Expect(len(tmpWorkspace.Users)).To(Equal(1))
 			})
 		})
 	})

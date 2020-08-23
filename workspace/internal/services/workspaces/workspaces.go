@@ -2,36 +2,11 @@ package workspaces
 
 import (
 	"strings"
-	"time"
 
 	uuid "github.com/gofrs/uuid"
 	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
-	"gitlab.com/archstack/workspace-api/internal/services/users"
+	"gitlab.com/archstack/workspace-api/models"
 )
-
-// Workspace holds all data required to represent a workspace
-type Workspace struct {
-	tableName struct{} `sql:"workspaces"`
-
-	ID     uuid.UUID `json:"-" sql:",type:uuid, pk"`
-	Name   string    `json:"firstName" sql:",notnull,unique"`
-	Active bool      `json:"active" sql:"default: FALSE"`
-
-	Users []*users.User `json:"users" sql:",many2many:workspace_user,join_fk:user_id"`
-
-	CreatedAt time.Time `json:"createdAt" sql:",default:now()"`
-	UpdatedAt time.Time `json:"updatedAt" sql:",default:now()"`
-}
-
-// Sanitize cleans up some fields on the workspace which may have "unclean" values
-func (w *Workspace) Sanitize() {
-	w.Name = strings.TrimSpace(w.Name)
-}
-
-// Validate checks that the workspace is valid that is contains no errors
-func (w *Workspace) Validate() error {
-	return nil
-}
 
 // Workspaces struct holds all the dependencies required for the workspaces package. And exposes all services
 // provided by this package as its methods
@@ -50,7 +25,7 @@ func NewService(datastore *datastore.Datastore) (*Workspaces, error) {
 }
 
 // Create creates a new workspace
-func (w *Workspaces) Create(workspace *Workspace) (*Workspace, error) {
+func (w *Workspaces) Create(workspace *models.Workspace) (*models.Workspace, error) {
 	id, err := uuid.NewV4()
 	if err != nil {
 		return nil, err
@@ -60,13 +35,13 @@ func (w *Workspaces) Create(workspace *Workspace) (*Workspace, error) {
 	return w.Repository.create(workspace)
 }
 
-// Get returns the Workspace with a given id
-func (w *Workspaces) Get(id uuid.UUID) (*Workspace, error) {
+// Get returns the models.Workspace with a given id
+func (w *Workspaces) Get(id uuid.UUID) (*models.Workspace, error) {
 	return w.Repository.getByID(id)
 }
 
 // SetName updates the name of a workspace
-func (w *Workspaces) SetName(workspace *Workspace, newName string) error {
+func (w *Workspaces) SetName(workspace *models.Workspace, newName string) error {
 	if newName == workspace.Name {
 		return nil
 	}
@@ -77,7 +52,7 @@ func (w *Workspaces) SetName(workspace *Workspace, newName string) error {
 }
 
 // SetActive updates the active state of a workspace
-func (w *Workspaces) SetActive(workspace *Workspace, isActive bool) error {
+func (w *Workspaces) SetActive(workspace *models.Workspace, isActive bool) error {
 	if isActive == workspace.Active {
 		return nil
 	}
@@ -88,11 +63,21 @@ func (w *Workspaces) SetActive(workspace *Workspace, isActive bool) error {
 }
 
 // AddUser associates a user with a workspace
-func (w *Workspaces) AddUser(user *users.User) error {
+func (w *Workspaces) AddUser(user *models.User) error {
 	return nil
 }
 
 // RemoveUser removes the association of a user with a workspace
-func (w *Workspaces) RemoveUser(user *users.User) error {
+func (w *Workspaces) RemoveUser(user *models.User) error {
+	return nil
+}
+
+// Sanitize cleans up some fields on the workspace which may have "unclean" values
+func (w *Workspaces) Sanitize(workspace *models.Workspace) {
+	workspace.Name = strings.TrimSpace(workspace.Name)
+}
+
+// Validate checks that the workspace is valid that is contains no errors
+func (w *Workspaces) Validate(workspace *models.Workspace) error {
 	return nil
 }
