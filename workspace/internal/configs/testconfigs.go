@@ -3,8 +3,8 @@ package configs
 import (
 	"time"
 
-	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
-	"gitlab.com/archstack/workspace-api/internal/server/http"
+	"gitlab.com/archstack/workspace-api/lib/datastore"
+	"gitlab.com/archstack/workspace-api/lib/server/http"
 )
 
 // TestConfigs struct handles all dependencies required for handling configurations

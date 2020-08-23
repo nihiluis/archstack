@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	"gitlab.com/archstack/workspace-api/internal/configs"
-	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
-	"gitlab.com/archstack/workspace-api/models"
+	"gitlab.com/archstack/workspace-api/lib/datastore"
+	"gitlab.com/archstack/workspace-api/lib/models"
 )
 
 var _ = Describe("Repository", func() {

@@ -6,12 +6,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Config holds all the configuration required to start the HTTP server
-type Config struct {
-	Host string
-	Port string
-}
-
 type Handlers struct {
 }
 
@@ -31,8 +25,4 @@ func NewService(config *Config) (*Server, error) {
 
 func (server *Server) Start() {
 	server.echo.Logger.Fatal(server.echo.Start(fmt.Sprintf(":%s", server.config.Port)))
-}
-
-func (server *Server) InitRoutes() {
-
 }

@@ -2,11 +2,11 @@ package users
 
 import (
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/internal/platform/datastore"
-	"gitlab.com/archstack/workspace-api/models"
+	"gitlab.com/archstack/workspace-api/lib/datastore"
+	"gitlab.com/archstack/workspace-api/lib/models"
 )
 
-// Users struct holds all the dependencies required for the workspaces package. And exposes all services
+// Users struct holds all the dependencies required for the users package. And exposes all services
 // provided by this package as its methods
 type Users struct {
 	Repository UserRepository
@@ -29,6 +29,13 @@ func (u *Users) Create(user *models.User) (*models.User, error) {
 	}
 
 	user.ID = id
+
+	hashedPassword, err := hashPassword(user.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Password = hashedPassword
 
 	return u.Repository.create(user)
 }
