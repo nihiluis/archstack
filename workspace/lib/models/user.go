@@ -8,13 +8,10 @@ import (
 type User struct {
 	tableName struct{} `pg:"users"`
 
-	ID        uuid.UUID `pg:",type:uuid,pk"`
-	FirstName string    `json:"firstName" pg:",notnull"`
-	LastName  string    `json:"lastName" pg:",notnull"`
-	Mail      string    `json:"mail" pg:",notnull"`
-	Level     int       `json:"level" pg:",notnull,default:0"`
+	ID     uuid.UUID `pg:",type:uuid,pk"`
+	AuthID uuid.UUID `pg:",type:uuid,unique:idx_auth_id"`
 
-	Password string `json:"-" pg:",notnull"`
+	Level int `json:"level" pg:",notnull,default:0"`
 
 	Workspaces []*Workspace `json:"workspaces" pg:"many2many:workspaces_users"`
 
