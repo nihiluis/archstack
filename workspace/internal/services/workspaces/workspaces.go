@@ -35,9 +35,14 @@ func (w *Workspaces) Create(workspace *models.Workspace) (*models.Workspace, err
 	return w.Repository.create(workspace)
 }
 
-// Get returns the models.Workspace with a given id
-func (w *Workspaces) Get(id uuid.UUID) (*models.Workspace, error) {
+// GetByID returns the models.Workspace with a given id
+func (w *Workspaces) GetByID(id uuid.UUID) (*models.Workspace, error) {
 	return w.Repository.getByID(id)
+}
+
+// GetAll returns all models.Workspace
+func (w *Workspaces) GetAll() ([]models.Workspace, error) {
+	return w.Repository.getAll()
 }
 
 // SetName updates the name of a workspace
@@ -62,22 +67,12 @@ func (w *Workspaces) SetActive(workspace *models.Workspace, isActive bool) error
 	return w.Repository.update(workspace)
 }
 
-// AddUser associates a user with a workspace
-func (w *Workspaces) AddUser(user *models.User) error {
-	return nil
-}
-
-// RemoveUser removes the association of a user with a workspace
-func (w *Workspaces) RemoveUser(user *models.User) error {
-	return nil
-}
-
 // Sanitize cleans up some fields on the workspace which may have "unclean" values
-func (w *Workspaces) Sanitize(workspace *models.Workspace) {
+func (w *Workspaces) sanitize(workspace *models.Workspace) {
 	workspace.Name = strings.TrimSpace(workspace.Name)
 }
 
 // Validate checks that the workspace is valid that is contains no errors
-func (w *Workspaces) Validate(workspace *models.Workspace) error {
+func (w *Workspaces) validate(workspace *models.Workspace) error {
 	return nil
 }

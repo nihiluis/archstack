@@ -4,8 +4,6 @@ go 1.14
 
 replace gitlab.com/archstack/workspace-api => ./
 
-replace gitlab.com/archstack/auth-api => ../auth-api
-
 require (
 	github.com/dghubble/sling v1.3.0
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
@@ -24,7 +22,6 @@ require (
 	github.com/onsi/gomega v1.10.1
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/valyala/fasttemplate v1.1.0 // indirect
-	gitlab.com/archstack/auth-api v0.0.0-00010101000000-000000000000
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	golang.org/x/mod v0.1.1-0.20191107180719-034126e5016b // indirect

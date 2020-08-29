@@ -1,8 +1,11 @@
 package main
 
 import (
+	"gitlab.com/archstack/workspace-api/internal/api"
 	"gitlab.com/archstack/workspace-api/internal/configs"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
+	"gitlab.com/archstack/workspace-api/internal/services/users"
+	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
 	"gitlab.com/archstack/workspace-api/lib/datastore"
 	"gitlab.com/archstack/workspace-api/lib/logger"
 	"gitlab.com/archstack/workspace-api/lib/models"
@@ -34,12 +37,34 @@ func main() {
 
 	defer datastore.DB.Close()
 
-	http, err := http.NewEchoService(logger, httpConfig)
+	workspaces, err := workspaces.NewService(datastore)
 	if err != nil {
 		panic(err)
 	}
 
+	users, err := users.NewService(datastore)
+	if err != nil {
+		panic(err)
+	}
+
+	relationships, err := relationships.NewService(datastore)
+	if err != nil {
+		panic(err)
+	}
+
+	server, err := http.NewEchoService(logger, httpConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	api, err := api.NewService(logger, workspaces, users, relationships)
+	if err != nil {
+		panic(err)
+	}
+	api.AddHandlers(server)
+
 	logger.Zap.Info("Loaded all services")
 	logger.Zap.Infow("HTTP server starting", zap.String("port", httpConfig.Port))
-	http.Start()
+
+	server.Start()
 }

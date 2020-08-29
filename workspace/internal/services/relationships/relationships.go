@@ -16,9 +16,9 @@ type Relationships struct {
 func NewService(datastore *datastore.Datastore) (*Relationships, error) {
 	repo := RelationshipRepository{datastore}
 
-	w := &Relationships{repo}
+	r := &Relationships{repo}
 
-	return w, nil
+	return r, nil
 }
 
 // WorkspaceAndUser represents a many to many relationship between workspaces and users
@@ -32,4 +32,13 @@ type WorkspaceAndUser struct {
 // NewWorkspaceAndUser returns an instance of the WorkspaceAndUser many to many relationship
 func NewWorkspaceAndUser(workspace *models.Workspace, user *models.User) WorkspaceAndUser {
 	return WorkspaceAndUser{WorkspaceID: workspace.ID, UserID: user.ID}
+}
+
+// AssignUserToWorkspace assigns a user to a workspace
+func (r *Relationships) AssignUserToWorkspace(user *models.User, workspace *models.Workspace) error {
+	rel := NewWorkspaceAndUser(workspace, user)
+
+	err := r.Repository.AddWorkspaceUser(&rel)
+
+	return err
 }

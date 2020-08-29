@@ -10,8 +10,8 @@ import (
 type Workspace struct {
 	tableName struct{} `pg:"workspaces"`
 
-	ID     uuid.UUID `json:"-" pg:",type:uuid, pk"`
-	Name   string    `json:"firstName" pg:",notnull,unique"`
+	ID     uuid.UUID `json:"id" pg:",type:uuid, pk"`
+	Name   string    `json:"name" pg:",notnull,unique"`
 	Active bool      `json:"active" pg:"default: FALSE"`
 
 	Users []*User `json:"users" pg:"many2many:workspaces_users"`

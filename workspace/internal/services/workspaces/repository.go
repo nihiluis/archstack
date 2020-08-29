@@ -37,6 +37,14 @@ func (r *WorkspaceRepository) remove(workspace *models.Workspace) error {
 	return err
 }
 
+func (r *WorkspaceRepository) getAll() ([]models.Workspace, error) {
+	var workspaces []models.Workspace
+
+	err := r.db.Model(&workspaces).Select()
+
+	return workspaces, err
+}
+
 func (r *WorkspaceRepository) update(workspace *models.Workspace) error {
 	_, err := r.db.Model(workspace).Update()
 
