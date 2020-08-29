@@ -4,25 +4,40 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"gitlab.com/archstack/workspace-api/lib/logger"
+	"go.uber.org/zap"
 )
 
-type Handlers struct {
-}
-
-type Server struct {
-	echo   *echo.Echo
+// EchoServer wraps an echo instance.
+type EchoServer struct {
+	Echo   *echo.Echo
 	config *Config
 }
 
-func NewService(config *Config) (*Server, error) {
+// NewEchoService creates a new EchoServer service.
+func NewEchoService(logger *logger.Logger, config *Config) (*EchoServer, error) {
 	e := echo.New()
 	e.HideBanner = true
+	e.HidePort = true
 
-	server := Server{e, config}
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		logger.Zap.Errorw("error during handler",
+			zap.String("path", c.Path()),
+			"params", c.QueryParams(),
+			zap.String("err", err.Error()))
+
+		e.DefaultHTTPErrorHandler(err, c)
+	}
+
+	e.Use(middleware.Recover())
+
+	server := EchoServer{e, config}
 
 	return &server, nil
 }
 
-func (server *Server) Start() {
-	server.echo.Logger.Fatal(server.echo.Start(fmt.Sprintf(":%s", server.config.Port)))
+// Start starts the echo server.
+func (server *EchoServer) Start() {
+	server.Echo.Start(fmt.Sprintf(":%s", server.config.Port))
 }
