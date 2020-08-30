@@ -8,8 +8,8 @@ import (
 
 	"gitlab.com/archstack/workspace-api/internal/configs"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
-	"gitlab.com/archstack/workspace-api/lib/datastore"
-	"gitlab.com/archstack/workspace-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 var _ = Describe("Repository", func() {

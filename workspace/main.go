@@ -6,10 +6,10 @@ import (
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
-	"gitlab.com/archstack/workspace-api/lib/datastore"
-	"gitlab.com/archstack/workspace-api/lib/logger"
-	"gitlab.com/archstack/workspace-api/lib/models"
-	"gitlab.com/archstack/workspace-api/lib/server/http"
+	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/logger"
+	"gitlab.com/archstack/core-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/server/http"
 	"go.uber.org/zap"
 )
 

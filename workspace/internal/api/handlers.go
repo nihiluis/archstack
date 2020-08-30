@@ -9,12 +9,12 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
+	"gitlab.com/archstack/core-api/lib/logger"
+	"gitlab.com/archstack/core-api/lib/models"
+	archhttp "gitlab.com/archstack/core-api/lib/server/http"
+	"gitlab.com/archstack/core-api/lib/server/http/middleware"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
-	"gitlab.com/archstack/workspace-api/lib/logger"
-	"gitlab.com/archstack/workspace-api/lib/models"
-	archhttp "gitlab.com/archstack/workspace-api/lib/server/http"
-	"gitlab.com/archstack/workspace-api/lib/server/http/middleware"
 )
 
 var validate *validator.Validate
@@ -38,6 +38,8 @@ func NewService(logger *logger.Logger,
 
 // AddHandlers adds the echo handlers that are part of this package.
 func (api *API) AddHandlers(s *archhttp.EchoServer) {
+	userCookieAuthMiddleware := middleware.UserCookieAuth()
+
 	userAuthConfig := &middleware.UserAuthConfig{
 		AuthEndpointURL: "http://localhost:3333",
 	}
@@ -51,9 +53,11 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 	workspaceGroup := s.Echo.Group("/workspace")
 	userGroup := s.Echo.Group("/user")
 
+	workspaceGroup.Use(userCookieAuthMiddleware)
 	workspaceGroup.Use(userAuthMiddleware)
 	workspaceGroup.Use(userLevelMiddleware)
 
+	userGroup.Use(userCookieAuthMiddleware)
 	userGroup.Use(userAuthMiddleware)
 
 	workspaceGroup.POST("/create", api.createWorkspace)

@@ -2,7 +2,7 @@ package users
 
 import (
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 // MapUsersToIDs turns an array of users into an array of uuids by their ids

@@ -3,7 +3,7 @@ package workspaces
 import (
 	"github.com/go-pg/pg/v10/orm"
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 // WorkspaceRepository enables CRUD ops on the db for the Workspace objects.

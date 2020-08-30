@@ -2,8 +2,8 @@ package users
 
 import (
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/lib/datastore"
-	"gitlab.com/archstack/workspace-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 // Users struct holds all the dependencies required for the users package. And exposes all services

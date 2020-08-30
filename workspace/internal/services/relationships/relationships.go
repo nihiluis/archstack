@@ -2,8 +2,8 @@ package relationships
 
 import (
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/lib/datastore"
-	"gitlab.com/archstack/workspace-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 // Relationships struct holds all the dependencies required for the relationships package. And exposes all services
