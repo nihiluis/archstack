@@ -1,11 +1,12 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 
-import Head from "next/head"
 import { Formik, FormikErrors } from "formik"
 
-import { SITE_TITLE, PRODUCT_NAME } from "../src/constants/env"
-import * as Logo from "../public/logo.svg"
+import { PRODUCT_NAME } from "../src/constants/env"
 import Layout from "../src/components/Layout"
+import Auth, { AuthContext } from "../src/components/Auth"
+import FormRow from "../src/components/form/FormRow"
+import { login } from "../src/lib/auth"
 
 interface FormValues {
   mail: string
@@ -16,59 +17,61 @@ function validate(values: FormValues): FormikErrors<FormValues> {
   return {}
 }
 
-export default function Home() {
-  const submit = function (values: FormValues) {}
+export default function Login() {
+  return (
+    <Auth require={false}>
+      <Layout>
+        <LoginForm />
+      </Layout>
+    </Auth>
+  )
+}
+
+function LoginForm(): JSX.Element {
+  const authContext = useContext(AuthContext)
+
+  const [loginError, setLoginError] = useState("")
+  const [loginLoading, setLoginLoading] = useState(false)
+
+  const submit = async function (values: FormValues) {
+    const { mail, password } = values
+
+    setLoginLoading(true)
+
+    const { success, token, error } = await login(mail, password)
+
+    setLoginLoading(false)
+    setLoginError(error)
+
+    authContext!.setAuth({ authenticated: success, token, error })
+  }
 
   return (
-    <Layout>
+    <React.Fragment>
       <h2 className="title-big">Log in to {PRODUCT_NAME}</h2>
       <Formik<FormValues>
         initialValues={{ mail: "", password: "" }}
         validate={validate}
         onSubmit={submit}>
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          isSubmitting,
-        }) => (
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <label className="form-label">Mail</label>
-              <input
-                className="form-input"
-                type="email"
-                name="mail"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.mail}
-              />
-              {errors.mail && touched.mail && errors.mail}
-            </div>
-            <div className="form-row">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-              />
-              {errors.password && touched.password && errors.password}
-            </div>
+        {formikProps => (
+          <form className="form" onSubmit={formikProps.handleSubmit}>
+            <FormRow {...formikProps} type="email" name="mail" label="Mail" />
+            <FormRow
+              {...formikProps}
+              type="password"
+              name="password"
+              label="Password"
+            />
+            {loginError && <p className="error">{loginError}</p>}
             <button
               type="submit"
               className="btn btn-primary form-btn"
-              disabled={isSubmitting}>
+              disabled={formikProps.isSubmitting || loginLoading}>
               Submit
             </button>
           </form>
         )}
       </Formik>
-    </Layout>
+    </React.Fragment>
   )
 }
