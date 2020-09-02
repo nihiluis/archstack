@@ -12,7 +12,7 @@ import (
 // EchoServer wraps an echo instance.
 type EchoServer struct {
 	Echo   *echo.Echo
-	config *Config
+	Config *Config
 }
 
 // NewEchoService creates a new EchoServer service.
@@ -39,5 +39,5 @@ func NewEchoService(logger *logger.Logger, config *Config) (*EchoServer, error) 
 
 // Start starts the echo server.
 func (server *EchoServer) Start() {
-	server.Echo.Start(fmt.Sprintf(":%s", server.config.Port))
+	server.Echo.Start(fmt.Sprintf(":%s", server.Config.Port))
 }

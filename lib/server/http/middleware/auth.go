@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/dghubble/sling"
 	"github.com/gofrs/uuid"
@@ -38,7 +38,7 @@ func UserAuthWithConfig(config *UserAuthConfig) echo.MiddlewareFunc {
 			}
 
 			if authData.User == nil {
-				return errors.New("unauthorized")
+				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "unauthorized"})
 			}
 
 			c.Set(config.AuthUserIDKey, authData.AuthUserID)
