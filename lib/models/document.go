@@ -2,6 +2,7 @@ package models
 
 import "github.com/gofrs/uuid"
 
+// Document represents an object of the IT landscape.
 type Document struct {
 	tableName struct{} `pg:"documents"`
 
@@ -10,10 +11,13 @@ type Document struct {
 	Name        string `pg:",notnull"`
 	Description string `pg:",notnull,default:''"`
 
-	TypeID    uuid.UUID `pg:",type:uuid,unique:idx_auth_id"`
-	Relations []*DocumentRelation
+	TypeID uuid.UUID `pg:",type:uuid"`
+	Type   *DocumentType
+
+	Values []*DocumentFieldValue `pg:"fk:document_id" json:"values"`
 }
 
+// DocumentType specifies the type of an object. E.g. an application or an IT component.
 type DocumentType struct {
 	tableName struct{} `pg:"document_types"`
 
@@ -22,11 +26,15 @@ type DocumentType struct {
 	Name        string    `pg:",notnull"`
 	Description string    `pg:",notnull,default:''"`
 
-	Fields []*DocumentField `json:"fields" pg:"many2many:workspaces_users"`
+	Documents []*Document      `pg:"fk:type_id" json:"documents"`
+	Fields    []*DocumentField `pg:"fk:type_id" json:"fields"`
+
+	WorkspaceID uuid.UUID `pg:",type:uuid"`
 }
 
+// DocumentField represents a field that contains data for a Document.
 type DocumentField struct {
-	tableName struct{} `pg:"document_types"`
+	tableName struct{} `pg:"document_fields"`
 
 	ID          uuid.UUID `pg:",type:uuid,pk"`
 	ExternalID  string    `pg:",notnull"`
@@ -34,33 +42,23 @@ type DocumentField struct {
 	Description string    `pg:",notnull,default:''"`
 
 	FieldType string `pg:",notnull"`
-	Type      string
+
+	TypeID uuid.UUID `pg:",type:uuid"`
+	Type   *DocumentType
 }
 
+// DocumentFieldValue specifies the value of a DocumentField.
 type DocumentFieldValue struct {
-	Field *DocumentField
-	Value string
+	tableName struct{} `pg:"document_field_values"`
+
+	FieldID    uuid.UUID `pg:",type:uuid,unique:idx_document_id_field_id"`
+	Field      *DocumentField
+	DocumentID uuid.UUID `pg:",type:uuid,unique:idx_document_id_field_id"`
+	Document   *Document
+	Value      string
 }
 
-type DocumentRelation struct {
-	tableName struct{} `pg:"document_types"`
-
-	ID          uuid.UUID `pg:",type:uuid,pk"`
-	ExternalID  string    `pg:",notnull"`
-	Name        string    `pg:",notnull"`
-	Description string    `pg:",notnull,default:''"`
-	Type        string    `pg:",notnull"`
-
-	From Document
-	To   Document
-
-	Fields []*DocumentField `json:"fields" pg:"many2many:workspaces_users"`
-}
-
-type DocumentRelationType struct {
-	Name string
-}
-
+// DocumentFieldType represents the data type for a DocumentField and its value.
 type DocumentFieldType struct {
 	Name string
 }
