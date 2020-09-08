@@ -43,9 +43,9 @@ export default function Auth(props: PropsWithChildren<Props>) {
 
         const { success, token, error } = await checkAuth()
 
-        setAuth({ authenticated: success, token, error })
-
         setAuthLoading(false)
+
+        setAuth({ authenticated: success, token, error })
       } else if (authLoading) {
         setAuthLoading(false)
       }
