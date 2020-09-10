@@ -48,7 +48,7 @@ function LoginForm(): JSX.Element {
 
   return (
     <React.Fragment>
-      <h2 className="title-big">Log in to {PRODUCT_NAME}</h2>
+      <h2 className="title-big title-big-margin">Log in to {PRODUCT_NAME}</h2>
       <Formik<FormValues>
         initialValues={{ mail: "", password: "" }}
         validate={validate}
