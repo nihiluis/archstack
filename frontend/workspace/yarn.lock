@@ -1486,9 +1486,9 @@ autoprefixer@^9.4.5, autoprefixer@^9.6.1:
     postcss-value-parser "^4.1.0"
 
 await-protect@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/await-protect/-/await-protect-1.0.13.tgz#3345bf3c1f510c711c36f15da75720e106ea6481"
-  integrity sha512-UIR/O4d9hQcUQjuOoHltISjI1y8EbJgBUviXJc7eICgHos61V70Qmw0pO+ezs28SxiISshXux60KL5c0KaUiWQ==
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/await-protect/-/await-protect-1.0.14.tgz#d56c9a10d44c3bdb72270b1ae031f6e22a911e50"
+  integrity sha512-wumRKJZMwF0IZUbo+xjf8lMNJrQOSfIIHhn1V8VjbzWE1h9YHqGbeexXTTBs23CukYiCwAl2p0VfLr+ibffCZA==
 
 axios@^0.20.0:
   version "0.20.0"
@@ -2817,6 +2817,11 @@ function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
+
+fuse.js@^3.4.5:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-3.6.1.tgz#7de85fdd6e1b3377c23ce010892656385fd9b10c"
+  integrity sha512-hT9yh/tiinkmirKrlv4KWOjztdoZo1mx9Qh4KvWqC7isoXwdUY3PNWUxceF4/qO9R6riA2C29jdTOeQOIROjgw==
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
@@ -4614,6 +4619,13 @@ react-refresh@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
   integrity sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
+
+react-select-search@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/react-select-search/-/react-select-search-2.0.6.tgz#495077834a5adabcc251cd9100c5deff0a3ac174"
+  integrity sha512-r9yjdB3SOmmueRgVXo5YuFjR4vJnfjS5O+9mmwXS+A1fE3SyVXTF38rswGz2Cc+1ta7TKxA/6CCxq3DZWf7YSA==
+  optionalDependencies:
+    fuse.js "^3.4.5"
 
 react@16.13.1:
   version "16.13.1"
