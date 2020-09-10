@@ -6,6 +6,7 @@ import Auth from "../src/components/Auth"
 import { SITE_TITLE } from "../src/constants/env"
 import * as Logo from "../public/logo.svg"
 import { getWorkspaces, Workspace } from "../src/lib/workspace"
+import { SelectSearch } from "../src/lib/reexports"
 
 interface WorkspaceState {
   error: string
@@ -33,10 +34,25 @@ export default function Home() {
     fetchData()
   }, [])
 
+  const workspaces = workspace.workspaces
+
+  const options = workspaces
+    .filter(w => w.active || !w.active)
+    .map(w => {
+      return { name: w.name, value: w.id }
+    })
+
   return (
     <Auth require>
       <Logo style={{ width: 24, height: 24 }} />
-      {workspace.workspaces.map(w => w.name)}
+      <h2 className="title-big">Choose workspace</h2>
+      <div className="container">
+        <SelectSearch
+          options={options}
+          value={""}
+        />
+        <button className="btn btn-primary">Select</button>
+      </div>
       {workspace.error && <p className="error">{workspace.error}</p>}
     </Auth>
   )
