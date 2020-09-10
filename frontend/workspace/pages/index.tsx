@@ -7,18 +7,20 @@ import { SITE_TITLE } from "../src/constants/env"
 import * as Logo from "../public/logo.svg"
 import { getWorkspaces, Workspace } from "../src/lib/workspace"
 import { SelectSearch } from "../src/lib/reexports"
+import Home from "../src/components/Home"
 
 interface WorkspaceState {
   error: string
   workspaces: Workspace[]
 }
 
-export default function Home() {
+export default function Index() {
   const [workspacesLoading, setWorkspacesLoading] = useState<boolean>(true)
   const [workspace, setWorkspace] = useState<WorkspaceState>({
     error: "",
     workspaces: [],
   })
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string>("")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,10 @@ export default function Home() {
       const { workspaces, error } = await getWorkspaces()
 
       setWorkspacesLoading(false)
+
+      if (workspaces.length > 0) {
+        setSelectedWorkspace(workspaces[0].id)
+      }
 
       setWorkspace({ workspaces, error })
     }
@@ -44,16 +50,7 @@ export default function Home() {
 
   return (
     <Auth require>
-      <Logo style={{ width: 24, height: 24 }} />
-      <h2 className="title-big">Choose workspace</h2>
-      <div className="container">
-        <SelectSearch
-          options={options}
-          value={""}
-        />
-        <button className="btn btn-primary">Select</button>
-      </div>
-      {workspace.error && <p className="error">{workspace.error}</p>}
+      <Home />
     </Auth>
   )
 }

@@ -29,7 +29,7 @@ export async function getWorkspaces(): Promise<WorkspacesResult> {
   }
 
   const body: WorkspacesResponse = res.data
-  const workspaces = body.workspaces
+  const workspaces = body.workspaces || []
 
   return { success: true, workspaces, error: "" }
 }
