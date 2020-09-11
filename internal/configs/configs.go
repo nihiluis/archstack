@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/server/http"
+	"gitlab.com/archstack/inventory-api/internal/api"
 )
 
 // Configs struct handles all dependencies required for handling configurations
@@ -28,6 +30,21 @@ func (cfg *Configs) Datastore() (*datastore.Config, error) {
 		WriteTimeout: time.Second * 5,
 		IdleTimeout:  time.Second * 60,
 		DialTimeout:  time.Second * 10,
+	}, nil
+}
+
+// API returns API configuration
+func (cfg *Configs) API() (*api.Config, error) {
+	return &api.Config{
+		GraphQLEndpointURL: "http://localhost:8081/v1/graphql",
+	}, nil
+}
+
+// HTTP returns the configuration required for HTTP package
+func (cfg *Configs) HTTP() (*http.Config, error) {
+	return &http.Config{
+		Port:         "3335",
+		AllowOrigins: []string{"http://localhost:3000"},
 	}, nil
 }
 
