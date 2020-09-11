@@ -42,3 +42,9 @@ func (r *Relationships) AssignUserToWorkspace(user *models.User, workspace *mode
 
 	return err
 }
+
+func (r *Relationships) IsUserAssignedToWorkspace(userID uuid.UUID, workspaceID uuid.UUID) (bool, error) {
+	rel := &WorkspaceAndUser{WorkspaceID: workspaceID, UserID: userID}
+
+	return r.Repository.IsUserAssignedToWorkspace(rel)
+}

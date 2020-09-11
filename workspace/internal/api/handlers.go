@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"gitlab.com/archstack/core-api/lib/logger"
 	"gitlab.com/archstack/core-api/lib/models"
 	archhttp "gitlab.com/archstack/core-api/lib/server/http"
@@ -38,6 +39,12 @@ func NewService(logger *logger.Logger,
 
 // AddHandlers adds the echo handlers that are part of this package.
 func (api *API) AddHandlers(s *archhttp.EchoServer) {
+	s.Echo.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
+		AllowOrigins:     s.Config.AllowOrigins,
+		AllowCredentials: true,
+		AllowMethods:     []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
+
 	userCookieAuthMiddleware := middleware.UserCookieAuth()
 
 	userAuthConfig := &middleware.UserAuthConfig{
@@ -64,6 +71,7 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 	workspaceGroup.GET("/all", api.getWorkspaces)
 	userGroup.GET("/workspaces", api.getWorkspacesForUser)
 	workspaceGroup.POST("/user/assign", api.assignUser)
+	workspaceGroup.POST("/user/isassigned", api.isUserAssignedToWorkspace)
 }
 
 // CreateWorkspaceRequestBody is the JSON body of a request to the createWorkspace handler.
@@ -136,6 +144,33 @@ func (api *API) assignUser(c echo.Context) error {
 	api.relationships.AssignUserToWorkspace(user, workspace)
 
 	return c.JSON(http.StatusOK, echo.Map{})
+}
+
+// IsUserAssignedToWorkspaceRequestBody is the JSON body of a request to the isUserAssignedToWorkspace handler.
+type IsUserAssignedToWorkspaceRequestBody struct {
+	UserID      uuid.UUID `json:"userId" validate:"required"`
+	WorkspaceID uuid.UUID `json:"workspaceId" validate:"required"`
+}
+
+func (api *API) isUserAssignedToWorkspace(c echo.Context) error {
+	body := new(IsUserAssignedToWorkspaceRequestBody)
+	if err := c.Bind(body); err != nil {
+		return err
+	}
+	err := api.validate.Struct(body)
+	if err != nil {
+		return err
+	}
+
+	userID := body.UserID
+	workspaceID := body.WorkspaceID
+
+	isAssigned, err := api.relationships.IsUserAssignedToWorkspace(userID, workspaceID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"isAssigned": isAssigned})
 }
 
 func (api *API) getWorkspacesForUser(c echo.Context) error {

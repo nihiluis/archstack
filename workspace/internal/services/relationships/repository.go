@@ -41,3 +41,7 @@ func (r *RelationshipRepository) DeleteWorkspaceUser(workspaceAndUser *Workspace
 
 	return err
 }
+
+func (r *RelationshipRepository) IsUserAssignedToWorkspace(workspaceAndUser *WorkspaceAndUser) (bool, error) {
+	return r.datastore.DB.Model(workspaceAndUser).Exists()
+}
