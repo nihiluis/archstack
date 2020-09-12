@@ -36,7 +36,11 @@ func (cfg *Configs) Datastore() (*datastore.Config, error) {
 // API returns API configuration
 func (cfg *Configs) API() (*api.Config, error) {
 	return &api.Config{
-		GraphQLEndpointURL: "http://localhost:8081/v1/graphql",
+		GraphQLEndpointURL:     "http://localhost:8081/v1/graphql",
+		GraphQLWorkspaceHeader: "X-Hasura-Workspace",
+		GraphQLRoleHeader:      "X-Hasura-Role",
+		GraphQLRoleName:        "workspace",
+		WorkspaceContextKey:    "workspace",
 	}, nil
 }
 
