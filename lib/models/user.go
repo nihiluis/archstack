@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"github.com/gofrs/uuid"
 )
 
@@ -20,6 +18,6 @@ type User struct {
 	InvitedBy   *User         `json:"invitedBy" pg:"-"`
 	InvitedByID uuid.NullUUID `json:"-" pg:",type:uuid"`
 
-	CreatedAt time.Time `json:"createdAt" pg:",default:now()"`
-	UpdatedAt time.Time `json:"updatedAt" pg:",default:now()"`
+	//CreatedAt time.Time `json:"createdAt" pg:",default:now()"`
+	//UpdatedAt time.Time `json:"updatedAt" pg:",default:now()"`
 }

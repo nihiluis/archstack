@@ -197,9 +197,6 @@ func JWTWithConfig(config JWTConfig) echo.MiddlewareFunc {
 			// Issue #647, #656
 			if _, ok := config.Claims.(jwt.MapClaims); ok {
 				token, err = jwt.Parse(auth, config.keyFunc, jwt.WithoutAudienceValidation())
-				if err != nil {
-					//panic(err)
-				}
 			} else {
 				t := reflect.ValueOf(config.Claims).Type().Elem()
 				claims := reflect.New(t).Interface().(jwt.Claims)

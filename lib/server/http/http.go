@@ -31,6 +31,7 @@ func NewEchoService(logger *logger.Logger, config *Config) (*EchoServer, error) 
 	}
 
 	e.Use(middleware.Recover())
+	e.Use(middleware.Gzip())
 
 	server := EchoServer{e, config}
 
