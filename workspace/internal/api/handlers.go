@@ -16,6 +16,7 @@ import (
 	"gitlab.com/archstack/core-api/lib/server/http/middleware"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
+	workspaceMiddleware "gitlab.com/archstack/workspace-api/lib/server/http/middleware"
 )
 
 var validate *validator.Validate
@@ -26,15 +27,21 @@ type API struct {
 	relationships *relationships.Relationships
 	logger        *logger.Logger
 	validate      *validator.Validate
+	config        *Config
+}
+
+type Config struct {
+	WorkspaceHeader string
 }
 
 func NewService(logger *logger.Logger,
 	workspaces *workspaces.Workspaces,
 	users *users.Users,
-	relationships *relationships.Relationships) (*API, error) {
+	relationships *relationships.Relationships,
+	config *Config) (*API, error) {
 	validate := validator.New()
 
-	return &API{users, workspaces, relationships, logger, validate}, nil
+	return &API{users, workspaces, relationships, logger, validate, config}, nil
 }
 
 // AddHandlers adds the echo handlers that are part of this package.
@@ -57,21 +64,29 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 	}
 	userLevelMiddleware := middleware.UserLevelWithConfig(userLevelConfig, userAuthConfig)
 
-	workspaceGroup := s.Echo.Group("/workspace")
-	userGroup := s.Echo.Group("/user")
+	s.Echo.Use(userCookieAuthMiddleware)
+	s.Echo.Use(userAuthMiddleware)
 
-	workspaceGroup.Use(userCookieAuthMiddleware)
-	workspaceGroup.Use(userAuthMiddleware)
-	workspaceGroup.Use(userLevelMiddleware)
+	adminGroup := s.Echo.Group("/admin")
+
+	adminGroup.Use(userLevelMiddleware)
+
+	adminGroup.POST("/create", api.createWorkspace)
+	adminGroup.GET("/all", api.getWorkspaces)
+	adminGroup.POST("/user/assign", api.assignUser)
+	adminGroup.POST("/user/isassigned", api.isUserAssignedToWorkspace)
+
+	userGroup := s.Echo.Group("/user")
 
 	userGroup.Use(userCookieAuthMiddleware)
 	userGroup.Use(userAuthMiddleware)
 
-	workspaceGroup.POST("/create", api.createWorkspace)
-	workspaceGroup.GET("/all", api.getWorkspaces)
 	userGroup.GET("/workspaces", api.getWorkspacesForUser)
-	workspaceGroup.POST("/user/assign", api.assignUser)
-	workspaceGroup.POST("/user/isassigned", api.isUserAssignedToWorkspace)
+
+	workspaceLimiterConfig := &workspaceMiddleware.WorkspaceLimiterConfig{}
+	workspaceMiddleware := workspaceMiddleware.WorkspaceLimiterWithConfig(workspaceLimiterConfig)
+
+	s.Echo.GET("/get", api.getWorkspace, workspaceMiddleware)
 }
 
 // CreateWorkspaceRequestBody is the JSON body of a request to the createWorkspace handler.
@@ -110,6 +125,25 @@ func (api *API) getWorkspaces(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"workspaces": workspaces})
+}
+
+func (api *API) getWorkspace(c echo.Context) error {
+	idString := c.Request().Header.Get(api.config.WorkspaceHeader)
+	if idString == "" {
+		return errors.New("workspace must be provided with header")
+	}
+
+	id, err := uuid.FromString(idString)
+	if err != nil {
+		return err
+	}
+
+	workspace, err := api.workspaces.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"workspace": workspace})
 }
 
 // AssignUserToWorkspaceRequestBody is the JSON body of a request to the createWorkspace handler.

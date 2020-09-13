@@ -5,6 +5,7 @@ import (
 
 	"gitlab.com/archstack/core-api/lib/datastore"
 	"gitlab.com/archstack/core-api/lib/server/http"
+	"gitlab.com/archstack/workspace-api/internal/api"
 )
 
 // Configs struct handles all dependencies required for handling configurations
@@ -15,7 +16,14 @@ type Configs struct {
 func (cfg *Configs) HTTP() (*http.Config, error) {
 	return &http.Config{
 		Port:         "3334",
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000", "http://localhost:3001"},
+	}, nil
+}
+
+// API returns the configuration required for the API package
+func (cfg *Configs) API() (*api.Config, error) {
+	return &api.Config{
+		WorkspaceHeader: "Archstack-Workspace",
 	}, nil
 }
 

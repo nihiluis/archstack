@@ -1,15 +1,15 @@
 package main
 
 import (
+	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/logger"
+	"gitlab.com/archstack/core-api/lib/models"
+	"gitlab.com/archstack/core-api/lib/server/http"
 	"gitlab.com/archstack/workspace-api/internal/api"
 	"gitlab.com/archstack/workspace-api/internal/configs"
 	"gitlab.com/archstack/workspace-api/internal/services/relationships"
 	"gitlab.com/archstack/workspace-api/internal/services/users"
 	"gitlab.com/archstack/workspace-api/internal/services/workspaces"
-	"gitlab.com/archstack/core-api/lib/datastore"
-	"gitlab.com/archstack/core-api/lib/logger"
-	"gitlab.com/archstack/core-api/lib/models"
-	"gitlab.com/archstack/core-api/lib/server/http"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +21,7 @@ func main() {
 
 	httpConfig, err := configs.HTTP()
 	pgConfig, err := configs.Datastore()
+	apiConfig, err := configs.API()
 
 	logger := logger.NewService()
 
@@ -57,7 +58,7 @@ func main() {
 		panic(err)
 	}
 
-	api, err := api.NewService(logger, workspaces, users, relationships)
+	api, err := api.NewService(logger, workspaces, users, relationships, apiConfig)
 	if err != nil {
 		panic(err)
 	}
