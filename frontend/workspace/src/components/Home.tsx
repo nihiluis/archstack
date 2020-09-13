@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 
 import Head from "next/head"
 
 import * as Logo from "../../public/logo.svg"
 import { getWorkspaces, Workspace } from "../lib/workspace"
 import { SelectSearch } from "../lib/reexports"
-import { SITE_TITLE } from "../constants/env"
+import { SITE_TITLE, ENDPOINT_INVENTORY_LOGIN_URL } from "../constants/env"
+import { AuthContext } from "./Auth"
 
 interface WorkspaceState {
   error: string
@@ -13,6 +14,8 @@ interface WorkspaceState {
 }
 
 export default function Home() {
+  const { auth } = useContext(AuthContext)
+
   const [workspacesLoading, setWorkspacesLoading] = useState<boolean>(true)
   const [workspace, setWorkspace] = useState<WorkspaceState>({
     error: "",
@@ -46,6 +49,18 @@ export default function Home() {
       return { name: w.name, value: w.id }
     })
 
+  function handleRedirect(event: React.FormEvent<HTMLButtonElement>) {
+    event.preventDefault()
+
+    if (!workspacesLoading && selectedWorkspace) {
+      const url =
+        `${ENDPOINT_INVENTORY_LOGIN_URL}?workspaceId=${selectedWorkspace}` +
+        `&token=${auth.token}`
+
+      window.location.href = url
+    }
+  }
+
   return (
     <React.Fragment>
       <Head>
@@ -56,7 +71,7 @@ export default function Home() {
           <Logo style={{ width: 24, height: 24 }} />
           <h2 className="ml-4 title-big">Choose workspace</h2>
         </div>
-        <div className="form">
+        <form className="form">
           <div className="mb-8">
             <SelectSearch
               options={options}
@@ -64,9 +79,11 @@ export default function Home() {
               onChange={value => setSelectedWorkspace(value)}
             />
           </div>
-          <button className="btn btn-primary">Select</button>
+          <button className="btn btn-primary" onClick={handleRedirect}>
+            Select
+          </button>
           {workspace.error && <p className="error">{workspace.error}</p>}
-        </div>
+        </form>
       </div>
     </React.Fragment>
   )
