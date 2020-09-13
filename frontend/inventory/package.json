@@ -1,0 +1,29 @@
+{
+  "name": "archstack-workspace-selection-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start:dev": "next dev -p 3001",
+    "build": "next build",
+    "start:prod": "next start"
+  },
+  "dependencies": {
+    "archstack-core": "git+ssh://git@gitlab.com:archstack/core-app.git",
+    "await-protect": "^1.0.13",
+    "axios": "^0.20.0",
+    "formik": "^2.1.5",
+    "next": "9.5.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-select-search": "^2.0.6",
+    "yup": "^0.29.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.6.2",
+    "@types/react": "^16.9.48",
+    "babel-plugin-inline-react-svg": "^1.1.1",
+    "postcss-preset-env": "^6.7.0",
+    "tailwindcss": "^1.7.6",
+    "typescript": "^4.0.2"
+  }
+}
