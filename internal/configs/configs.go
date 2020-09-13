@@ -48,7 +48,7 @@ func (cfg *Configs) API() (*api.Config, error) {
 func (cfg *Configs) HTTP() (*http.Config, error) {
 	return &http.Config{
 		Port:         "3335",
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000", "http://localhost:3001"},
 	}, nil
 }
 
