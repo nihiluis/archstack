@@ -19,6 +19,10 @@ declare module '*.css' {
   const resource: any
   export = resource
 }
+declare module '*.module.css' {
+  const resource: any
+  export = resource
+}
 declare module '*.scss' {
   const resource: any
   export = resource

@@ -1,4 +1,5 @@
 import "../styles/globals.css"
+import "../styles/vars.css"
 import "../styles/selectsearch.css"
 import { AuthContext } from "../src/components/Auth"
 import { useState } from "react"

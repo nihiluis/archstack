@@ -61,7 +61,7 @@ export default function Auth(props: PropsWithChildren<Props>) {
     if (require && !auth.authenticated && !authLoading) {
       setLocalWorkspaceId("")
 
-      //window.location.href = LOGIN_URL
+      window.location.href = LOGIN_URL
     }
   }, [auth])
 

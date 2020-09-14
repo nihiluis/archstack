@@ -1,0 +1,9 @@
+.nav {
+	@apply flex;
+	@apply items-center;
+	height: var(--header-height);
+}
+
+.nav li {
+	@apply mx-4;
+}
