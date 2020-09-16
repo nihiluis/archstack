@@ -7,6 +7,11 @@ import Sidebar from "./Sidebar"
 
 import layoutStyle from "./Layout.module.css"
 import Logo from "./Logo"
+
+import * as BellSVG from "../icons/Bell.svg"
+import * as ProfileSVG from "../icons/Profile.svg"
+import * as SettingsSVG from "../icons/Settings.svg"
+
 import { PRODUCT_NAME } from "../../constants/env"
 import MiniSearch from "../search/MiniSearch"
 
@@ -45,8 +50,23 @@ export default function Layout(props: React.PropsWithChildren<Props>) {
             <Navigation />
             <div className="flex items-center">
               <MiniSearch />
-              <button className="py-1 btn btn-primary">Invite</button>
             </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <ProfileSVG
+                className="ml-4 text-gray-600 fill-current"
+                style={{ width: 24, height: 24 }}
+              />
+              <BellSVG
+                className="ml-2 text-gray-600 fill-current"
+                style={{ width: 24, height: 24 }}
+              />
+            </div>
+            <SettingsSVG
+              className="ml-2 mr-8 text-gray-600 fill-current"
+              style={{ width: 24, height: 24 }}
+            />
           </div>
         </header>
         <Sidebar

@@ -1,5 +1,9 @@
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { cx } from "../../lib/reexports"
+
+import * as styles from "./Navigation.module.css"
 
 interface Props {
   name?: string
@@ -12,11 +16,17 @@ interface Props {
 }
 
 const NavigationItem: React.FC<Props> = props => {
-  const { url, onClick, name, Icon, iconSize } = props
+  const { url, onClick, name, Icon, iconSize, className } = props
+
+  const router = useRouter()
+
+  const classNames = cx(className, {
+    [styles.itemActive]: url && router.pathname === url,
+  })
 
   return (
     <li>
-      {url && <NavigationItemLink {...props} />}
+      {url && <NavigationItemLink {...props} className={classNames} />}
       {!url && !Icon && <a onClick={onClick}>{name}</a>}
       {!url && Icon && (
         <a onClick={onClick}>
@@ -30,6 +40,8 @@ const NavigationItem: React.FC<Props> = props => {
 const NavigationItemLink: React.FC<Props> = props => {
   const { name, url, index, Icon, iconSize, className } = props
 
+  const router = useRouter()
+
   return Icon ? (
     <Link href={url!}>
       <a className={className}>
@@ -38,7 +50,10 @@ const NavigationItemLink: React.FC<Props> = props => {
         )}
         {name && Icon && (
           <span className="flex items-center">
-            <Icon className="mr-4 text-gray-600" style={{ width: iconSize || 16, height: iconSize || 16 }} />
+            <Icon
+              className="mr-4 text-gray-600 fill-current"
+              style={{ width: iconSize || 16, height: iconSize || 16 }}
+            />
             <p>{name}</p>
           </span>
         )}

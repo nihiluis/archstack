@@ -1,0 +1,1717 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+# expression to compare columns of type Boolean. All fields are combined with logical 'AND'.
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
+# columns and relationships of "document"
+type document {
+  created_at: timestamptz
+  description: String!
+  external_id: String
+  id: uuid!
+  name: String!
+  type_id: uuid!
+  updated_at: timestamptz
+}
+
+# aggregated selection of "document"
+type document_aggregate {
+  aggregate: document_aggregate_fields
+  nodes: [document!]!
+}
+
+# aggregate fields of "document"
+type document_aggregate_fields {
+  count(columns: [document_select_column!], distinct: Boolean): Int
+  max: document_max_fields
+  min: document_min_fields
+}
+
+# order by aggregate values of table "document"
+input document_aggregate_order_by {
+  count: order_by
+  max: document_max_order_by
+  min: document_min_order_by
+}
+
+# input type for inserting array relation for remote table "document"
+input document_arr_rel_insert_input {
+  data: [document_insert_input!]!
+  on_conflict: document_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document". All fields are combined with a logical 'AND'.
+input document_bool_exp {
+  _and: [document_bool_exp]
+  _not: document_bool_exp
+  _or: [document_bool_exp]
+  created_at: timestamptz_comparison_exp
+  description: String_comparison_exp
+  external_id: String_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  type_id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+# unique or primary key constraints on table "document"
+enum document_constraint {
+  # unique or primary key constraint
+  document_pkey
+}
+
+# columns and relationships of "document_field"
+type document_field {
+  created_at: timestamptz
+  description: String!
+  external_id: String!
+  field_type: String!
+  id: uuid!
+  name: String!
+
+  # An object relationship
+  type: document_type
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# aggregated selection of "document_field"
+type document_field_aggregate {
+  aggregate: document_field_aggregate_fields
+  nodes: [document_field!]!
+}
+
+# aggregate fields of "document_field"
+type document_field_aggregate_fields {
+  count(columns: [document_field_select_column!], distinct: Boolean): Int
+  max: document_field_max_fields
+  min: document_field_min_fields
+}
+
+# order by aggregate values of table "document_field"
+input document_field_aggregate_order_by {
+  count: order_by
+  max: document_field_max_order_by
+  min: document_field_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_field"
+input document_field_arr_rel_insert_input {
+  data: [document_field_insert_input!]!
+  on_conflict: document_field_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_field". All fields are combined with a logical 'AND'.
+input document_field_bool_exp {
+  _and: [document_field_bool_exp]
+  _not: document_field_bool_exp
+  _or: [document_field_bool_exp]
+  created_at: timestamptz_comparison_exp
+  description: String_comparison_exp
+  external_id: String_comparison_exp
+  field_type: String_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  type: document_type_bool_exp
+  type_id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+# unique or primary key constraints on table "document_field"
+enum document_field_constraint {
+  # unique or primary key constraint
+  document_field_pkey
+}
+
+# input type for inserting data into table "document_field"
+input document_field_insert_input {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  field_type: String
+  id: uuid
+  name: String
+  type: document_type_obj_rel_insert_input
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# aggregate max on columns
+type document_field_max_fields {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  field_type: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# order by max() on columns of table "document_field"
+input document_field_max_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  field_type: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# aggregate min on columns
+type document_field_min_fields {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  field_type: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# order by min() on columns of table "document_field"
+input document_field_min_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  field_type: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# response of any mutation on the table "document_field"
+type document_field_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_field!]!
+}
+
+# input type for inserting object relation for remote table "document_field"
+input document_field_obj_rel_insert_input {
+  data: document_field_insert_input!
+  on_conflict: document_field_on_conflict
+}
+
+# on conflict condition type for table "document_field"
+input document_field_on_conflict {
+  constraint: document_field_constraint!
+  update_columns: [document_field_update_column!]!
+  where: document_field_bool_exp
+}
+
+# ordering options when selecting data from "document_field"
+input document_field_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  field_type: order_by
+  id: order_by
+  name: order_by
+  type: document_type_order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# primary key columns input for table: "document_field"
+input document_field_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_field"
+enum document_field_select_column {
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  field_type
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+
+  # column name
+  updated_at
+}
+
+# input type for updating data in table "document_field"
+input document_field_set_input {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  field_type: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# update columns of table "document_field"
+enum document_field_update_column {
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  field_type
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+
+  # column name
+  updated_at
+}
+
+# columns and relationships of "document_field_value"
+type document_field_value {
+  document_id: uuid
+  field_id: uuid
+  value: String
+}
+
+# aggregated selection of "document_field_value"
+type document_field_value_aggregate {
+  aggregate: document_field_value_aggregate_fields
+  nodes: [document_field_value!]!
+}
+
+# aggregate fields of "document_field_value"
+type document_field_value_aggregate_fields {
+  count(columns: [document_field_value_select_column!], distinct: Boolean): Int
+  max: document_field_value_max_fields
+  min: document_field_value_min_fields
+}
+
+# order by aggregate values of table "document_field_value"
+input document_field_value_aggregate_order_by {
+  count: order_by
+  max: document_field_value_max_order_by
+  min: document_field_value_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_field_value"
+input document_field_value_arr_rel_insert_input {
+  data: [document_field_value_insert_input!]!
+  on_conflict: document_field_value_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_field_value". All fields are combined with a logical 'AND'.
+input document_field_value_bool_exp {
+  _and: [document_field_value_bool_exp]
+  _not: document_field_value_bool_exp
+  _or: [document_field_value_bool_exp]
+  document_id: uuid_comparison_exp
+  field_id: uuid_comparison_exp
+  value: String_comparison_exp
+}
+
+# unique or primary key constraints on table "document_field_value"
+enum document_field_value_constraint {
+  # unique or primary key constraint
+  document_field_values_field_id_document_id_key
+}
+
+# input type for inserting data into table "document_field_value"
+input document_field_value_insert_input {
+  document_id: uuid
+  field_id: uuid
+  value: String
+}
+
+# aggregate max on columns
+type document_field_value_max_fields {
+  document_id: uuid
+  field_id: uuid
+  value: String
+}
+
+# order by max() on columns of table "document_field_value"
+input document_field_value_max_order_by {
+  document_id: order_by
+  field_id: order_by
+  value: order_by
+}
+
+# aggregate min on columns
+type document_field_value_min_fields {
+  document_id: uuid
+  field_id: uuid
+  value: String
+}
+
+# order by min() on columns of table "document_field_value"
+input document_field_value_min_order_by {
+  document_id: order_by
+  field_id: order_by
+  value: order_by
+}
+
+# response of any mutation on the table "document_field_value"
+type document_field_value_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_field_value!]!
+}
+
+# input type for inserting object relation for remote table "document_field_value"
+input document_field_value_obj_rel_insert_input {
+  data: document_field_value_insert_input!
+  on_conflict: document_field_value_on_conflict
+}
+
+# on conflict condition type for table "document_field_value"
+input document_field_value_on_conflict {
+  constraint: document_field_value_constraint!
+  update_columns: [document_field_value_update_column!]!
+  where: document_field_value_bool_exp
+}
+
+# ordering options when selecting data from "document_field_value"
+input document_field_value_order_by {
+  document_id: order_by
+  field_id: order_by
+  value: order_by
+}
+
+# select columns of table "document_field_value"
+enum document_field_value_select_column {
+  # column name
+  document_id
+
+  # column name
+  field_id
+
+  # column name
+  value
+}
+
+# input type for updating data in table "document_field_value"
+input document_field_value_set_input {
+  document_id: uuid
+  field_id: uuid
+  value: String
+}
+
+# update columns of table "document_field_value"
+enum document_field_value_update_column {
+  # column name
+  document_id
+
+  # column name
+  field_id
+
+  # column name
+  value
+}
+
+# input type for inserting data into table "document"
+input document_insert_input {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# aggregate max on columns
+type document_max_fields {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# order by max() on columns of table "document"
+input document_max_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# aggregate min on columns
+type document_min_fields {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# order by min() on columns of table "document"
+input document_min_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# response of any mutation on the table "document"
+type document_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document!]!
+}
+
+# input type for inserting object relation for remote table "document"
+input document_obj_rel_insert_input {
+  data: document_insert_input!
+  on_conflict: document_on_conflict
+}
+
+# on conflict condition type for table "document"
+input document_on_conflict {
+  constraint: document_constraint!
+  update_columns: [document_update_column!]!
+  where: document_bool_exp
+}
+
+# ordering options when selecting data from "document"
+input document_order_by {
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+  updated_at: order_by
+}
+
+# primary key columns input for table: "document"
+input document_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document"
+enum document_select_column {
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+
+  # column name
+  updated_at
+}
+
+# input type for updating data in table "document"
+input document_set_input {
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  type_id: uuid
+  updated_at: timestamptz
+}
+
+# columns and relationships of "document_type"
+type document_type {
+  color: String!
+  created_at: timestamptz
+  description: String!
+  external_id: String!
+
+  # An array relationship
+  fields(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): [document_field!]!
+
+  # An aggregated array relationship
+  fields_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): document_field_aggregate!
+  id: uuid!
+  name: String!
+  updated_at: timestamptz
+
+  # An object relationship
+  workspace: workspace
+  workspace_id: uuid!
+}
+
+# aggregated selection of "document_type"
+type document_type_aggregate {
+  aggregate: document_type_aggregate_fields
+  nodes: [document_type!]!
+}
+
+# aggregate fields of "document_type"
+type document_type_aggregate_fields {
+  count(columns: [document_type_select_column!], distinct: Boolean): Int
+  max: document_type_max_fields
+  min: document_type_min_fields
+}
+
+# order by aggregate values of table "document_type"
+input document_type_aggregate_order_by {
+  count: order_by
+  max: document_type_max_order_by
+  min: document_type_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_type"
+input document_type_arr_rel_insert_input {
+  data: [document_type_insert_input!]!
+  on_conflict: document_type_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_type". All fields are combined with a logical 'AND'.
+input document_type_bool_exp {
+  _and: [document_type_bool_exp]
+  _not: document_type_bool_exp
+  _or: [document_type_bool_exp]
+  color: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  description: String_comparison_exp
+  external_id: String_comparison_exp
+  fields: document_field_bool_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  workspace: workspace_bool_exp
+  workspace_id: uuid_comparison_exp
+}
+
+# unique or primary key constraints on table "document_type"
+enum document_type_constraint {
+  # unique or primary key constraint
+  document_type_pkey
+}
+
+# input type for inserting data into table "document_type"
+input document_type_insert_input {
+  color: String
+  created_at: timestamptz
+  description: String
+  external_id: String
+  fields: document_field_arr_rel_insert_input
+  id: uuid
+  name: String
+  updated_at: timestamptz
+  workspace: workspace_obj_rel_insert_input
+  workspace_id: uuid
+}
+
+# aggregate max on columns
+type document_type_max_fields {
+  color: String
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  updated_at: timestamptz
+  workspace_id: uuid
+}
+
+# order by max() on columns of table "document_type"
+input document_type_max_order_by {
+  color: order_by
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+  workspace_id: order_by
+}
+
+# aggregate min on columns
+type document_type_min_fields {
+  color: String
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  updated_at: timestamptz
+  workspace_id: uuid
+}
+
+# order by min() on columns of table "document_type"
+input document_type_min_order_by {
+  color: order_by
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+  workspace_id: order_by
+}
+
+# response of any mutation on the table "document_type"
+type document_type_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_type!]!
+}
+
+# input type for inserting object relation for remote table "document_type"
+input document_type_obj_rel_insert_input {
+  data: document_type_insert_input!
+  on_conflict: document_type_on_conflict
+}
+
+# on conflict condition type for table "document_type"
+input document_type_on_conflict {
+  constraint: document_type_constraint!
+  update_columns: [document_type_update_column!]!
+  where: document_type_bool_exp
+}
+
+# ordering options when selecting data from "document_type"
+input document_type_order_by {
+  color: order_by
+  created_at: order_by
+  description: order_by
+  external_id: order_by
+  fields_aggregate: document_field_aggregate_order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+  workspace: workspace_order_by
+  workspace_id: order_by
+}
+
+# primary key columns input for table: "document_type"
+input document_type_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_type"
+enum document_type_select_column {
+  # column name
+  color
+
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  updated_at
+
+  # column name
+  workspace_id
+}
+
+# input type for updating data in table "document_type"
+input document_type_set_input {
+  color: String
+  created_at: timestamptz
+  description: String
+  external_id: String
+  id: uuid
+  name: String
+  updated_at: timestamptz
+  workspace_id: uuid
+}
+
+# update columns of table "document_type"
+enum document_type_update_column {
+  # column name
+  color
+
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  updated_at
+
+  # column name
+  workspace_id
+}
+
+# update columns of table "document"
+enum document_update_column {
+  # column name
+  created_at
+
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+
+  # column name
+  updated_at
+}
+
+# mutation root
+type mutation_root {
+  # delete data from the table: "document"
+  delete_document(
+    # filter the rows which have to be deleted
+    where: document_bool_exp!
+  ): document_mutation_response
+
+  # delete single row from the table: "document"
+  delete_document_by_pk(id: uuid!): document
+
+  # delete data from the table: "document_field"
+  delete_document_field(
+    # filter the rows which have to be deleted
+    where: document_field_bool_exp!
+  ): document_field_mutation_response
+
+  # delete single row from the table: "document_field"
+  delete_document_field_by_pk(id: uuid!): document_field
+
+  # delete data from the table: "document_field_value"
+  delete_document_field_value(
+    # filter the rows which have to be deleted
+    where: document_field_value_bool_exp!
+  ): document_field_value_mutation_response
+
+  # delete data from the table: "document_type"
+  delete_document_type(
+    # filter the rows which have to be deleted
+    where: document_type_bool_exp!
+  ): document_type_mutation_response
+
+  # delete single row from the table: "document_type"
+  delete_document_type_by_pk(id: uuid!): document_type
+
+  # delete data from the table: "workspace"
+  delete_workspace(
+    # filter the rows which have to be deleted
+    where: workspace_bool_exp!
+  ): workspace_mutation_response
+
+  # delete single row from the table: "workspace"
+  delete_workspace_by_pk(id: uuid!): workspace
+
+  # insert data into the table: "document"
+  insert_document(
+    # the rows to be inserted
+    objects: [document_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_on_conflict
+  ): document_mutation_response
+
+  # insert data into the table: "document_field"
+  insert_document_field(
+    # the rows to be inserted
+    objects: [document_field_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_field_on_conflict
+  ): document_field_mutation_response
+
+  # insert a single row into the table: "document_field"
+  insert_document_field_one(
+    # the row to be inserted
+    object: document_field_insert_input!
+
+    # on conflict condition
+    on_conflict: document_field_on_conflict
+  ): document_field
+
+  # insert data into the table: "document_field_value"
+  insert_document_field_value(
+    # the rows to be inserted
+    objects: [document_field_value_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_field_value_on_conflict
+  ): document_field_value_mutation_response
+
+  # insert a single row into the table: "document_field_value"
+  insert_document_field_value_one(
+    # the row to be inserted
+    object: document_field_value_insert_input!
+
+    # on conflict condition
+    on_conflict: document_field_value_on_conflict
+  ): document_field_value
+
+  # insert a single row into the table: "document"
+  insert_document_one(
+    # the row to be inserted
+    object: document_insert_input!
+
+    # on conflict condition
+    on_conflict: document_on_conflict
+  ): document
+
+  # insert data into the table: "document_type"
+  insert_document_type(
+    # the rows to be inserted
+    objects: [document_type_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_type_on_conflict
+  ): document_type_mutation_response
+
+  # insert a single row into the table: "document_type"
+  insert_document_type_one(
+    # the row to be inserted
+    object: document_type_insert_input!
+
+    # on conflict condition
+    on_conflict: document_type_on_conflict
+  ): document_type
+
+  # insert data into the table: "workspace"
+  insert_workspace(
+    # the rows to be inserted
+    objects: [workspace_insert_input!]!
+
+    # on conflict condition
+    on_conflict: workspace_on_conflict
+  ): workspace_mutation_response
+
+  # insert a single row into the table: "workspace"
+  insert_workspace_one(
+    # the row to be inserted
+    object: workspace_insert_input!
+
+    # on conflict condition
+    on_conflict: workspace_on_conflict
+  ): workspace
+
+  # update data of the table: "document"
+  update_document(
+    # sets the columns of the filtered rows to the given values
+    _set: document_set_input
+
+    # filter the rows which have to be updated
+    where: document_bool_exp!
+  ): document_mutation_response
+
+  # update single row of the table: "document"
+  update_document_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_set_input
+    pk_columns: document_pk_columns_input!
+  ): document
+
+  # update data of the table: "document_field"
+  update_document_field(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_set_input
+
+    # filter the rows which have to be updated
+    where: document_field_bool_exp!
+  ): document_field_mutation_response
+
+  # update single row of the table: "document_field"
+  update_document_field_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_set_input
+    pk_columns: document_field_pk_columns_input!
+  ): document_field
+
+  # update data of the table: "document_field_value"
+  update_document_field_value(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_value_set_input
+
+    # filter the rows which have to be updated
+    where: document_field_value_bool_exp!
+  ): document_field_value_mutation_response
+
+  # update data of the table: "document_type"
+  update_document_type(
+    # sets the columns of the filtered rows to the given values
+    _set: document_type_set_input
+
+    # filter the rows which have to be updated
+    where: document_type_bool_exp!
+  ): document_type_mutation_response
+
+  # update single row of the table: "document_type"
+  update_document_type_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_type_set_input
+    pk_columns: document_type_pk_columns_input!
+  ): document_type
+
+  # update data of the table: "workspace"
+  update_workspace(
+    # sets the columns of the filtered rows to the given values
+    _set: workspace_set_input
+
+    # filter the rows which have to be updated
+    where: workspace_bool_exp!
+  ): workspace_mutation_response
+
+  # update single row of the table: "workspace"
+  update_workspace_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: workspace_set_input
+    pk_columns: workspace_pk_columns_input!
+  ): workspace
+}
+
+# column ordering options
+enum order_by {
+  # in the ascending order, nulls last
+  asc
+
+  # in the ascending order, nulls first
+  asc_nulls_first
+
+  # in the ascending order, nulls last
+  asc_nulls_last
+
+  # in the descending order, nulls first
+  desc
+
+  # in the descending order, nulls first
+  desc_nulls_first
+
+  # in the descending order, nulls last
+  desc_nulls_last
+}
+
+# query root
+type query_root {
+  # fetch data from the table: "document"
+  document(
+    # distinct select on columns
+    distinct_on: [document_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_order_by!]
+
+    # filter the rows returned
+    where: document_bool_exp
+  ): [document!]!
+
+  # fetch aggregated fields from the table: "document"
+  document_aggregate(
+    # distinct select on columns
+    distinct_on: [document_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_order_by!]
+
+    # filter the rows returned
+    where: document_bool_exp
+  ): document_aggregate!
+
+  # fetch data from the table: "document" using primary key columns
+  document_by_pk(id: uuid!): document
+
+  # fetch data from the table: "document_field"
+  document_field(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): [document_field!]!
+
+  # fetch aggregated fields from the table: "document_field"
+  document_field_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): document_field_aggregate!
+
+  # fetch data from the table: "document_field" using primary key columns
+  document_field_by_pk(id: uuid!): document_field
+
+  # fetch data from the table: "document_field_value"
+  document_field_value(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): [document_field_value!]!
+
+  # fetch aggregated fields from the table: "document_field_value"
+  document_field_value_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_value_aggregate!
+
+  # fetch data from the table: "document_type"
+  document_type(
+    # distinct select on columns
+    distinct_on: [document_type_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_type_order_by!]
+
+    # filter the rows returned
+    where: document_type_bool_exp
+  ): [document_type!]!
+
+  # fetch aggregated fields from the table: "document_type"
+  document_type_aggregate(
+    # distinct select on columns
+    distinct_on: [document_type_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_type_order_by!]
+
+    # filter the rows returned
+    where: document_type_bool_exp
+  ): document_type_aggregate!
+
+  # fetch data from the table: "document_type" using primary key columns
+  document_type_by_pk(id: uuid!): document_type
+
+  # fetch data from the table: "workspace"
+  workspace(
+    # distinct select on columns
+    distinct_on: [workspace_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [workspace_order_by!]
+
+    # filter the rows returned
+    where: workspace_bool_exp
+  ): [workspace!]!
+
+  # fetch aggregated fields from the table: "workspace"
+  workspace_aggregate(
+    # distinct select on columns
+    distinct_on: [workspace_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [workspace_order_by!]
+
+    # filter the rows returned
+    where: workspace_bool_exp
+  ): workspace_aggregate!
+
+  # fetch data from the table: "workspace" using primary key columns
+  workspace_by_pk(id: uuid!): workspace
+}
+
+# expression to compare columns of type String. All fields are combined with logical 'AND'.
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+  _ilike: String
+  _in: [String!]
+  _is_null: Boolean
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+  _nilike: String
+  _nin: [String!]
+  _nlike: String
+  _nsimilar: String
+  _similar: String
+}
+
+# subscription root
+type subscription_root {
+  # fetch data from the table: "document"
+  document(
+    # distinct select on columns
+    distinct_on: [document_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_order_by!]
+
+    # filter the rows returned
+    where: document_bool_exp
+  ): [document!]!
+
+  # fetch aggregated fields from the table: "document"
+  document_aggregate(
+    # distinct select on columns
+    distinct_on: [document_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_order_by!]
+
+    # filter the rows returned
+    where: document_bool_exp
+  ): document_aggregate!
+
+  # fetch data from the table: "document" using primary key columns
+  document_by_pk(id: uuid!): document
+
+  # fetch data from the table: "document_field"
+  document_field(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): [document_field!]!
+
+  # fetch aggregated fields from the table: "document_field"
+  document_field_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): document_field_aggregate!
+
+  # fetch data from the table: "document_field" using primary key columns
+  document_field_by_pk(id: uuid!): document_field
+
+  # fetch data from the table: "document_field_value"
+  document_field_value(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): [document_field_value!]!
+
+  # fetch aggregated fields from the table: "document_field_value"
+  document_field_value_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_value_aggregate!
+
+  # fetch data from the table: "document_type"
+  document_type(
+    # distinct select on columns
+    distinct_on: [document_type_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_type_order_by!]
+
+    # filter the rows returned
+    where: document_type_bool_exp
+  ): [document_type!]!
+
+  # fetch aggregated fields from the table: "document_type"
+  document_type_aggregate(
+    # distinct select on columns
+    distinct_on: [document_type_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_type_order_by!]
+
+    # filter the rows returned
+    where: document_type_bool_exp
+  ): document_type_aggregate!
+
+  # fetch data from the table: "document_type" using primary key columns
+  document_type_by_pk(id: uuid!): document_type
+
+  # fetch data from the table: "workspace"
+  workspace(
+    # distinct select on columns
+    distinct_on: [workspace_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [workspace_order_by!]
+
+    # filter the rows returned
+    where: workspace_bool_exp
+  ): [workspace!]!
+
+  # fetch aggregated fields from the table: "workspace"
+  workspace_aggregate(
+    # distinct select on columns
+    distinct_on: [workspace_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [workspace_order_by!]
+
+    # filter the rows returned
+    where: workspace_bool_exp
+  ): workspace_aggregate!
+
+  # fetch data from the table: "workspace" using primary key columns
+  workspace_by_pk(id: uuid!): workspace
+}
+
+scalar timestamptz
+
+# expression to compare columns of type timestamptz. All fields are combined with logical 'AND'.
+input timestamptz_comparison_exp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _is_null: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}
+
+scalar uuid
+
+# expression to compare columns of type uuid. All fields are combined with logical 'AND'.
+input uuid_comparison_exp {
+  _eq: uuid
+  _gt: uuid
+  _gte: uuid
+  _in: [uuid!]
+  _is_null: Boolean
+  _lt: uuid
+  _lte: uuid
+  _neq: uuid
+  _nin: [uuid!]
+}
+
+# columns and relationships of "workspace"
+type workspace {
+  active: Boolean
+  created_at: timestamptz
+  id: uuid!
+  name: String!
+  updated_at: timestamptz
+}
+
+# aggregated selection of "workspace"
+type workspace_aggregate {
+  aggregate: workspace_aggregate_fields
+  nodes: [workspace!]!
+}
+
+# aggregate fields of "workspace"
+type workspace_aggregate_fields {
+  count(columns: [workspace_select_column!], distinct: Boolean): Int
+  max: workspace_max_fields
+  min: workspace_min_fields
+}
+
+# order by aggregate values of table "workspace"
+input workspace_aggregate_order_by {
+  count: order_by
+  max: workspace_max_order_by
+  min: workspace_min_order_by
+}
+
+# input type for inserting array relation for remote table "workspace"
+input workspace_arr_rel_insert_input {
+  data: [workspace_insert_input!]!
+  on_conflict: workspace_on_conflict
+}
+
+# Boolean expression to filter rows from the table "workspace". All fields are combined with a logical 'AND'.
+input workspace_bool_exp {
+  _and: [workspace_bool_exp]
+  _not: workspace_bool_exp
+  _or: [workspace_bool_exp]
+  active: Boolean_comparison_exp
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+# unique or primary key constraints on table "workspace"
+enum workspace_constraint {
+  # unique or primary key constraint
+  workspaces_name_key
+
+  # unique or primary key constraint
+  workspaces_pkey
+}
+
+# input type for inserting data into table "workspace"
+input workspace_insert_input {
+  active: Boolean
+  created_at: timestamptz
+  id: uuid
+  name: String
+  updated_at: timestamptz
+}
+
+# aggregate max on columns
+type workspace_max_fields {
+  created_at: timestamptz
+  id: uuid
+  name: String
+  updated_at: timestamptz
+}
+
+# order by max() on columns of table "workspace"
+input workspace_max_order_by {
+  created_at: order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+}
+
+# aggregate min on columns
+type workspace_min_fields {
+  created_at: timestamptz
+  id: uuid
+  name: String
+  updated_at: timestamptz
+}
+
+# order by min() on columns of table "workspace"
+input workspace_min_order_by {
+  created_at: order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+}
+
+# response of any mutation on the table "workspace"
+type workspace_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [workspace!]!
+}
+
+# input type for inserting object relation for remote table "workspace"
+input workspace_obj_rel_insert_input {
+  data: workspace_insert_input!
+  on_conflict: workspace_on_conflict
+}
+
+# on conflict condition type for table "workspace"
+input workspace_on_conflict {
+  constraint: workspace_constraint!
+  update_columns: [workspace_update_column!]!
+  where: workspace_bool_exp
+}
+
+# ordering options when selecting data from "workspace"
+input workspace_order_by {
+  active: order_by
+  created_at: order_by
+  id: order_by
+  name: order_by
+  updated_at: order_by
+}
+
+# primary key columns input for table: "workspace"
+input workspace_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "workspace"
+enum workspace_select_column {
+  # column name
+  active
+
+  # column name
+  created_at
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  updated_at
+}
+
+# input type for updating data in table "workspace"
+input workspace_set_input {
+  active: Boolean
+  created_at: timestamptz
+  id: uuid
+  name: String
+  updated_at: timestamptz
+}
+
+# update columns of table "workspace"
+enum workspace_update_column {
+  # column name
+  active
+
+  # column name
+  created_at
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  updated_at
+}
+

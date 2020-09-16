@@ -16,6 +16,10 @@ module.exports = {
         cyan: "#9cdbff",
         "primary": "#D8D4FF"
       },
+      width: {
+        96: "24rem",
+        128: "32rem",
+      },
       margin: {
         96: "24rem",
         128: "32rem",

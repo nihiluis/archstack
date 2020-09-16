@@ -4,7 +4,7 @@
  * Main wrapper
  */
 .select-search {
-  width: 300px;
+  width: 500px;
   position: relative;
   @apply font-body;
   box-sizing: border-box;
