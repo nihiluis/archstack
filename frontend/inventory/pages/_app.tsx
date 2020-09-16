@@ -17,8 +17,9 @@ import { useState, useContext, useEffect } from "react"
 import { AuthState } from "../src/components/Auth"
 import Head from "next/head"
 import { WorkspaceState, WorkspaceContext } from "../src/components/Workspace"
+import withRelay from "../src/relay/withRelay"
 
-function MyApp({ Component, pageProps }) {
+function InventoryApp({ Component, pageProps }) {
   //const { environment } = useContext(ReactRelayContext)
 
   const [auth, setAuth] = useState<AuthState>({
@@ -48,4 +49,4 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-export default MyApp
+export default withRelay(InventoryApp)

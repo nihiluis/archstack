@@ -1,10 +1,6 @@
 import React from "react"
 import RelayEnvironment from "./RelayEnvironment"
-import {
-  RelayEnvironmentProvider,
-  preloadQuery,
-  usePreloadedQuery,
-} from "react-relay/hooks"
+import { RelayEnvironmentProvider } from "react-relay/hooks"
 import { NextPageContext } from "next"
 const { Suspense } = React
 
@@ -50,14 +46,7 @@ export default (ComposedComponent, options = {}) => {
       }
     }
 
-    constructor(props) {
-      super(props)
-      this.environment = initEnvironment({
-        records: props.queryRecords,
-      })
-    }
-
-    render() {
+    render(): JSX.Element {
       return (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <Suspense fallback={"Loading..."}>

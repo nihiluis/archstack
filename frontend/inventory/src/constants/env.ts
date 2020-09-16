@@ -17,3 +17,7 @@ export const WORKSPACE_SELECTION_URL = "http://localhost:3000"
 export const ENDPOINT_AUTH_URL = `${AUTH_API_URL}/auth`
 export const ENDPOINT_LOGIN_URL = `${AUTH_API_URL}/login`
 export const ENDPOINT_GET_WORKSPACE_URL = `${WORKSPACE_API_URL}/get`
+
+export const ENDPOINT_RELAY_URL = `${INVENTORY_API_URL}/v1/relay`
+
+export const WORKSPACE_HEADER = "Archstack-Workspace"
