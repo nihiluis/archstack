@@ -39,57 +39,6 @@ interface Props {
 }
 
 export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
-  const data = useLazyLoadQuery(
-    graphql`
-      query DocumentTypeQuery {
-        document_type_connection {
-          edges {
-            node {
-              id
-              external_id
-              name
-              fields_connection {
-                edges {
-                  node {
-                    id
-                    name
-                    description
-                  }
-                  cursor
-                }
-              }
-            }
-            cursor
-          }
-        }
-      }
-    `,
-    {}
-  )
-
-  /*
-  const data = useFragment(
-    graphql`
-      fragment WorkspaceComponent_document_type on document_type
-        id
-        external_id
-        name
-        description
-        fields_connection() @connection(key: "document_type_fields_connection") {
-          edges {
-            node {
-              id
-              name
-              description
-            }
-          }
-        }
-      }
-    `,
-    props.documentType
-  )
-  */
-
   const { workspace, setWorkspace } = useContext(WorkspaceContext)
   const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(true)
 
@@ -141,8 +90,35 @@ export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
   return (
     <React.Fragment>
       <Head>{workspaceLoading && <title>Selecting workspace...</title>}</Head>
-      {hasWorkspace && !workspaceLoading && props.children}
+      {hasWorkspace && !workspaceLoading && (
+        <WorkspaceContent>{props.children}</WorkspaceContent>
+      )}
       {workspaceLoading && <Loading />}
     </React.Fragment>
   )
+}
+
+function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
+  // somehow the downloaded schema doesnt have a document_type_connection, but document_types..?
+
+  const data = useLazyLoadQuery(
+    graphql`
+      query WorkspaceQuery {
+        document_type_connection {
+          edges {
+            node {
+              id
+              external_id
+              name
+              ...TypeSidebar_document_types
+            }
+            cursor
+          }
+        }
+      }
+    `,
+    {}
+  )
+
+  return <React.Fragment>{props.children}</React.Fragment>
 }
