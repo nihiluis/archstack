@@ -4,19 +4,22 @@ import Auth from "../src/components/Auth"
 import Workspace, { WorkspaceContext } from "../src/components/Workspace"
 
 import Layout from "../src/components/ui/Layout"
+import FilterSidebar from "../src/components/sidebar/FilterSidebar"
 
 export default function Index() {
   const { workspace } = useContext(WorkspaceContext)
 
   return (
-    <Layout
-      showSidebarLeft={true}
-      showSidebarRight={true}
-      sidebarLeftComponent={null}
-      sidebarRightComponent={null}>
-      <Auth require>
-        <Workspace>Workspace ID: {workspace.id}</Workspace>
-      </Auth>
-    </Layout>
+    <Auth require>
+      <Workspace>
+        <Layout
+          showSidebarLeft={true}
+          showSidebarRight={true}
+          sidebarLeftComponent={<FilterSidebar />}
+          sidebarRightComponent={null}>
+          Workspace ID: {workspace.id}
+        </Layout>
+      </Workspace>
+    </Auth>
   )
 }

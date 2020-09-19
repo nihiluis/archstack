@@ -51,3 +51,13 @@ export async function login(
 
   return { success: true, token, error: "" }
 }
+
+const SESSION_TOKEN_KEY = "token"
+
+export function getSessionToken(): string {
+  return sessionStorage.getItem(SESSION_TOKEN_KEY)
+}
+
+export function setSessionToken(token: string) {
+  sessionStorage.setItem(SESSION_TOKEN_KEY, token)
+}

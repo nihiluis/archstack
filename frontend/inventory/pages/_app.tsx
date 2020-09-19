@@ -49,4 +49,4 @@ function InventoryApp({ Component, pageProps }) {
   )
 }
 
-export default withRelay(InventoryApp)
+export default InventoryApp

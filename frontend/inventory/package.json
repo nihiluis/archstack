@@ -7,16 +7,16 @@
     "build": "next build",
     "start:prod": "next start",
     "relay": "yarn run relay-compiler --schema schemas/schema.graphql --language typescript --src ."
- },
+  },
   "dependencies": {
     "archstack-core": "git+ssh://git@gitlab.com:archstack/core-app.git",
     "await-protect": "^1.0.13",
     "axios": "^0.20.0",
     "formik": "^2.1.5",
-    "graphql": "^15.3.0",
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-relay": "^0.0.0-experimental-183bdd28",
     "react-select-search": "^2.0.6",
     "relay-runtime": "^10.0.1",
     "yup": "^0.29.3"
@@ -29,6 +29,7 @@
     "@types/relay-runtime": "^10.0.3",
     "babel-plugin-inline-react-svg": "^1.1.1",
     "babel-plugin-relay": "^10.0.1",
+    "graphql": "^15.3.0",
     "postcss-preset-env": "^6.7.0",
     "relay-compiler": "^10.0.1",
     "relay-compiler-language-typescript": "^13.0.1",

@@ -1,3 +1,6 @@
 module.exports = {
-  basePath: ""
+  basePath: "",
+  node: {
+    fs: "empty",
+  },
 }

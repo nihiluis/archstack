@@ -1,4 +1,10 @@
-import React from "react"
+import React, {
+  ComponentClass,
+  Component,
+  ComponentType,
+  ReactType,
+  ReactNode,
+} from "react"
 import RelayEnvironment from "./RelayEnvironment"
 import { RelayEnvironmentProvider } from "react-relay/hooks"
 import { NextPageContext } from "next"
@@ -6,8 +12,18 @@ const { Suspense } = React
 
 //import { getQueryRecordsFromEnvironment, getOperationFromQuery } from "./utils"
 
-export default (ComposedComponent, options = {}) => {
-  return class WithRelay extends React.Component {
+interface ComposedComponentProps {}
+
+interface ComposedComponentStatic {
+  displayName?: string
+  getInitialProps?: (ctx: NextPageContext) => any
+}
+
+function withRelay<T extends ComposedComponentProps>(
+  ComposedComponent: React.ComponentType<T> & ComposedComponentStatic,
+  options = {}
+) {
+  return class WithRelay extends React.Component<T> {
     static displayName = `WithRelay(${
       ComposedComponent.displayName || "ComposedComponent"
     })`
@@ -57,3 +73,5 @@ export default (ComposedComponent, options = {}) => {
     }
   }
 }
+
+export default withRelay

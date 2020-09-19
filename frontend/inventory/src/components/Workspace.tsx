@@ -3,9 +3,10 @@ import React, {
   useEffect,
   PropsWithChildren,
   useContext,
+  Suspense,
 } from "react"
 import Head from "next/head"
-import graphql from "babel-plugin-relay/macro"
+//import graphql from "babel-plugin-relay/macro"
 import Loading from "./Loading"
 import { Workspace } from "archstack-core/lib/@types"
 import {
@@ -13,14 +14,16 @@ import {
   getLocalWorkspaceId,
   setLocalWorkspaceId,
 } from "../lib/workspace"
-import { WORKSPACE_SELECTION_URL } from "../constants/env"
+import { WORKSPACE_SELECTION_URL, IS_SERVER } from "../constants/env"
 import { useRouter } from "next/router"
 import { AuthContext } from "./Auth"
-import { useFragment, useLazyLoadQuery } from "react-relay/hooks"
+import { useFragment, useLazyLoadQuery, graphql } from "react-relay/hooks"
 import {
   WorkspaceQuery,
   WorkspaceQueryResponse,
 } from "./__generated__/WorkspaceQuery.graphql"
+import dynamic from "next/dynamic"
+import withRelay from "../relay/withRelay"
 
 interface WorkspaceContextValues {
   workspace: WorkspaceState
@@ -39,17 +42,26 @@ export interface WorkspaceState {
 
 interface Props {
   workspaceId?: string
+  require?: boolean
 }
 
 export const DocumentTypesContext = React.createContext<WorkspaceQueryResponse>(
   undefined
 )
 
-export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
+export default dynamic(() => Promise.resolve(withRelay(WorkspaceComponent)), {
+  ssr: false,
+})
+
+function WorkspaceComponent({
+  workspaceId: workspaceIdTmp,
+  require = true,
+  children,
+}: PropsWithChildren<Props>) {
   const { workspace, setWorkspace } = useContext(WorkspaceContext)
   const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(true)
 
-  const workspaceId = props.workspaceId || getLocalWorkspaceId()
+  const workspaceId = workspaceIdTmp || getLocalWorkspaceId()
 
   const router = useRouter()
 
@@ -97,8 +109,8 @@ export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
   return (
     <React.Fragment>
       <Head>{workspaceLoading && <title>Selecting workspace...</title>}</Head>
-      {hasWorkspace && !workspaceLoading && (
-        <WorkspaceContent>{props.children}</WorkspaceContent>
+      {hasWorkspace && !workspaceLoading && require && (
+        <WorkspaceContent>{children}</WorkspaceContent>
       )}
       {workspaceLoading && <Loading />}
     </React.Fragment>
@@ -108,7 +120,7 @@ export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
 function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   // somehow the downloaded schema doesnt have a document_type_connection, but document_types..?
 
-  const data = useLazyLoadQuery<WorkspaceQuery>(
+  let data = useLazyLoadQuery<WorkspaceQuery>(
     graphql`
       query WorkspaceQuery {
         document_type_connection {
@@ -130,8 +142,10 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   //const [documentTypes, setDocumentTypes] = useState(data)
 
   return (
-    <DocumentTypesContext.Provider value={data}>
-      {props.children}
-    </DocumentTypesContext.Provider>
+    <Suspense fallback={"Loading..."}>
+      <DocumentTypesContext.Provider value={data}>
+        {props.children}
+      </DocumentTypesContext.Provider>
+    </Suspense>
   )
 }

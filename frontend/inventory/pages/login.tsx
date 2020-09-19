@@ -6,11 +6,6 @@ import Workspace, { WorkspaceContext } from "../src/components/Workspace"
 import { useRouter } from "next/router"
 import { LOGIN_URL } from "../src/constants/env"
 
-interface FormValues {
-  mail: string
-  password: string
-}
-
 function Login() {
   const router = useRouter()
 
@@ -40,7 +35,7 @@ function Login() {
 
   return (
     <Auth require={false} initialToken={token as string}>
-      <Workspace workspaceId={workspaceId as string} />
+      <Workspace require={false} workspaceId={workspaceId as string} />
     </Auth>
   )
 }
