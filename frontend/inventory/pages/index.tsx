@@ -5,6 +5,7 @@ import Workspace, { WorkspaceContext } from "../src/components/Workspace"
 
 import Layout from "../src/components/ui/Layout"
 import FilterSidebar from "../src/components/sidebar/FilterSidebar"
+import DocumentList from "../src/components/list/DocumentList"
 
 export default function Index() {
   const { workspace } = useContext(WorkspaceContext)
@@ -17,7 +18,7 @@ export default function Index() {
           showSidebarRight={true}
           sidebarLeftComponent={<FilterSidebar />}
           sidebarRightComponent={null}>
-          Workspace ID: {workspace.id}
+          <DocumentList />
         </Layout>
       </Workspace>
     </Auth>

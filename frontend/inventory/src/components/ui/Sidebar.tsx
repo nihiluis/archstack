@@ -28,9 +28,9 @@ class Sidebar extends React.Component<Props, {}> {
 }
 
 export const SidebarTitle: React.FunctionComponent = props =>
-  <h2>{props.children}</h2>
+  <h2 className="font-semibold ml-4">{props.children}</h2>
 
 export const SidebarCategory: React.FunctionComponent = props =>
-  <div>{props.children}</div>
+  <div className="py-2 px-4">{props.children}</div>
 
 export default Sidebar

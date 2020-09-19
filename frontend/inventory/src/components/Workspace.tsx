@@ -129,6 +129,7 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
               id
               external_id
               name
+              color
               ...FilterSidebar_document_types
             }
             cursor

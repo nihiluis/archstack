@@ -7,15 +7,24 @@ import {
 } from "./__generated__/FilterSidebar_document_types.graphql"
 import { DocumentTypesContext } from "../Workspace"
 import { WorkspaceQueryResponse } from "../__generated__/WorkspaceQuery.graphql"
+import Badge from "../ui/Badge"
+import { SidebarTitle, SidebarCategory } from "../ui/Sidebar"
 
 export default function FilterSidebar(): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
 
   return (
     <React.Fragment>
-      {documentTypeData.document_type_connection.edges.map(type => (
-        <FilterType documentType={type.node} />
-      ))}
+      <div className="mt-4" />
+      <SidebarTitle>Document type</SidebarTitle>
+      <SidebarCategory>
+        {documentTypeData.document_type_connection.edges.map(type => (
+          <FilterType
+            key={`filterType-${type.node.id}`}
+            documentType={type.node}
+          />
+        ))}
+      </SidebarCategory>
     </React.Fragment>
   )
 }
@@ -43,5 +52,11 @@ function FilterType({
     documentType
   )
 
-  return <div>{documentType.name}</div>
+  return (
+    <Badge
+      className="my-2"
+      color={documentType.color}
+      title={documentType.name}
+    />
+  )
 }
