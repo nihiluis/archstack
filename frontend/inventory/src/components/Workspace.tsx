@@ -17,6 +17,10 @@ import { WORKSPACE_SELECTION_URL } from "../constants/env"
 import { useRouter } from "next/router"
 import { AuthContext } from "./Auth"
 import { useFragment, useLazyLoadQuery } from "react-relay/hooks"
+import {
+  WorkspaceQuery,
+  WorkspaceQueryResponse,
+} from "./__generated__/WorkspaceQuery.graphql"
 
 interface WorkspaceContextValues {
   workspace: WorkspaceState
@@ -35,8 +39,11 @@ export interface WorkspaceState {
 
 interface Props {
   workspaceId?: string
-  documentType: any
 }
+
+export const DocumentTypesContext = React.createContext<WorkspaceQueryResponse>(
+  undefined
+)
 
 export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
   const { workspace, setWorkspace } = useContext(WorkspaceContext)
@@ -101,7 +108,7 @@ export default function WorkspaceComponent(props: PropsWithChildren<Props>) {
 function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   // somehow the downloaded schema doesnt have a document_type_connection, but document_types..?
 
-  const data = useLazyLoadQuery(
+  const data = useLazyLoadQuery<WorkspaceQuery>(
     graphql`
       query WorkspaceQuery {
         document_type_connection {
@@ -110,7 +117,7 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
               id
               external_id
               name
-              ...TypeSidebar_document_types
+              ...FilterSidebar_document_types
             }
             cursor
           }
@@ -120,5 +127,11 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
     {}
   )
 
-  return <React.Fragment>{props.children}</React.Fragment>
+  //const [documentTypes, setDocumentTypes] = useState(data)
+
+  return (
+    <DocumentTypesContext.Provider value={data}>
+      {props.children}
+    </DocumentTypesContext.Provider>
+  )
 }
