@@ -4,8 +4,8 @@ export const IS_SERVER = typeof window === "undefined"
 
 export const BASE_PATH = "/app"
 
-export const SITE_TITLE = "Archstack"
-export const PRODUCT_NAME = "Archstack"
+export const SITE_TITLE = "IT repo"
+export const PRODUCT_NAME = "IT repo"
 
 export const AUTH_API_URL = !DEV ? "??" : "http://localhost:3333"
 

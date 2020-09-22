@@ -7,7 +7,10 @@
 @tailwind utilities;
 
 :root {
-	--primary-color: #D8D4FF;
+	--primary-color: #4d496b;
+	--link-color: #4d496b;
+	--focused-color: #8575ff;
+	--unfocused-color: #9996a9;
 }
 
 html,
@@ -30,13 +33,22 @@ a {
   box-sizing: border-box;
 }
 
+
+a {
+	color: var(--link-color);
+}
+
+a:hover {
+	color: var(--focused-color);
+}
+
 p.error {
 	@apply text-red-400;
 }
 
 .btn {
 	@apply font-bold;
-	@apply py-2; 
+	@apply py-1; 
 	@apply px-4;
 	@apply rounded-full;
 }
@@ -44,6 +56,15 @@ p.error {
 .btn-primary {
 	@apply bg-indigo-500;
 	@apply text-white;
+}
+
+.btn-secondary {
+	@apply bg-gray-900;
+	@apply text-white;
+}
+
+.btn-secondary:hover {
+	@apply bg-gray-700;
 }
 
 .btn-primary:hover {
@@ -87,4 +108,8 @@ p.error {
 
 .form-btn {
 	@apply mt-8;
+}
+
+.unfocused {
+	color: var(--unfocused-color);
 }

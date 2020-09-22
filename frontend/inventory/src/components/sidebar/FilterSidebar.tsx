@@ -16,6 +16,7 @@ export default function FilterSidebar(): JSX.Element {
   return (
     <React.Fragment>
       <div className="mt-4" />
+      <p className="ml-4 mb-3">Filter by</p>
       <SidebarTitle>Document type</SidebarTitle>
       <SidebarCategory>
         {documentTypeData.document_type_connection.edges.map(type => (

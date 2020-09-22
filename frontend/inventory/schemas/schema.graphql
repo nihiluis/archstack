@@ -22,8 +22,64 @@ type document implements Node {
   created_at: timestamptz
   description: String!
   external_id: String
+
+  # An array relationship
+  field_values(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): [document_field_value!]!
+
+  # An aggregated array relationship
+  field_values_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_value_aggregate!
+
+  # An array relationship connection
+  field_values_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_valueConnection!
   id: ID!
   name: String!
+
+  # An object relationship
+  type: document_type
   type_id: uuid!
   updated_at: timestamptz
 }
@@ -62,8 +118,10 @@ input document_bool_exp {
   created_at: timestamptz_comparison_exp
   description: String_comparison_exp
   external_id: String_comparison_exp
+  field_values: document_field_value_bool_exp
   id: uuid_comparison_exp
   name: String_comparison_exp
+  type: document_type_bool_exp
   type_id: uuid_comparison_exp
   updated_at: timestamptz_comparison_exp
 }
@@ -78,14 +136,72 @@ enum document_constraint {
 type document_field implements Node {
   created_at: timestamptz
   description: String!
-  external_id: String!
-  field_type: String!
-  id: ID!
-  name: String!
 
   # An object relationship
-  type: document_type
-  type_id: uuid
+  document_type: document_type
+  document_type_id: uuid
+  external_id: String!
+  field_type: String!
+
+  # An array relationship
+  field_values(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): [document_field_value!]!
+
+  # An aggregated array relationship
+  field_values_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_value_aggregate!
+
+  # An array relationship connection
+  field_values_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_valueConnection!
+  id: ID!
+  mandatory: Boolean!
+  name: String!
+  order: Int!
+
+  # An object relationship
+  preview_info: preview_info
   updated_at: timestamptz
 }
 
@@ -97,22 +213,48 @@ type document_field_aggregate {
 
 # aggregate fields of "document_field"
 type document_field_aggregate_fields {
+  avg: document_field_avg_fields
   count(columns: [document_field_select_column!], distinct: Boolean): Int
   max: document_field_max_fields
   min: document_field_min_fields
+  stddev: document_field_stddev_fields
+  stddev_pop: document_field_stddev_pop_fields
+  stddev_samp: document_field_stddev_samp_fields
+  sum: document_field_sum_fields
+  var_pop: document_field_var_pop_fields
+  var_samp: document_field_var_samp_fields
+  variance: document_field_variance_fields
 }
 
 # order by aggregate values of table "document_field"
 input document_field_aggregate_order_by {
+  avg: document_field_avg_order_by
   count: order_by
   max: document_field_max_order_by
   min: document_field_min_order_by
+  stddev: document_field_stddev_order_by
+  stddev_pop: document_field_stddev_pop_order_by
+  stddev_samp: document_field_stddev_samp_order_by
+  sum: document_field_sum_order_by
+  var_pop: document_field_var_pop_order_by
+  var_samp: document_field_var_samp_order_by
+  variance: document_field_variance_order_by
 }
 
 # input type for inserting array relation for remote table "document_field"
 input document_field_arr_rel_insert_input {
   data: [document_field_insert_input!]!
   on_conflict: document_field_on_conflict
+}
+
+# aggregate avg on columns
+type document_field_avg_fields {
+  order: Float
+}
+
+# order by avg() on columns of table "document_field"
+input document_field_avg_order_by {
+  order: order_by
 }
 
 # Boolean expression to filter rows from the table "document_field". All fields are combined with a logical 'AND'.
@@ -122,12 +264,16 @@ input document_field_bool_exp {
   _or: [document_field_bool_exp]
   created_at: timestamptz_comparison_exp
   description: String_comparison_exp
+  document_type: document_type_bool_exp
+  document_type_id: uuid_comparison_exp
   external_id: String_comparison_exp
   field_type: String_comparison_exp
+  field_values: document_field_value_bool_exp
   id: uuid_comparison_exp
+  mandatory: Boolean_comparison_exp
   name: String_comparison_exp
-  type: document_type_bool_exp
-  type_id: uuid_comparison_exp
+  order: Int_comparison_exp
+  preview_info: preview_info_bool_exp
   updated_at: timestamptz_comparison_exp
 }
 
@@ -137,16 +283,25 @@ enum document_field_constraint {
   document_field_pkey
 }
 
+# input type for incrementing integer column in table "document_field"
+input document_field_inc_input {
+  order: Int
+}
+
 # input type for inserting data into table "document_field"
 input document_field_insert_input {
   created_at: timestamptz
   description: String
+  document_type: document_type_obj_rel_insert_input
+  document_type_id: uuid
   external_id: String
   field_type: String
+  field_values: document_field_value_arr_rel_insert_input
   id: uuid
+  mandatory: Boolean
   name: String
-  type: document_type_obj_rel_insert_input
-  type_id: uuid
+  order: Int
+  preview_info: preview_info_obj_rel_insert_input
   updated_at: timestamptz
 }
 
@@ -154,11 +309,12 @@ input document_field_insert_input {
 type document_field_max_fields {
   created_at: timestamptz
   description: String
+  document_type_id: uuid
   external_id: String
   field_type: String
   id: uuid
   name: String
-  type_id: uuid
+  order: Int
   updated_at: timestamptz
 }
 
@@ -166,11 +322,12 @@ type document_field_max_fields {
 input document_field_max_order_by {
   created_at: order_by
   description: order_by
+  document_type_id: order_by
   external_id: order_by
   field_type: order_by
   id: order_by
   name: order_by
-  type_id: order_by
+  order: order_by
   updated_at: order_by
 }
 
@@ -178,11 +335,12 @@ input document_field_max_order_by {
 type document_field_min_fields {
   created_at: timestamptz
   description: String
+  document_type_id: uuid
   external_id: String
   field_type: String
   id: uuid
   name: String
-  type_id: uuid
+  order: Int
   updated_at: timestamptz
 }
 
@@ -190,11 +348,12 @@ type document_field_min_fields {
 input document_field_min_order_by {
   created_at: order_by
   description: order_by
+  document_type_id: order_by
   external_id: order_by
   field_type: order_by
   id: order_by
   name: order_by
-  type_id: order_by
+  order: order_by
   updated_at: order_by
 }
 
@@ -224,12 +383,16 @@ input document_field_on_conflict {
 input document_field_order_by {
   created_at: order_by
   description: order_by
+  document_type: document_type_order_by
+  document_type_id: order_by
   external_id: order_by
   field_type: order_by
+  field_values_aggregate: document_field_value_aggregate_order_by
   id: order_by
+  mandatory: order_by
   name: order_by
-  type: document_type_order_by
-  type_id: order_by
+  order: order_by
+  preview_info: preview_info_order_by
   updated_at: order_by
 }
 
@@ -247,6 +410,9 @@ enum document_field_select_column {
   description
 
   # column name
+  document_type_id
+
+  # column name
   external_id
 
   # column name
@@ -256,10 +422,13 @@ enum document_field_select_column {
   id
 
   # column name
+  mandatory
+
+  # column name
   name
 
   # column name
-  type_id
+  order
 
   # column name
   updated_at
@@ -269,12 +438,54 @@ enum document_field_select_column {
 input document_field_set_input {
   created_at: timestamptz
   description: String
+  document_type_id: uuid
   external_id: String
   field_type: String
   id: uuid
+  mandatory: Boolean
   name: String
-  type_id: uuid
+  order: Int
   updated_at: timestamptz
+}
+
+# aggregate stddev on columns
+type document_field_stddev_fields {
+  order: Float
+}
+
+# order by stddev() on columns of table "document_field"
+input document_field_stddev_order_by {
+  order: order_by
+}
+
+# aggregate stddev_pop on columns
+type document_field_stddev_pop_fields {
+  order: Float
+}
+
+# order by stddev_pop() on columns of table "document_field"
+input document_field_stddev_pop_order_by {
+  order: order_by
+}
+
+# aggregate stddev_samp on columns
+type document_field_stddev_samp_fields {
+  order: Float
+}
+
+# order by stddev_samp() on columns of table "document_field"
+input document_field_stddev_samp_order_by {
+  order: order_by
+}
+
+# aggregate sum on columns
+type document_field_sum_fields {
+  order: Int
+}
+
+# order by sum() on columns of table "document_field"
+input document_field_sum_order_by {
+  order: order_by
 }
 
 # update columns of table "document_field"
@@ -286,6 +497,9 @@ enum document_field_update_column {
   description
 
   # column name
+  document_type_id
+
+  # column name
   external_id
 
   # column name
@@ -295,13 +509,235 @@ enum document_field_update_column {
   id
 
   # column name
+  mandatory
+
+  # column name
   name
 
   # column name
-  type_id
+  order
 
   # column name
   updated_at
+}
+
+# columns and relationships of "document_field_value"
+type document_field_value implements Node {
+  # An object relationship
+  document: document
+  document_id: uuid
+
+  # An object relationship
+  field: document_field
+  field_id: uuid
+  id: ID!
+  value: String
+}
+
+# aggregated selection of "document_field_value"
+type document_field_value_aggregate {
+  aggregate: document_field_value_aggregate_fields
+  nodes: [document_field_value!]!
+}
+
+# aggregate fields of "document_field_value"
+type document_field_value_aggregate_fields {
+  count(columns: [document_field_value_select_column!], distinct: Boolean): Int
+  max: document_field_value_max_fields
+  min: document_field_value_min_fields
+}
+
+# order by aggregate values of table "document_field_value"
+input document_field_value_aggregate_order_by {
+  count: order_by
+  max: document_field_value_max_order_by
+  min: document_field_value_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_field_value"
+input document_field_value_arr_rel_insert_input {
+  data: [document_field_value_insert_input!]!
+  on_conflict: document_field_value_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_field_value". All fields are combined with a logical 'AND'.
+input document_field_value_bool_exp {
+  _and: [document_field_value_bool_exp]
+  _not: document_field_value_bool_exp
+  _or: [document_field_value_bool_exp]
+  document: document_bool_exp
+  document_id: uuid_comparison_exp
+  field: document_field_bool_exp
+  field_id: uuid_comparison_exp
+  id: uuid_comparison_exp
+  value: String_comparison_exp
+}
+
+# unique or primary key constraints on table "document_field_value"
+enum document_field_value_constraint {
+  # unique or primary key constraint
+  document_field_value_pkey
+
+  # unique or primary key constraint
+  document_field_values_field_id_document_id_key
+}
+
+# input type for inserting data into table "document_field_value"
+input document_field_value_insert_input {
+  document: document_obj_rel_insert_input
+  document_id: uuid
+  field: document_field_obj_rel_insert_input
+  field_id: uuid
+  id: uuid
+  value: String
+}
+
+# aggregate max on columns
+type document_field_value_max_fields {
+  document_id: uuid
+  field_id: uuid
+  id: uuid
+  value: String
+}
+
+# order by max() on columns of table "document_field_value"
+input document_field_value_max_order_by {
+  document_id: order_by
+  field_id: order_by
+  id: order_by
+  value: order_by
+}
+
+# aggregate min on columns
+type document_field_value_min_fields {
+  document_id: uuid
+  field_id: uuid
+  id: uuid
+  value: String
+}
+
+# order by min() on columns of table "document_field_value"
+input document_field_value_min_order_by {
+  document_id: order_by
+  field_id: order_by
+  id: order_by
+  value: order_by
+}
+
+# response of any mutation on the table "document_field_value"
+type document_field_value_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_field_value!]!
+}
+
+# input type for inserting object relation for remote table "document_field_value"
+input document_field_value_obj_rel_insert_input {
+  data: document_field_value_insert_input!
+  on_conflict: document_field_value_on_conflict
+}
+
+# on conflict condition type for table "document_field_value"
+input document_field_value_on_conflict {
+  constraint: document_field_value_constraint!
+  update_columns: [document_field_value_update_column!]!
+  where: document_field_value_bool_exp
+}
+
+# ordering options when selecting data from "document_field_value"
+input document_field_value_order_by {
+  document: document_order_by
+  document_id: order_by
+  field: document_field_order_by
+  field_id: order_by
+  id: order_by
+  value: order_by
+}
+
+# primary key columns input for table: "document_field_value"
+input document_field_value_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_field_value"
+enum document_field_value_select_column {
+  # column name
+  document_id
+
+  # column name
+  field_id
+
+  # column name
+  id
+
+  # column name
+  value
+}
+
+# input type for updating data in table "document_field_value"
+input document_field_value_set_input {
+  document_id: uuid
+  field_id: uuid
+  id: uuid
+  value: String
+}
+
+# update columns of table "document_field_value"
+enum document_field_value_update_column {
+  # column name
+  document_id
+
+  # column name
+  field_id
+
+  # column name
+  id
+
+  # column name
+  value
+}
+
+# A Relay Connection object on "document_field_value"
+type document_field_valueConnection {
+  edges: [document_field_valueEdge!]!
+  pageInfo: PageInfo!
+}
+
+type document_field_valueEdge {
+  cursor: String!
+  node: document_field_value!
+}
+
+# aggregate var_pop on columns
+type document_field_var_pop_fields {
+  order: Float
+}
+
+# order by var_pop() on columns of table "document_field"
+input document_field_var_pop_order_by {
+  order: order_by
+}
+
+# aggregate var_samp on columns
+type document_field_var_samp_fields {
+  order: Float
+}
+
+# order by var_samp() on columns of table "document_field"
+input document_field_var_samp_order_by {
+  order: order_by
+}
+
+# aggregate variance on columns
+type document_field_variance_fields {
+  order: Float
+}
+
+# order by variance() on columns of table "document_field"
+input document_field_variance_order_by {
+  order: order_by
 }
 
 # A Relay Connection object on "document_field"
@@ -320,8 +756,10 @@ input document_insert_input {
   created_at: timestamptz
   description: String
   external_id: String
+  field_values: document_field_value_arr_rel_insert_input
   id: uuid
   name: String
+  type: document_type_obj_rel_insert_input
   type_id: uuid
   updated_at: timestamptz
 }
@@ -397,8 +835,10 @@ input document_order_by {
   created_at: order_by
   description: order_by
   external_id: order_by
+  field_values_aggregate: document_field_value_aggregate_order_by
   id: order_by
   name: order_by
+  type: document_type_order_by
   type_id: order_by
   updated_at: order_by
 }
@@ -775,6 +1215,19 @@ type documentEdge {
   node: document!
 }
 
+# expression to compare columns of type Int. All fields are combined with logical 'AND'.
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
 # mutation root
 type mutation_root {
   # delete data from the table: "document"
@@ -795,6 +1248,15 @@ type mutation_root {
   # delete single row from the table: "document_field"
   delete_document_field_by_pk(id: uuid!): document_field
 
+  # delete data from the table: "document_field_value"
+  delete_document_field_value(
+    # filter the rows which have to be deleted
+    where: document_field_value_bool_exp!
+  ): document_field_value_mutation_response
+
+  # delete single row from the table: "document_field_value"
+  delete_document_field_value_by_pk(id: uuid!): document_field_value
+
   # delete data from the table: "document_type"
   delete_document_type(
     # filter the rows which have to be deleted
@@ -803,6 +1265,24 @@ type mutation_root {
 
   # delete single row from the table: "document_type"
   delete_document_type_by_pk(id: uuid!): document_type
+
+  # delete data from the table: "preview_info"
+  delete_preview_info(
+    # filter the rows which have to be deleted
+    where: preview_info_bool_exp!
+  ): preview_info_mutation_response
+
+  # delete single row from the table: "preview_info"
+  delete_preview_info_by_pk(id: uuid!): preview_info
+
+  # delete data from the table: "preview_info_type"
+  delete_preview_info_type(
+    # filter the rows which have to be deleted
+    where: preview_info_type_bool_exp!
+  ): preview_info_type_mutation_response
+
+  # delete single row from the table: "preview_info_type"
+  delete_preview_info_type_by_pk(name: String!): preview_info_type
 
   # delete data from the table: "workspace"
   delete_workspace(
@@ -840,6 +1320,24 @@ type mutation_root {
     on_conflict: document_field_on_conflict
   ): document_field
 
+  # insert data into the table: "document_field_value"
+  insert_document_field_value(
+    # the rows to be inserted
+    objects: [document_field_value_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_field_value_on_conflict
+  ): document_field_value_mutation_response
+
+  # insert a single row into the table: "document_field_value"
+  insert_document_field_value_one(
+    # the row to be inserted
+    object: document_field_value_insert_input!
+
+    # on conflict condition
+    on_conflict: document_field_value_on_conflict
+  ): document_field_value
+
   # insert a single row into the table: "document"
   insert_document_one(
     # the row to be inserted
@@ -866,6 +1364,42 @@ type mutation_root {
     # on conflict condition
     on_conflict: document_type_on_conflict
   ): document_type
+
+  # insert data into the table: "preview_info"
+  insert_preview_info(
+    # the rows to be inserted
+    objects: [preview_info_insert_input!]!
+
+    # on conflict condition
+    on_conflict: preview_info_on_conflict
+  ): preview_info_mutation_response
+
+  # insert a single row into the table: "preview_info"
+  insert_preview_info_one(
+    # the row to be inserted
+    object: preview_info_insert_input!
+
+    # on conflict condition
+    on_conflict: preview_info_on_conflict
+  ): preview_info
+
+  # insert data into the table: "preview_info_type"
+  insert_preview_info_type(
+    # the rows to be inserted
+    objects: [preview_info_type_insert_input!]!
+
+    # on conflict condition
+    on_conflict: preview_info_type_on_conflict
+  ): preview_info_type_mutation_response
+
+  # insert a single row into the table: "preview_info_type"
+  insert_preview_info_type_one(
+    # the row to be inserted
+    object: preview_info_type_insert_input!
+
+    # on conflict condition
+    on_conflict: preview_info_type_on_conflict
+  ): preview_info_type
 
   # insert data into the table: "workspace"
   insert_workspace(
@@ -903,6 +1437,9 @@ type mutation_root {
 
   # update data of the table: "document_field"
   update_document_field(
+    # increments the integer columns with given value of the filtered values
+    _inc: document_field_inc_input
+
     # sets the columns of the filtered rows to the given values
     _set: document_field_set_input
 
@@ -912,10 +1449,29 @@ type mutation_root {
 
   # update single row of the table: "document_field"
   update_document_field_by_pk(
+    # increments the integer columns with given value of the filtered values
+    _inc: document_field_inc_input
+
     # sets the columns of the filtered rows to the given values
     _set: document_field_set_input
     pk_columns: document_field_pk_columns_input!
   ): document_field
+
+  # update data of the table: "document_field_value"
+  update_document_field_value(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_value_set_input
+
+    # filter the rows which have to be updated
+    where: document_field_value_bool_exp!
+  ): document_field_value_mutation_response
+
+  # update single row of the table: "document_field_value"
+  update_document_field_value_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_value_set_input
+    pk_columns: document_field_value_pk_columns_input!
+  ): document_field_value
 
   # update data of the table: "document_type"
   update_document_type(
@@ -932,6 +1488,38 @@ type mutation_root {
     _set: document_type_set_input
     pk_columns: document_type_pk_columns_input!
   ): document_type
+
+  # update data of the table: "preview_info"
+  update_preview_info(
+    # sets the columns of the filtered rows to the given values
+    _set: preview_info_set_input
+
+    # filter the rows which have to be updated
+    where: preview_info_bool_exp!
+  ): preview_info_mutation_response
+
+  # update single row of the table: "preview_info"
+  update_preview_info_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: preview_info_set_input
+    pk_columns: preview_info_pk_columns_input!
+  ): preview_info
+
+  # update data of the table: "preview_info_type"
+  update_preview_info_type(
+    # sets the columns of the filtered rows to the given values
+    _set: preview_info_type_set_input
+
+    # filter the rows which have to be updated
+    where: preview_info_type_bool_exp!
+  ): preview_info_type_mutation_response
+
+  # update single row of the table: "preview_info_type"
+  update_preview_info_type_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: preview_info_type_set_input
+    pk_columns: preview_info_type_pk_columns_input!
+  ): preview_info_type
 
   # update data of the table: "workspace"
   update_workspace(
@@ -984,6 +1572,357 @@ type PageInfo {
   startCursor: String!
 }
 
+# columns and relationships of "preview_info"
+type preview_info implements Node {
+  created_at: timestamptz!
+
+  # An object relationship
+  field: document_field!
+  field_id: uuid!
+  id: ID!
+  show: Boolean!
+  type: preview_info_type_enum!
+  updated_at: timestamptz!
+}
+
+# aggregated selection of "preview_info"
+type preview_info_aggregate {
+  aggregate: preview_info_aggregate_fields
+  nodes: [preview_info!]!
+}
+
+# aggregate fields of "preview_info"
+type preview_info_aggregate_fields {
+  count(columns: [preview_info_select_column!], distinct: Boolean): Int
+  max: preview_info_max_fields
+  min: preview_info_min_fields
+}
+
+# order by aggregate values of table "preview_info"
+input preview_info_aggregate_order_by {
+  count: order_by
+  max: preview_info_max_order_by
+  min: preview_info_min_order_by
+}
+
+# input type for inserting array relation for remote table "preview_info"
+input preview_info_arr_rel_insert_input {
+  data: [preview_info_insert_input!]!
+  on_conflict: preview_info_on_conflict
+}
+
+# Boolean expression to filter rows from the table "preview_info". All fields are combined with a logical 'AND'.
+input preview_info_bool_exp {
+  _and: [preview_info_bool_exp]
+  _not: preview_info_bool_exp
+  _or: [preview_info_bool_exp]
+  created_at: timestamptz_comparison_exp
+  field: document_field_bool_exp
+  field_id: uuid_comparison_exp
+  id: uuid_comparison_exp
+  show: Boolean_comparison_exp
+  type: preview_info_type_enum_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+# unique or primary key constraints on table "preview_info"
+enum preview_info_constraint {
+  # unique or primary key constraint
+  preview_info_field_id_key
+
+  # unique or primary key constraint
+  preview_info_pkey
+}
+
+# input type for inserting data into table "preview_info"
+input preview_info_insert_input {
+  created_at: timestamptz
+  field: document_field_obj_rel_insert_input
+  field_id: uuid
+  id: uuid
+  show: Boolean
+  type: preview_info_type_enum
+  updated_at: timestamptz
+}
+
+# aggregate max on columns
+type preview_info_max_fields {
+  created_at: timestamptz
+  field_id: uuid
+  id: uuid
+  updated_at: timestamptz
+}
+
+# order by max() on columns of table "preview_info"
+input preview_info_max_order_by {
+  created_at: order_by
+  field_id: order_by
+  id: order_by
+  updated_at: order_by
+}
+
+# aggregate min on columns
+type preview_info_min_fields {
+  created_at: timestamptz
+  field_id: uuid
+  id: uuid
+  updated_at: timestamptz
+}
+
+# order by min() on columns of table "preview_info"
+input preview_info_min_order_by {
+  created_at: order_by
+  field_id: order_by
+  id: order_by
+  updated_at: order_by
+}
+
+# response of any mutation on the table "preview_info"
+type preview_info_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [preview_info!]!
+}
+
+# input type for inserting object relation for remote table "preview_info"
+input preview_info_obj_rel_insert_input {
+  data: preview_info_insert_input!
+  on_conflict: preview_info_on_conflict
+}
+
+# on conflict condition type for table "preview_info"
+input preview_info_on_conflict {
+  constraint: preview_info_constraint!
+  update_columns: [preview_info_update_column!]!
+  where: preview_info_bool_exp
+}
+
+# ordering options when selecting data from "preview_info"
+input preview_info_order_by {
+  created_at: order_by
+  field: document_field_order_by
+  field_id: order_by
+  id: order_by
+  show: order_by
+  type: order_by
+  updated_at: order_by
+}
+
+# primary key columns input for table: "preview_info"
+input preview_info_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "preview_info"
+enum preview_info_select_column {
+  # column name
+  created_at
+
+  # column name
+  field_id
+
+  # column name
+  id
+
+  # column name
+  show
+
+  # column name
+  type
+
+  # column name
+  updated_at
+}
+
+# input type for updating data in table "preview_info"
+input preview_info_set_input {
+  created_at: timestamptz
+  field_id: uuid
+  id: uuid
+  show: Boolean
+  type: preview_info_type_enum
+  updated_at: timestamptz
+}
+
+# columns and relationships of "preview_info_type"
+type preview_info_type implements Node {
+  id: ID!
+  name: String!
+}
+
+# aggregated selection of "preview_info_type"
+type preview_info_type_aggregate {
+  aggregate: preview_info_type_aggregate_fields
+  nodes: [preview_info_type!]!
+}
+
+# aggregate fields of "preview_info_type"
+type preview_info_type_aggregate_fields {
+  count(columns: [preview_info_type_select_column!], distinct: Boolean): Int
+  max: preview_info_type_max_fields
+  min: preview_info_type_min_fields
+}
+
+# order by aggregate values of table "preview_info_type"
+input preview_info_type_aggregate_order_by {
+  count: order_by
+  max: preview_info_type_max_order_by
+  min: preview_info_type_min_order_by
+}
+
+# input type for inserting array relation for remote table "preview_info_type"
+input preview_info_type_arr_rel_insert_input {
+  data: [preview_info_type_insert_input!]!
+  on_conflict: preview_info_type_on_conflict
+}
+
+# Boolean expression to filter rows from the table "preview_info_type". All fields are combined with a logical 'AND'.
+input preview_info_type_bool_exp {
+  _and: [preview_info_type_bool_exp]
+  _not: preview_info_type_bool_exp
+  _or: [preview_info_type_bool_exp]
+  name: String_comparison_exp
+}
+
+# unique or primary key constraints on table "preview_info_type"
+enum preview_info_type_constraint {
+  # unique or primary key constraint
+  preview_info_type_pkey
+}
+
+enum preview_info_type_enum {
+  badge
+  label
+}
+
+# expression to compare columns of type preview_info_type_enum. All fields are combined with logical 'AND'.
+input preview_info_type_enum_comparison_exp {
+  _eq: preview_info_type_enum
+  _in: [preview_info_type_enum!]
+  _is_null: Boolean
+  _neq: preview_info_type_enum
+  _nin: [preview_info_type_enum!]
+}
+
+# input type for inserting data into table "preview_info_type"
+input preview_info_type_insert_input {
+  name: String
+}
+
+# aggregate max on columns
+type preview_info_type_max_fields {
+  name: String
+}
+
+# order by max() on columns of table "preview_info_type"
+input preview_info_type_max_order_by {
+  name: order_by
+}
+
+# aggregate min on columns
+type preview_info_type_min_fields {
+  name: String
+}
+
+# order by min() on columns of table "preview_info_type"
+input preview_info_type_min_order_by {
+  name: order_by
+}
+
+# response of any mutation on the table "preview_info_type"
+type preview_info_type_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [preview_info_type!]!
+}
+
+# input type for inserting object relation for remote table "preview_info_type"
+input preview_info_type_obj_rel_insert_input {
+  data: preview_info_type_insert_input!
+  on_conflict: preview_info_type_on_conflict
+}
+
+# on conflict condition type for table "preview_info_type"
+input preview_info_type_on_conflict {
+  constraint: preview_info_type_constraint!
+  update_columns: [preview_info_type_update_column!]!
+  where: preview_info_type_bool_exp
+}
+
+# ordering options when selecting data from "preview_info_type"
+input preview_info_type_order_by {
+  name: order_by
+}
+
+# primary key columns input for table: "preview_info_type"
+input preview_info_type_pk_columns_input {
+  name: String!
+}
+
+# select columns of table "preview_info_type"
+enum preview_info_type_select_column {
+  # column name
+  name
+}
+
+# input type for updating data in table "preview_info_type"
+input preview_info_type_set_input {
+  name: String
+}
+
+# update columns of table "preview_info_type"
+enum preview_info_type_update_column {
+  # column name
+  name
+}
+
+# A Relay Connection object on "preview_info_type"
+type preview_info_typeConnection {
+  edges: [preview_info_typeEdge!]!
+  pageInfo: PageInfo!
+}
+
+type preview_info_typeEdge {
+  cursor: String!
+  node: preview_info_type!
+}
+
+# update columns of table "preview_info"
+enum preview_info_update_column {
+  # column name
+  created_at
+
+  # column name
+  field_id
+
+  # column name
+  id
+
+  # column name
+  show
+
+  # column name
+  type
+
+  # column name
+  updated_at
+}
+
+# A Relay Connection object on "preview_info"
+type preview_infoConnection {
+  edges: [preview_infoEdge!]!
+  pageInfo: PageInfo!
+}
+
+type preview_infoEdge {
+  cursor: String!
+  node: preview_info!
+}
+
 # query root
 type query_root {
   # fetch data from the table: "document"
@@ -1020,6 +1959,23 @@ type query_root {
     where: document_field_bool_exp
   ): document_fieldConnection!
 
+  # fetch data from the table: "document_field_value"
+  document_field_value_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_valueConnection!
+
   # fetch data from the table: "document_type"
   document_type_connection(
     after: String
@@ -1040,6 +1996,40 @@ type query_root {
     # A globally unique id
     id: ID!
   ): Node
+
+  # fetch data from the table: "preview_info"
+  preview_info_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [preview_info_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [preview_info_order_by!]
+
+    # filter the rows returned
+    where: preview_info_bool_exp
+  ): preview_infoConnection!
+
+  # fetch data from the table: "preview_info_type"
+  preview_info_type_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [preview_info_type_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [preview_info_type_order_by!]
+
+    # filter the rows returned
+    where: preview_info_type_bool_exp
+  ): preview_info_typeConnection!
 
   # fetch data from the table: "workspace"
   workspace_connection(
@@ -1114,6 +2104,23 @@ type subscription_root {
     where: document_field_bool_exp
   ): document_fieldConnection!
 
+  # fetch data from the table: "document_field_value"
+  document_field_value_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_value_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_value_order_by!]
+
+    # filter the rows returned
+    where: document_field_value_bool_exp
+  ): document_field_valueConnection!
+
   # fetch data from the table: "document_type"
   document_type_connection(
     after: String
@@ -1134,6 +2141,40 @@ type subscription_root {
     # A globally unique id
     id: ID!
   ): Node
+
+  # fetch data from the table: "preview_info"
+  preview_info_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [preview_info_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [preview_info_order_by!]
+
+    # filter the rows returned
+    where: preview_info_bool_exp
+  ): preview_infoConnection!
+
+  # fetch data from the table: "preview_info_type"
+  preview_info_type_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [preview_info_type_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [preview_info_type_order_by!]
+
+    # filter the rows returned
+    where: preview_info_type_bool_exp
+  ): preview_info_typeConnection!
 
   # fetch data from the table: "workspace"
   workspace_connection(

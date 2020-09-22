@@ -1,9 +1,10 @@
 @import "../../../styles/vars.css";
 
 #layout {
-	--header-height: 54px;
-	--sidebar-left-width: 200px;
-	--sidebar-right-width: 200px;
+  --header-height: 54px;
+  --sidebar-left-width: 200px;
+  --sidebar-right-width: 200px;
+  --bg-color: white;
 
   grid-template-columns: 200px auto 200px;
   grid-template-rows: min-content auto min-content;
@@ -36,12 +37,15 @@
 }
 
 .headerGrid {
-	display: grid;
-	grid-template-columns: var(--sidebar-left-width) auto var(--sidebar-right-width);
+  display: grid;
+  grid-template-columns: var(--sidebar-left-width) auto var(
+      --sidebar-right-width
+    );
   position: fixed;
   width: 100%;
   height: var(--header-height);
   z-index: 1000;
+  background-color: var(--bg-color);
 }
 
 .sidebarLeftGrid {
@@ -50,6 +54,7 @@
   left: 0;
   top: var(--header-height);
   width: var(--sidebar-left-width);
+  @apply bg-white;
 }
 
 .sidebarRightGrid {
@@ -58,6 +63,7 @@
   right: 0;
   top: var(--header-height);
   width: var(--sidebar-right-width);
+  @apply bg-gray-300;
 }
 
 .sidebarGridDisabled {
