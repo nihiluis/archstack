@@ -110,6 +110,6 @@ p.error {
 	@apply mt-8;
 }
 
-.unfocused {
+.font-unfocused {
 	color: var(--unfocused-color);
 }

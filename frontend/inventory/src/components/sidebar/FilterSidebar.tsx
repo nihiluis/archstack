@@ -55,7 +55,7 @@ function FilterType({
 
   return (
     <Badge
-      className="my-2"
+      className="my-2 w-3/4"
       color={documentType.color}
       title={documentType.name}
     />

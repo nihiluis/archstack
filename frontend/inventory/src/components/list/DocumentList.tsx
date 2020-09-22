@@ -25,6 +25,7 @@ import {
   DocumentListItem_field_values$key,
   DocumentListItem_field_values,
 } from "./__generated__/DocumentListItem_field_values.graphql"
+import Badge from "../ui/Badge"
 
 interface Props {}
 
@@ -156,20 +157,25 @@ function DocumentListItem(props: ItemProps) {
       fragment DocumentListItem_field_values on document {
         type {
           fields_connection(
-            first: 1000
+            first: 6
             where: { preview_info: { show: { _eq: true } } }
+            order_by: { order: asc }
           ) @connection(key: "document_fields_connection") {
             edges {
               node {
                 id
                 name
+                preview_info {
+                  type
+                }
               }
             }
           }
         }
         field_values_connection(
-          first: 1000
+          first: 6
           where: { field: { preview_info: { show: { _eq: true } } } }
+          order_by: { field: { order: asc } }
         ) @connection(key: "document_field_values_connection") {
           edges {
             node {
@@ -186,27 +192,42 @@ function DocumentListItem(props: ItemProps) {
   )
 
   return (
-    <div className="">
+    <div key={`DocumentListItem-div-${props.item.id}`} className="">
       <Line />
-      <div className="flex">
-        <MiniBadge title={type.name} className="mt-2 mr-2" color={type.color} />
-        <div className="py-2 px-2">
-          <a href="#" className="font-semibold">
-            {name}
-          </a>
-          <p className="unfocused">{description || "-"}</p>
+      <div className="flex justify-between w-full">
+        <div className="py-2 px-2 w-1/5">
+          <div className="flex">
+            <MiniBadge
+              title={type.name}
+              className="mt-2 mr-2"
+              color={type.color}
+            />
+            <div>
+              <a href="#" className="font-semibold">
+                {name}
+              </a>
+              <p className="font-unfocused">{description || "-"}</p>
+            </div>
+          </div>
         </div>
-        <div className="flex">
+        <div className="flex py-2 px-2 w-4/5">
+          <Badge title="Fields" className="w-14 h-8 flex items-center mr-4 bg-gray-300" />
           <Suspense fallback="Loading...">
-            {(data.type.fields_connection?.edges || []).map(edge => {
-              const value = data.field_values_connection?.edges.find(
-                edge2 => edge2.node.field.id === edge.node.id
-              )
+            {(data.type.fields_connection?.edges || [])
+              .filter(edge => edge.node.preview_info.type === "label")
+              .map(edge => {
+                const value = data.field_values_connection?.edges.find(
+                  edge2 => edge2.node.field.id === edge.node.id
+                )
 
-              return (
-                <DocumentListItemField field={edge.node} value={value?.node} />
-              )
-            })}
+                return (
+                  <DocumentListItemFieldText
+                    key={`DocumentListItemField-${edge.node.id}`}
+                    field={edge.node}
+                    value={value?.node}
+                  />
+                )
+              })}
           </Suspense>
         </div>
       </div>
@@ -219,11 +240,11 @@ interface FieldProps {
   value?: DocumentListItem_field_values["field_values_connection"]["edges"][0]["node"]
 }
 
-function DocumentListItemField(props: FieldProps): JSX.Element {
+function DocumentListItemFieldText(props: FieldProps): JSX.Element {
   return (
-    <div>
-      <p>{props.field.name}</p>
-      <p>{props.value?.value || ""}</p>
+    <div className="mr-8">
+      <p className="font-semibold text-gray-600">{props.field.name}</p>
+      <p className="font-unfocused">{props.value?.value || "-"}</p>
     </div>
   )
 }
