@@ -18,6 +18,42 @@ export default function Document(props: Props): JSX.Element {
           edges {
             node {
               id
+              created_at
+              description
+              external_id
+              name
+              type {
+                color
+                description
+                created_at
+                external_id
+                id
+                name
+                updated_at
+                fields_connection {
+                  edges {
+                    node {
+                      description
+                      created_at
+                      id
+                      mandatory
+                      name
+                      order
+                      updated_at
+                      field_type
+                      external_id
+                      field_values_connection(where: {document: {id: {_eq: $id}}}, first: 1) {
+                        edges {
+                          node {
+                            id
+                            value
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
