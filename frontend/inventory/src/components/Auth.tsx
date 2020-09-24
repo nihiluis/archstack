@@ -37,7 +37,7 @@ export default function Auth(props: PropsWithChildren<Props>) {
 
   const router = useRouter()
 
-  const [authLoading, setAuthLoading] = useState<boolean>(true)
+  const [authLoading, setAuthLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchData = async () => {

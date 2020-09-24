@@ -5,73 +5,27 @@ import React, {
   ReactType,
   ReactNode,
 } from "react"
-import RelayEnvironment from "./RelayEnvironment"
 import { RelayEnvironmentProvider } from "react-relay/hooks"
 import { NextPageContext } from "next"
+import { useEnvironment } from "./relay"
 const { Suspense } = React
 
 //import { getQueryRecordsFromEnvironment, getOperationFromQuery } from "./utils"
 
 interface ComposedComponentProps {}
 
-interface ComposedComponentStatic {
-  displayName?: string
-  getInitialProps?: (ctx: NextPageContext) => any
-}
-
 function withRelay<T extends ComposedComponentProps>(
-  ComposedComponent: React.ComponentType<T> & ComposedComponentStatic,
-  options = {}
+  ComposedComponent: React.ComponentType<T>
 ) {
-  return class WithRelay extends React.Component<T> {
-    static displayName = `WithRelay(${
-      ComposedComponent.displayName || "ComposedComponent"
-    })`
-
-    static async getInitialProps(ctx: NextPageContext) {
-      let composedInitialProps = {}
-
-      if (ComposedComponent.getInitialProps) {
-        composedInitialProps = await ComposedComponent.getInitialProps(ctx)
-      }
-
-      /*
-      let queryProps = {}
-      let queryRecords = {}
-      let operationToRetain
-
-      if (options.query) {
-        queryProps = await fetchQuery(
-          environment,
-          options.query,
-          options.variables || {}
-        )
-        queryRecords = getQueryRecordsFromEnvironment(environment)
-        operationToRetain = getOperationFromQuery(
-          options.query,
-          options.variables
-        )
-      }
-      */
-
-      return {
-        ...composedInitialProps,
-        // ...queryProps,
-        // queryRecords,
-        // operationToRetain,
-      }
-    }
-
-    render(): JSX.Element {
-      return (
-        <RelayEnvironmentProvider environment={RelayEnvironment}>
-          <Suspense fallback={"Loading..."}>
-            <ComposedComponent {...this.props} />
-          </Suspense>
-        </RelayEnvironmentProvider>
-      )
-    }
+  const WithRelay = (props: T) => {
+    return (
+      <Suspense fallback={"Loading..."}>
+        <ComposedComponent {...props} />
+      </Suspense>
+    )
   }
+
+  return WithRelay
 }
 
 export default withRelay

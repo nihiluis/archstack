@@ -23,6 +23,8 @@ import {
   WorkspaceQueryResponse,
 } from "./__generated__/WorkspaceQuery.graphql"
 import dynamic from "next/dynamic"
+import { ReactRelayContext } from "react-relay"
+import { getRequest, createOperationDescriptor } from "relay-runtime"
 import withRelay from "../relay/withRelay"
 
 interface WorkspaceContextValues {
@@ -49,17 +51,13 @@ export const DocumentTypesContext = React.createContext<WorkspaceQueryResponse>(
   undefined
 )
 
-export default dynamic(() => Promise.resolve(withRelay(WorkspaceComponent)), {
-  ssr: false,
-})
-
-function WorkspaceComponent({
+export default function WorkspaceComponent({
   workspaceId: workspaceIdTmp,
   require = true,
   children,
 }: PropsWithChildren<Props>) {
   const { workspace, setWorkspace } = useContext(WorkspaceContext)
-  const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(true)
+  const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(false)
 
   const workspaceId = workspaceIdTmp || getLocalWorkspaceId()
 
@@ -110,43 +108,51 @@ function WorkspaceComponent({
     <React.Fragment>
       <Head>{workspaceLoading && <title>Selecting workspace...</title>}</Head>
       {hasWorkspace && !workspaceLoading && require && (
-        <WorkspaceContent>{children}</WorkspaceContent>
+        <WorkspaceContentWrapper>{children}</WorkspaceContentWrapper>
       )}
       {workspaceLoading && <Loading />}
     </React.Fragment>
   )
 }
 
+const WorkspaceContentWrapper = withRelay(WorkspaceContent)
+
 function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   // somehow the downloaded schema doesnt have a document_type_connection, but document_types..?
 
-  let data = useLazyLoadQuery<WorkspaceQuery>(
-    graphql`
-      query WorkspaceQuery {
-        document_type_connection {
-          edges {
-            node {
-              id
-              external_id
-              name
-              color
-              ...FilterSidebar_document_types
-            }
-            cursor
+  const query = graphql`
+    query WorkspaceQuery {
+      document_type_connection {
+        edges {
+          node {
+            id
+            external_id
+            name
+            color
+            ...FilterSidebar_document_types
           }
+          cursor
         }
       }
-    `,
-    {}
-  )
+    }
+  `
+
+  const queryRequest = getRequest(query)
+  const queryDescriptor = createOperationDescriptor(queryRequest, {})
+
+  const data = useLazyLoadQuery<WorkspaceQuery>(query, {})
+
+  const { environment } = useContext(ReactRelayContext)
+
+  useEffect(() => {
+    environment.retain(queryDescriptor)
+  }, [])
 
   //const [documentTypes, setDocumentTypes] = useState(data)
 
   return (
-    <Suspense fallback={"Loading..."}>
-      <DocumentTypesContext.Provider value={data}>
-        {props.children}
-      </DocumentTypesContext.Provider>
-    </Suspense>
+    <DocumentTypesContext.Provider value={data}>
+      {props.children}
+    </DocumentTypesContext.Provider>
   )
 }

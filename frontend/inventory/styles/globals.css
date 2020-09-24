@@ -113,3 +113,7 @@ p.error {
 .font-unfocused {
 	color: var(--unfocused-color);
 }
+
+.text-error {
+	color: red;
+}

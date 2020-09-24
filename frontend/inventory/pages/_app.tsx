@@ -2,25 +2,20 @@ import "../styles/globals.css"
 import "../styles/vars.css"
 import "../styles/selectsearch.css"
 
-import graphql from "babel-plugin-relay/macro"
-import {
-  RelayEnvironmentProvider,
-  preloadQuery,
-  usePreloadedQuery,
-} from "react-relay/hooks"
-import RelayEnvironment from "../src/relay/RelayEnvironment"
 import { ReactRelayContext } from "react-relay"
 
 import { AuthContext } from "../src/components/Auth"
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext } from "react"
 
 import { AuthState } from "../src/components/Auth"
 import Head from "next/head"
 import { WorkspaceState, WorkspaceContext } from "../src/components/Workspace"
-import withRelay from "../src/relay/withRelay"
+import { IS_SERVER } from "../src/constants/env"
+import { RelayEnvironmentProvider } from "react-relay/hooks"
+import { useEnvironment } from "../src/relay/relay"
 
 function InventoryApp({ Component, pageProps }) {
-  //const { environment } = useContext(ReactRelayContext)
+  const environment = useEnvironment()
 
   const [auth, setAuth] = useState<AuthState>({
     authenticated: false,
@@ -38,14 +33,16 @@ function InventoryApp({ Component, pageProps }) {
   const workspaceContextValue = { workspace, setWorkspace }
 
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <WorkspaceContext.Provider value={workspaceContextValue}>
-        <Head>
-          <title>Inventory | Archstack</title>
-        </Head>
-        <Component {...pageProps} />
-      </WorkspaceContext.Provider>
-    </AuthContext.Provider>
+    <RelayEnvironmentProvider environment={environment}>
+      <AuthContext.Provider value={authContextValue}>
+        <WorkspaceContext.Provider value={workspaceContextValue}>
+          <Head>
+            <title>Inventory | Archstack</title>
+          </Head>
+          <Component {...pageProps} />
+        </WorkspaceContext.Provider>
+      </AuthContext.Provider>
+    </RelayEnvironmentProvider>
   )
 }
 

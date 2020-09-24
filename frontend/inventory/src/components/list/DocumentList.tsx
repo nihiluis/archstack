@@ -26,6 +26,8 @@ import {
   DocumentListItem_field_values,
 } from "./__generated__/DocumentListItem_field_values.graphql"
 import Badge from "../ui/Badge"
+import Link from "next/link"
+import { getIdFromNodeId } from "../../lib/hasura"
 
 interface Props {}
 
@@ -90,7 +92,7 @@ function DocumentListComponent(props: {
         ) @connection(key: "DocumentList_document_connection") {
           edges {
             node {
-              id
+              nodeId: id
               external_id
               name
               description
@@ -113,7 +115,7 @@ function DocumentListComponent(props: {
 
   return (
     <div className="mt-2">
-      <Suspense fallback={"Loading..."}>
+      <Suspense fallback={"Loading documents..."}>
         <div>
           {(data.document_connection?.edges || []).length === 0 && (
             <p>No objects found.</p>
@@ -121,7 +123,7 @@ function DocumentListComponent(props: {
           {(data.document_connection?.edges || []).map(edge => {
             return (
               <DocumentListItem
-                key={`DocumentListItem-${edge.node.id}`}
+                key={`DocumentListItem-${edge.node.nodeId}`}
                 item={edge.node}
               />
             )
@@ -150,7 +152,8 @@ interface ItemProps {
 }
 
 function DocumentListItem(props: ItemProps) {
-  const { name, description, type } = props.item
+  const { name, description, type, nodeId } = props.item
+  const id = getIdFromNodeId(nodeId)
 
   const data = useFragment<DocumentListItem_field_values$key>(
     graphql`
@@ -163,7 +166,7 @@ function DocumentListItem(props: ItemProps) {
           ) @connection(key: "document_fields_connection") {
             edges {
               node {
-                id
+                nodeId: id
                 name
                 preview_info {
                   type
@@ -181,7 +184,7 @@ function DocumentListItem(props: ItemProps) {
             node {
               value
               field {
-                id
+                nodeId: id
               }
             }
           }
@@ -192,7 +195,7 @@ function DocumentListItem(props: ItemProps) {
   )
 
   return (
-    <div key={`DocumentListItem-div-${props.item.id}`} className="">
+    <div key={`DocumentListItem-div-${id}`} className="">
       <Line />
       <div className="flex justify-between w-full">
         <div className="py-2 px-2 w-1/5">
@@ -203,26 +206,29 @@ function DocumentListItem(props: ItemProps) {
               color={type.color}
             />
             <div>
-              <a href="#" className="font-semibold">
-                {name}
-              </a>
+              <Link href={`/document/[id]`} as={`/document/${id}`}>
+                <a className="font-semibold">{name}</a>
+              </Link>
               <p className="font-unfocused">{description || "-"}</p>
             </div>
           </div>
         </div>
         <div className="flex py-2 px-2 w-4/5">
-          <Badge title="Fields" className="w-14 h-8 flex items-center mr-4 bg-gray-300" />
+          <Badge
+            title="Fields"
+            className="w-14 h-8 flex items-center mr-4 bg-gray-300"
+          />
           <Suspense fallback="Loading...">
             {(data.type.fields_connection?.edges || [])
               .filter(edge => edge.node.preview_info.type === "label")
               .map(edge => {
                 const value = data.field_values_connection?.edges.find(
-                  edge2 => edge2.node.field.id === edge.node.id
+                  edge2 => edge2.node.field.nodeId === edge.node.nodeId
                 )
 
                 return (
                   <DocumentListItemFieldText
-                    key={`DocumentListItemField-${edge.node.id}`}
+                    key={`DocumentListItemField-${edge.node.nodeId}`}
                     field={edge.node}
                     value={value?.node}
                   />

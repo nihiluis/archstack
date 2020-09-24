@@ -6,10 +6,9 @@ import Workspace, { WorkspaceContext } from "../src/components/Workspace"
 import Layout from "../src/components/ui/Layout"
 import FilterSidebar from "../src/components/sidebar/FilterSidebar"
 import DocumentList from "../src/components/list/DocumentList"
+import { initEnvironment } from "../src/relay/relay"
 
 export default function Index() {
-  const { workspace } = useContext(WorkspaceContext)
-
   return (
     <Auth require>
       <Workspace>
@@ -23,4 +22,10 @@ export default function Index() {
       </Workspace>
     </Auth>
   )
+}
+
+export async function getStaticProps() {
+  initEnvironment()
+
+  return { props: {} }
 }

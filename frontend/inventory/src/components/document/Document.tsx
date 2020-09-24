@@ -1,9 +1,6 @@
 import React, { Suspense } from "react"
 
-import {
-  graphql,
-  useLazyLoadQuery,
-} from "react-relay/hooks"
+import { graphql, useLazyLoadQuery } from "react-relay/hooks"
 import { DocumentQuery } from "./__generated__/DocumentQuery.graphql"
 
 interface Props {
@@ -42,7 +39,10 @@ export default function Document(props: Props): JSX.Element {
                       updated_at
                       field_type
                       external_id
-                      field_values_connection(where: {document: {id: {_eq: $id}}}, first: 1) {
+                      field_values_connection(
+                        where: { document: { id: { _eq: $id } } }
+                        first: 1
+                      ) {
                         edges {
                           node {
                             id
@@ -64,9 +64,26 @@ export default function Document(props: Props): JSX.Element {
     }
   )
 
+  const hasDocument = data.document_connection.edges.length === 1
+  const documentData = hasDocument
+    ? data.document_connection.edges[0].node
+    : null
+
   return (
-    <div>
-      <Suspense fallback="Loading..."></Suspense>
-    </div>
+    <React.Fragment>
+      {!hasDocument && (
+        <p className="text-error">Unable to find this document.</p>
+      )}
+      {hasDocument && (
+        <div className="mb-2 flex">
+          <h1 className="font-semibold mb-1 text-xl">{documentData.name}</h1>
+          <div
+            className="rounded-full py-1 px-2 text-white table ml-4"
+            style={{ backgroundColor: documentData.type.color }}>
+            {documentData.type.name}
+          </div>
+        </div>
+      )}
+    </React.Fragment>
   )
 }
