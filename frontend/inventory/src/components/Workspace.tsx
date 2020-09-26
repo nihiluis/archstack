@@ -58,6 +58,7 @@ export default function WorkspaceComponent({
 }: PropsWithChildren<Props>) {
   const { workspace, setWorkspace } = useContext(WorkspaceContext)
   const [workspaceLoading, setWorkspaceLoading] = useState<boolean>(false)
+  const [initialized, setInitialized] = useState<boolean>(false)
 
   const workspaceId = workspaceIdTmp || getLocalWorkspaceId()
 
@@ -66,6 +67,8 @@ export default function WorkspaceComponent({
   const { auth } = useContext(AuthContext)
 
   useEffect(() => {
+    let isCancelled = false
+
     const fetchData = async () => {
       if (!workspaceId || typeof workspaceId !== "string") {
         setWorkspace({
@@ -77,25 +80,33 @@ export default function WorkspaceComponent({
 
         const { id, workspace, error } = await getWorkspace(workspaceId)
 
-        setWorkspaceLoading(false)
+        if (!isCancelled) {
+          setWorkspaceLoading(false)
 
-        if (!error && workspace) {
-          setLocalWorkspaceId(id)
+          if (!error && workspace) {
+            setLocalWorkspaceId(id)
+          }
+
+          setWorkspace({ workspace, id, error })
         }
-
-        setWorkspace({ workspace, id, error })
       } else if (workspaceLoading) {
         setWorkspaceLoading(false)
       }
     }
 
     fetchData()
+
+    setInitialized(true)
+
+    return () => {
+      isCancelled = true
+    }
   }, [])
 
   const hasWorkspace = !!workspace.workspace
 
   useEffect(() => {
-    if (!hasWorkspace && !workspaceLoading) {
+    if (!hasWorkspace && !workspaceLoading && initialized) {
       window.location.href = WORKSPACE_SELECTION_URL
     }
 

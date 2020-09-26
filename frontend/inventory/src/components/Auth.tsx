@@ -35,32 +35,39 @@ export default function Auth(props: PropsWithChildren<Props>) {
 
   const { auth, setAuth } = useContext(AuthContext)
 
-  const router = useRouter()
-
   const [authLoading, setAuthLoading] = useState<boolean>(false)
+  const [initialized, setInitialized] = useState<boolean>(false)
 
   useEffect(() => {
+    let isCancelled = false
+
     const fetchData = async () => {
       if (!auth.authenticated) {
         setAuthLoading(true)
 
         const { success, token, error } = await checkAuth(initialToken)
 
-        setAuthLoading(false)
-
-        setSessionToken(token)
-
-        setAuth({ authenticated: success, token, error })
+        if (!isCancelled) {
+          setAuthLoading(false)
+          setSessionToken(token)
+          setAuth({ authenticated: success, token, error })
+        }
       } else if (authLoading) {
         setAuthLoading(false)
       }
     }
 
     fetchData()
+
+    setInitialized(true)
+
+    return () => {
+      isCancelled = true
+    }
   }, [])
 
   useEffect(() => {
-    if (require && !auth.authenticated && !authLoading) {
+    if (require && !auth.authenticated && !authLoading && initialized) {
       setLocalWorkspaceId("")
 
       window.location.href = LOGIN_URL

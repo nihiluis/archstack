@@ -22,7 +22,7 @@ export default function Index() {
           showSidebarRight={true}
           sidebarLeftComponent={null}
           sidebarRightComponent={null}>
-          <Suspense fallback={<p style={{ fontSize: "96px" }}>ERROR</p>}>
+          <Suspense fallback="Loading...">
             <Document documentId={id as string} />
           </Suspense>
         </Layout>
