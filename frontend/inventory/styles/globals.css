@@ -11,6 +11,11 @@
 	--link-color: #4d496b;
 	--focused-color: #8575ff;
 	--unfocused-color: #9996a9;
+	--bg-content: #fff;
+	--bg-content-contrast: #fefefe;
+	--border-color: #fefefe;
+	--section-left-column-width: 180px;
+	--section-left-column-gap: 1.5rem;
 }
 
 html,

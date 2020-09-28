@@ -1,8 +1,18 @@
-import React, { Suspense } from "react"
+import React, { Suspense, useEffect } from "react"
 
 import { graphql, useLazyLoadQuery, useFragment } from "react-relay/hooks"
-import { DocumentQuery } from "./__generated__/DocumentQuery.graphql"
+import {
+  DocumentQuery,
+  DocumentQueryResponse,
+} from "./__generated__/DocumentQuery.graphql"
 import { DocumentField_field$key } from "./__generated__/DocumentField_field.graphql"
+import Section from "../ui/section/Section"
+import SectionContent from "../ui/section/SectionContent"
+import SectionHeader from "../ui/section/SectionHeader"
+import SectionTitle from "../ui/section/SectionTitle"
+import Subsection from "../ui/section/Subsection"
+import SubsectionTitle from "../ui/section/SubsectionTitle"
+import SubsectionContent from "../ui/section/SubsectionContent"
 
 interface Props {
   documentId: string
@@ -28,11 +38,27 @@ export default function Document(props: Props): JSX.Element {
                 id
                 name
                 updated_at
-                fields_connection {
+                groups_connection {
                   edges {
                     node {
                       id
-                      ...DocumentField_field
+                      name
+                      sections_connection {
+                        edges {
+                          node {
+                            fields_connection {
+                              edges {
+                                node {
+                                  id
+                                  ...DocumentField_field
+                                }
+                              }
+                            }
+                            id
+                            name
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -47,10 +73,20 @@ export default function Document(props: Props): JSX.Element {
     }
   )
 
+  type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]
+
+  useEffect(() => {}, [data])
+
   const hasDocument = data.document_connection.edges.length === 1
   const documentData = hasDocument
     ? data.document_connection.edges[0].node
     : null
+
+  const documentFields =
+    documentData?.type.groups_connection.edges.flatMap(edge => edge.node) ?? []
+
+  const groups: Group[] =
+    (documentData?.type.groups_connection.edges as Group[]) ?? []
 
   return (
     <React.Fragment>
@@ -68,11 +104,27 @@ export default function Document(props: Props): JSX.Element {
             </div>
           </div>
           <div>
-            {(documentData.type.fields_connection?.edges ?? []).map(e => (
-              <DocumentField
-                key={`DocumentField-${e.node.id}`}
-                field={e.node}
-              />
+            {groups.map(e => (
+              <Section key={`section-${e.node.id}`}>
+                <SectionHeader>
+                  <SectionTitle title={e.node.name} size="full" />
+                </SectionHeader>
+                <SectionContent size="full">
+                  {e.node.sections_connection.edges.map(e2 => (
+                    <Subsection key={`subsection-${e2.node.id}`} size="full">
+                      <SubsectionTitle title={e2.node.name} />
+                      <SubsectionContent size="full">
+                        {e2.node.fields_connection.edges.map(e3 => (
+                          <DocumentField
+                            key={`DocumentField-${e3.node.id}`}
+                            field={e3.node}
+                          />
+                        ))}
+                      </SubsectionContent>
+                    </Subsection>
+                  ))}
+                </SectionContent>
+              </Section>
             ))}
           </div>
         </div>
@@ -81,8 +133,11 @@ export default function Document(props: Props): JSX.Element {
   )
 }
 
+
+type Field = DocumentQuery["response"]["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]["node"]["sections_connection"]["edges"][0]["node"]["fields_connection"]["edges"][0]["node"]
+
 interface FieldProps {
-  field: DocumentQuery["response"]["document_connection"]["edges"][0]["node"]["type"]["fields_connection"]["edges"][0]["node"]
+  field: Field 
 }
 
 function DocumentField(props: FieldProps) {

@@ -139,7 +139,7 @@ type document_field implements Node {
 
   # An object relationship
   document_type: document_type
-  document_type_id: uuid
+  document_type_id: uuid!
   external_id: String!
   field_type: String!
 
@@ -202,6 +202,10 @@ type document_field implements Node {
 
   # An object relationship
   preview_info: preview_info
+
+  # An object relationship
+  section: document_field_section
+  section_id: uuid
   updated_at: timestamptz
 }
 
@@ -274,6 +278,8 @@ input document_field_bool_exp {
   name: String_comparison_exp
   order: Int_comparison_exp
   preview_info: preview_info_bool_exp
+  section: document_field_section_bool_exp
+  section_id: uuid_comparison_exp
   updated_at: timestamptz_comparison_exp
 }
 
@@ -281,6 +287,237 @@ input document_field_bool_exp {
 enum document_field_constraint {
   # unique or primary key constraint
   document_field_pkey
+}
+
+# columns and relationships of "document_field_group"
+type document_field_group implements Node {
+  description: String!
+  id: ID!
+  name: String!
+
+  # An array relationship
+  sections(
+    # distinct select on columns
+    distinct_on: [document_field_section_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_section_order_by!]
+
+    # filter the rows returned
+    where: document_field_section_bool_exp
+  ): [document_field_section!]!
+
+  # An aggregated array relationship
+  sections_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_section_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_section_order_by!]
+
+    # filter the rows returned
+    where: document_field_section_bool_exp
+  ): document_field_section_aggregate!
+
+  # An array relationship connection
+  sections_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_section_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_section_order_by!]
+
+    # filter the rows returned
+    where: document_field_section_bool_exp
+  ): document_field_sectionConnection!
+  type_id: uuid
+}
+
+# aggregated selection of "document_field_group"
+type document_field_group_aggregate {
+  aggregate: document_field_group_aggregate_fields
+  nodes: [document_field_group!]!
+}
+
+# aggregate fields of "document_field_group"
+type document_field_group_aggregate_fields {
+  count(columns: [document_field_group_select_column!], distinct: Boolean): Int
+  max: document_field_group_max_fields
+  min: document_field_group_min_fields
+}
+
+# order by aggregate values of table "document_field_group"
+input document_field_group_aggregate_order_by {
+  count: order_by
+  max: document_field_group_max_order_by
+  min: document_field_group_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_field_group"
+input document_field_group_arr_rel_insert_input {
+  data: [document_field_group_insert_input!]!
+  on_conflict: document_field_group_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_field_group". All fields are combined with a logical 'AND'.
+input document_field_group_bool_exp {
+  _and: [document_field_group_bool_exp]
+  _not: document_field_group_bool_exp
+  _or: [document_field_group_bool_exp]
+  description: String_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  sections: document_field_section_bool_exp
+  type_id: uuid_comparison_exp
+}
+
+# unique or primary key constraints on table "document_field_group"
+enum document_field_group_constraint {
+  # unique or primary key constraint
+  document_field_group_pkey
+}
+
+# input type for inserting data into table "document_field_group"
+input document_field_group_insert_input {
+  description: String
+  id: uuid
+  name: String
+  sections: document_field_section_arr_rel_insert_input
+  type_id: uuid
+}
+
+# aggregate max on columns
+type document_field_group_max_fields {
+  description: String
+  id: uuid
+  name: String
+  type_id: uuid
+}
+
+# order by max() on columns of table "document_field_group"
+input document_field_group_max_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+}
+
+# aggregate min on columns
+type document_field_group_min_fields {
+  description: String
+  id: uuid
+  name: String
+  type_id: uuid
+}
+
+# order by min() on columns of table "document_field_group"
+input document_field_group_min_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  type_id: order_by
+}
+
+# response of any mutation on the table "document_field_group"
+type document_field_group_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_field_group!]!
+}
+
+# input type for inserting object relation for remote table "document_field_group"
+input document_field_group_obj_rel_insert_input {
+  data: document_field_group_insert_input!
+  on_conflict: document_field_group_on_conflict
+}
+
+# on conflict condition type for table "document_field_group"
+input document_field_group_on_conflict {
+  constraint: document_field_group_constraint!
+  update_columns: [document_field_group_update_column!]!
+  where: document_field_group_bool_exp
+}
+
+# ordering options when selecting data from "document_field_group"
+input document_field_group_order_by {
+  description: order_by
+  id: order_by
+  name: order_by
+  sections_aggregate: document_field_section_aggregate_order_by
+  type_id: order_by
+}
+
+# primary key columns input for table: "document_field_group"
+input document_field_group_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_field_group"
+enum document_field_group_select_column {
+  # column name
+  description
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+}
+
+# input type for updating data in table "document_field_group"
+input document_field_group_set_input {
+  description: String
+  id: uuid
+  name: String
+  type_id: uuid
+}
+
+# update columns of table "document_field_group"
+enum document_field_group_update_column {
+  # column name
+  description
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  type_id
+}
+
+# A Relay Connection object on "document_field_group"
+type document_field_groupConnection {
+  edges: [document_field_groupEdge!]!
+  pageInfo: PageInfo!
+}
+
+type document_field_groupEdge {
+  cursor: String!
+  node: document_field_group!
 }
 
 # input type for incrementing integer column in table "document_field"
@@ -302,6 +539,8 @@ input document_field_insert_input {
   name: String
   order: Int
   preview_info: preview_info_obj_rel_insert_input
+  section: document_field_section_obj_rel_insert_input
+  section_id: uuid
   updated_at: timestamptz
 }
 
@@ -315,6 +554,7 @@ type document_field_max_fields {
   id: uuid
   name: String
   order: Int
+  section_id: uuid
   updated_at: timestamptz
 }
 
@@ -328,6 +568,7 @@ input document_field_max_order_by {
   id: order_by
   name: order_by
   order: order_by
+  section_id: order_by
   updated_at: order_by
 }
 
@@ -341,6 +582,7 @@ type document_field_min_fields {
   id: uuid
   name: String
   order: Int
+  section_id: uuid
   updated_at: timestamptz
 }
 
@@ -354,6 +596,7 @@ input document_field_min_order_by {
   id: order_by
   name: order_by
   order: order_by
+  section_id: order_by
   updated_at: order_by
 }
 
@@ -393,12 +636,251 @@ input document_field_order_by {
   name: order_by
   order: order_by
   preview_info: preview_info_order_by
+  section: document_field_section_order_by
+  section_id: order_by
   updated_at: order_by
 }
 
 # primary key columns input for table: "document_field"
 input document_field_pk_columns_input {
   id: uuid!
+}
+
+# columns and relationships of "document_field_section"
+type document_field_section implements Node {
+  description: String!
+
+  # An array relationship
+  fields(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): [document_field!]!
+
+  # An aggregated array relationship
+  fields_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): document_field_aggregate!
+
+  # An array relationship connection
+  fields_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_order_by!]
+
+    # filter the rows returned
+    where: document_field_bool_exp
+  ): document_fieldConnection!
+
+  # An object relationship
+  group: document_field_group!
+  group_id: uuid!
+  id: ID!
+  name: String!
+}
+
+# aggregated selection of "document_field_section"
+type document_field_section_aggregate {
+  aggregate: document_field_section_aggregate_fields
+  nodes: [document_field_section!]!
+}
+
+# aggregate fields of "document_field_section"
+type document_field_section_aggregate_fields {
+  count(columns: [document_field_section_select_column!], distinct: Boolean): Int
+  max: document_field_section_max_fields
+  min: document_field_section_min_fields
+}
+
+# order by aggregate values of table "document_field_section"
+input document_field_section_aggregate_order_by {
+  count: order_by
+  max: document_field_section_max_order_by
+  min: document_field_section_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_field_section"
+input document_field_section_arr_rel_insert_input {
+  data: [document_field_section_insert_input!]!
+  on_conflict: document_field_section_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_field_section". All fields are combined with a logical 'AND'.
+input document_field_section_bool_exp {
+  _and: [document_field_section_bool_exp]
+  _not: document_field_section_bool_exp
+  _or: [document_field_section_bool_exp]
+  description: String_comparison_exp
+  fields: document_field_bool_exp
+  group: document_field_group_bool_exp
+  group_id: uuid_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+}
+
+# unique or primary key constraints on table "document_field_section"
+enum document_field_section_constraint {
+  # unique or primary key constraint
+  document_field_section_pkey
+}
+
+# input type for inserting data into table "document_field_section"
+input document_field_section_insert_input {
+  description: String
+  fields: document_field_arr_rel_insert_input
+  group: document_field_group_obj_rel_insert_input
+  group_id: uuid
+  id: uuid
+  name: String
+}
+
+# aggregate max on columns
+type document_field_section_max_fields {
+  description: String
+  group_id: uuid
+  id: uuid
+  name: String
+}
+
+# order by max() on columns of table "document_field_section"
+input document_field_section_max_order_by {
+  description: order_by
+  group_id: order_by
+  id: order_by
+  name: order_by
+}
+
+# aggregate min on columns
+type document_field_section_min_fields {
+  description: String
+  group_id: uuid
+  id: uuid
+  name: String
+}
+
+# order by min() on columns of table "document_field_section"
+input document_field_section_min_order_by {
+  description: order_by
+  group_id: order_by
+  id: order_by
+  name: order_by
+}
+
+# response of any mutation on the table "document_field_section"
+type document_field_section_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_field_section!]!
+}
+
+# input type for inserting object relation for remote table "document_field_section"
+input document_field_section_obj_rel_insert_input {
+  data: document_field_section_insert_input!
+  on_conflict: document_field_section_on_conflict
+}
+
+# on conflict condition type for table "document_field_section"
+input document_field_section_on_conflict {
+  constraint: document_field_section_constraint!
+  update_columns: [document_field_section_update_column!]!
+  where: document_field_section_bool_exp
+}
+
+# ordering options when selecting data from "document_field_section"
+input document_field_section_order_by {
+  description: order_by
+  fields_aggregate: document_field_aggregate_order_by
+  group: document_field_group_order_by
+  group_id: order_by
+  id: order_by
+  name: order_by
+}
+
+# primary key columns input for table: "document_field_section"
+input document_field_section_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_field_section"
+enum document_field_section_select_column {
+  # column name
+  description
+
+  # column name
+  group_id
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# input type for updating data in table "document_field_section"
+input document_field_section_set_input {
+  description: String
+  group_id: uuid
+  id: uuid
+  name: String
+}
+
+# update columns of table "document_field_section"
+enum document_field_section_update_column {
+  # column name
+  description
+
+  # column name
+  group_id
+
+  # column name
+  id
+
+  # column name
+  name
+}
+
+# A Relay Connection object on "document_field_section"
+type document_field_sectionConnection {
+  edges: [document_field_sectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type document_field_sectionEdge {
+  cursor: String!
+  node: document_field_section!
 }
 
 # select columns of table "document_field"
@@ -431,6 +913,9 @@ enum document_field_select_column {
   order
 
   # column name
+  section_id
+
+  # column name
   updated_at
 }
 
@@ -445,6 +930,7 @@ input document_field_set_input {
   mandatory: Boolean
   name: String
   order: Int
+  section_id: uuid
   updated_at: timestamptz
 }
 
@@ -516,6 +1002,9 @@ enum document_field_update_column {
 
   # column name
   order
+
+  # column name
+  section_id
 
   # column name
   updated_at
@@ -848,6 +1337,439 @@ input document_pk_columns_input {
   id: uuid!
 }
 
+# columns and relationships of "document_relation"
+type document_relation implements Node {
+  from_id: uuid!
+  id: ID!
+  to_id: uuid!
+}
+
+# aggregated selection of "document_relation"
+type document_relation_aggregate {
+  aggregate: document_relation_aggregate_fields
+  nodes: [document_relation!]!
+}
+
+# aggregate fields of "document_relation"
+type document_relation_aggregate_fields {
+  count(columns: [document_relation_select_column!], distinct: Boolean): Int
+  max: document_relation_max_fields
+  min: document_relation_min_fields
+}
+
+# order by aggregate values of table "document_relation"
+input document_relation_aggregate_order_by {
+  count: order_by
+  max: document_relation_max_order_by
+  min: document_relation_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_relation"
+input document_relation_arr_rel_insert_input {
+  data: [document_relation_insert_input!]!
+  on_conflict: document_relation_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_relation". All fields are combined with a logical 'AND'.
+input document_relation_bool_exp {
+  _and: [document_relation_bool_exp]
+  _not: document_relation_bool_exp
+  _or: [document_relation_bool_exp]
+  from_id: uuid_comparison_exp
+  id: uuid_comparison_exp
+  to_id: uuid_comparison_exp
+}
+
+# unique or primary key constraints on table "document_relation"
+enum document_relation_constraint {
+  # unique or primary key constraint
+  document_relation_pkey
+}
+
+# input type for inserting data into table "document_relation"
+input document_relation_insert_input {
+  from_id: uuid
+  id: uuid
+  to_id: uuid
+}
+
+# aggregate max on columns
+type document_relation_max_fields {
+  from_id: uuid
+  id: uuid
+  to_id: uuid
+}
+
+# order by max() on columns of table "document_relation"
+input document_relation_max_order_by {
+  from_id: order_by
+  id: order_by
+  to_id: order_by
+}
+
+# aggregate min on columns
+type document_relation_min_fields {
+  from_id: uuid
+  id: uuid
+  to_id: uuid
+}
+
+# order by min() on columns of table "document_relation"
+input document_relation_min_order_by {
+  from_id: order_by
+  id: order_by
+  to_id: order_by
+}
+
+# response of any mutation on the table "document_relation"
+type document_relation_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_relation!]!
+}
+
+# input type for inserting object relation for remote table "document_relation"
+input document_relation_obj_rel_insert_input {
+  data: document_relation_insert_input!
+  on_conflict: document_relation_on_conflict
+}
+
+# on conflict condition type for table "document_relation"
+input document_relation_on_conflict {
+  constraint: document_relation_constraint!
+  update_columns: [document_relation_update_column!]!
+  where: document_relation_bool_exp
+}
+
+# ordering options when selecting data from "document_relation"
+input document_relation_order_by {
+  from_id: order_by
+  id: order_by
+  to_id: order_by
+}
+
+# primary key columns input for table: "document_relation"
+input document_relation_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_relation"
+enum document_relation_select_column {
+  # column name
+  from_id
+
+  # column name
+  id
+
+  # column name
+  to_id
+}
+
+# input type for updating data in table "document_relation"
+input document_relation_set_input {
+  from_id: uuid
+  id: uuid
+  to_id: uuid
+}
+
+# columns and relationships of "document_relation_type"
+type document_relation_type implements Node {
+  description: String!
+  external_id: String
+
+  # An object relationship
+  from: document_type!
+  from_id: uuid!
+
+  # An array relationship
+  groups(
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): [document_field_group!]!
+
+  # An aggregated array relationship
+  groups_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_group_aggregate!
+
+  # An array relationship connection
+  groups_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_groupConnection!
+  id: ID!
+  name: String!
+
+  # An object relationship
+  to: document_type!
+  to_id: uuid!
+}
+
+# aggregated selection of "document_relation_type"
+type document_relation_type_aggregate {
+  aggregate: document_relation_type_aggregate_fields
+  nodes: [document_relation_type!]!
+}
+
+# aggregate fields of "document_relation_type"
+type document_relation_type_aggregate_fields {
+  count(columns: [document_relation_type_select_column!], distinct: Boolean): Int
+  max: document_relation_type_max_fields
+  min: document_relation_type_min_fields
+}
+
+# order by aggregate values of table "document_relation_type"
+input document_relation_type_aggregate_order_by {
+  count: order_by
+  max: document_relation_type_max_order_by
+  min: document_relation_type_min_order_by
+}
+
+# input type for inserting array relation for remote table "document_relation_type"
+input document_relation_type_arr_rel_insert_input {
+  data: [document_relation_type_insert_input!]!
+  on_conflict: document_relation_type_on_conflict
+}
+
+# Boolean expression to filter rows from the table "document_relation_type". All fields are combined with a logical 'AND'.
+input document_relation_type_bool_exp {
+  _and: [document_relation_type_bool_exp]
+  _not: document_relation_type_bool_exp
+  _or: [document_relation_type_bool_exp]
+  description: String_comparison_exp
+  external_id: String_comparison_exp
+  from: document_type_bool_exp
+  from_id: uuid_comparison_exp
+  groups: document_field_group_bool_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  to: document_type_bool_exp
+  to_id: uuid_comparison_exp
+}
+
+# unique or primary key constraints on table "document_relation_type"
+enum document_relation_type_constraint {
+  # unique or primary key constraint
+  document_relation_type_pkey
+}
+
+# input type for inserting data into table "document_relation_type"
+input document_relation_type_insert_input {
+  description: String
+  external_id: String
+  from: document_type_obj_rel_insert_input
+  from_id: uuid
+  groups: document_field_group_arr_rel_insert_input
+  id: uuid
+  name: String
+  to: document_type_obj_rel_insert_input
+  to_id: uuid
+}
+
+# aggregate max on columns
+type document_relation_type_max_fields {
+  description: String
+  external_id: String
+  from_id: uuid
+  id: uuid
+  name: String
+  to_id: uuid
+}
+
+# order by max() on columns of table "document_relation_type"
+input document_relation_type_max_order_by {
+  description: order_by
+  external_id: order_by
+  from_id: order_by
+  id: order_by
+  name: order_by
+  to_id: order_by
+}
+
+# aggregate min on columns
+type document_relation_type_min_fields {
+  description: String
+  external_id: String
+  from_id: uuid
+  id: uuid
+  name: String
+  to_id: uuid
+}
+
+# order by min() on columns of table "document_relation_type"
+input document_relation_type_min_order_by {
+  description: order_by
+  external_id: order_by
+  from_id: order_by
+  id: order_by
+  name: order_by
+  to_id: order_by
+}
+
+# response of any mutation on the table "document_relation_type"
+type document_relation_type_mutation_response {
+  # number of affected rows by the mutation
+  affected_rows: Int!
+
+  # data of the affected rows by the mutation
+  returning: [document_relation_type!]!
+}
+
+# input type for inserting object relation for remote table "document_relation_type"
+input document_relation_type_obj_rel_insert_input {
+  data: document_relation_type_insert_input!
+  on_conflict: document_relation_type_on_conflict
+}
+
+# on conflict condition type for table "document_relation_type"
+input document_relation_type_on_conflict {
+  constraint: document_relation_type_constraint!
+  update_columns: [document_relation_type_update_column!]!
+  where: document_relation_type_bool_exp
+}
+
+# ordering options when selecting data from "document_relation_type"
+input document_relation_type_order_by {
+  description: order_by
+  external_id: order_by
+  from: document_type_order_by
+  from_id: order_by
+  groups_aggregate: document_field_group_aggregate_order_by
+  id: order_by
+  name: order_by
+  to: document_type_order_by
+  to_id: order_by
+}
+
+# primary key columns input for table: "document_relation_type"
+input document_relation_type_pk_columns_input {
+  id: uuid!
+}
+
+# select columns of table "document_relation_type"
+enum document_relation_type_select_column {
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  from_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  to_id
+}
+
+# input type for updating data in table "document_relation_type"
+input document_relation_type_set_input {
+  description: String
+  external_id: String
+  from_id: uuid
+  id: uuid
+  name: String
+  to_id: uuid
+}
+
+# update columns of table "document_relation_type"
+enum document_relation_type_update_column {
+  # column name
+  description
+
+  # column name
+  external_id
+
+  # column name
+  from_id
+
+  # column name
+  id
+
+  # column name
+  name
+
+  # column name
+  to_id
+}
+
+# A Relay Connection object on "document_relation_type"
+type document_relation_typeConnection {
+  edges: [document_relation_typeEdge!]!
+  pageInfo: PageInfo!
+}
+
+type document_relation_typeEdge {
+  cursor: String!
+  node: document_relation_type!
+}
+
+# update columns of table "document_relation"
+enum document_relation_update_column {
+  # column name
+  from_id
+
+  # column name
+  id
+
+  # column name
+  to_id
+}
+
+# A Relay Connection object on "document_relation"
+type document_relationConnection {
+  edges: [document_relationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type document_relationEdge {
+  cursor: String!
+  node: document_relation!
+}
+
 # select columns of table "document"
 enum document_select_column {
   # column name
@@ -942,6 +1864,59 @@ type document_type implements Node {
     # filter the rows returned
     where: document_field_bool_exp
   ): document_fieldConnection!
+
+  # An array relationship
+  groups(
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): [document_field_group!]!
+
+  # An aggregated array relationship
+  groups_aggregate(
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+
+    # limit the number of rows returned
+    limit: Int
+
+    # skip the first n rows. Use only with order_by
+    offset: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_group_aggregate!
+
+  # An array relationship connection
+  groups_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_groupConnection!
   id: ID!
   name: String!
   updated_at: timestamptz
@@ -987,6 +1962,7 @@ input document_type_bool_exp {
   description: String_comparison_exp
   external_id: String_comparison_exp
   fields: document_field_bool_exp
+  groups: document_field_group_bool_exp
   id: uuid_comparison_exp
   name: String_comparison_exp
   updated_at: timestamptz_comparison_exp
@@ -1007,6 +1983,7 @@ input document_type_insert_input {
   description: String
   external_id: String
   fields: document_field_arr_rel_insert_input
+  groups: document_field_group_arr_rel_insert_input
   id: uuid
   name: String
   updated_at: timestamptz
@@ -1091,6 +2068,7 @@ input document_type_order_by {
   description: order_by
   external_id: order_by
   fields_aggregate: document_field_aggregate_order_by
+  groups_aggregate: document_field_group_aggregate_order_by
   id: order_by
   name: order_by
   updated_at: order_by
@@ -1248,6 +2226,24 @@ type mutation_root {
   # delete single row from the table: "document_field"
   delete_document_field_by_pk(id: uuid!): document_field
 
+  # delete data from the table: "document_field_group"
+  delete_document_field_group(
+    # filter the rows which have to be deleted
+    where: document_field_group_bool_exp!
+  ): document_field_group_mutation_response
+
+  # delete single row from the table: "document_field_group"
+  delete_document_field_group_by_pk(id: uuid!): document_field_group
+
+  # delete data from the table: "document_field_section"
+  delete_document_field_section(
+    # filter the rows which have to be deleted
+    where: document_field_section_bool_exp!
+  ): document_field_section_mutation_response
+
+  # delete single row from the table: "document_field_section"
+  delete_document_field_section_by_pk(id: uuid!): document_field_section
+
   # delete data from the table: "document_field_value"
   delete_document_field_value(
     # filter the rows which have to be deleted
@@ -1256,6 +2252,24 @@ type mutation_root {
 
   # delete single row from the table: "document_field_value"
   delete_document_field_value_by_pk(id: uuid!): document_field_value
+
+  # delete data from the table: "document_relation"
+  delete_document_relation(
+    # filter the rows which have to be deleted
+    where: document_relation_bool_exp!
+  ): document_relation_mutation_response
+
+  # delete single row from the table: "document_relation"
+  delete_document_relation_by_pk(id: uuid!): document_relation
+
+  # delete data from the table: "document_relation_type"
+  delete_document_relation_type(
+    # filter the rows which have to be deleted
+    where: document_relation_type_bool_exp!
+  ): document_relation_type_mutation_response
+
+  # delete single row from the table: "document_relation_type"
+  delete_document_relation_type_by_pk(id: uuid!): document_relation_type
 
   # delete data from the table: "document_type"
   delete_document_type(
@@ -1311,6 +2325,24 @@ type mutation_root {
     on_conflict: document_field_on_conflict
   ): document_field_mutation_response
 
+  # insert data into the table: "document_field_group"
+  insert_document_field_group(
+    # the rows to be inserted
+    objects: [document_field_group_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_field_group_on_conflict
+  ): document_field_group_mutation_response
+
+  # insert a single row into the table: "document_field_group"
+  insert_document_field_group_one(
+    # the row to be inserted
+    object: document_field_group_insert_input!
+
+    # on conflict condition
+    on_conflict: document_field_group_on_conflict
+  ): document_field_group
+
   # insert a single row into the table: "document_field"
   insert_document_field_one(
     # the row to be inserted
@@ -1319,6 +2351,24 @@ type mutation_root {
     # on conflict condition
     on_conflict: document_field_on_conflict
   ): document_field
+
+  # insert data into the table: "document_field_section"
+  insert_document_field_section(
+    # the rows to be inserted
+    objects: [document_field_section_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_field_section_on_conflict
+  ): document_field_section_mutation_response
+
+  # insert a single row into the table: "document_field_section"
+  insert_document_field_section_one(
+    # the row to be inserted
+    object: document_field_section_insert_input!
+
+    # on conflict condition
+    on_conflict: document_field_section_on_conflict
+  ): document_field_section
 
   # insert data into the table: "document_field_value"
   insert_document_field_value(
@@ -1346,6 +2396,42 @@ type mutation_root {
     # on conflict condition
     on_conflict: document_on_conflict
   ): document
+
+  # insert data into the table: "document_relation"
+  insert_document_relation(
+    # the rows to be inserted
+    objects: [document_relation_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_relation_on_conflict
+  ): document_relation_mutation_response
+
+  # insert a single row into the table: "document_relation"
+  insert_document_relation_one(
+    # the row to be inserted
+    object: document_relation_insert_input!
+
+    # on conflict condition
+    on_conflict: document_relation_on_conflict
+  ): document_relation
+
+  # insert data into the table: "document_relation_type"
+  insert_document_relation_type(
+    # the rows to be inserted
+    objects: [document_relation_type_insert_input!]!
+
+    # on conflict condition
+    on_conflict: document_relation_type_on_conflict
+  ): document_relation_type_mutation_response
+
+  # insert a single row into the table: "document_relation_type"
+  insert_document_relation_type_one(
+    # the row to be inserted
+    object: document_relation_type_insert_input!
+
+    # on conflict condition
+    on_conflict: document_relation_type_on_conflict
+  ): document_relation_type
 
   # insert data into the table: "document_type"
   insert_document_type(
@@ -1457,6 +2543,38 @@ type mutation_root {
     pk_columns: document_field_pk_columns_input!
   ): document_field
 
+  # update data of the table: "document_field_group"
+  update_document_field_group(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_group_set_input
+
+    # filter the rows which have to be updated
+    where: document_field_group_bool_exp!
+  ): document_field_group_mutation_response
+
+  # update single row of the table: "document_field_group"
+  update_document_field_group_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_group_set_input
+    pk_columns: document_field_group_pk_columns_input!
+  ): document_field_group
+
+  # update data of the table: "document_field_section"
+  update_document_field_section(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_section_set_input
+
+    # filter the rows which have to be updated
+    where: document_field_section_bool_exp!
+  ): document_field_section_mutation_response
+
+  # update single row of the table: "document_field_section"
+  update_document_field_section_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_field_section_set_input
+    pk_columns: document_field_section_pk_columns_input!
+  ): document_field_section
+
   # update data of the table: "document_field_value"
   update_document_field_value(
     # sets the columns of the filtered rows to the given values
@@ -1472,6 +2590,38 @@ type mutation_root {
     _set: document_field_value_set_input
     pk_columns: document_field_value_pk_columns_input!
   ): document_field_value
+
+  # update data of the table: "document_relation"
+  update_document_relation(
+    # sets the columns of the filtered rows to the given values
+    _set: document_relation_set_input
+
+    # filter the rows which have to be updated
+    where: document_relation_bool_exp!
+  ): document_relation_mutation_response
+
+  # update single row of the table: "document_relation"
+  update_document_relation_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_relation_set_input
+    pk_columns: document_relation_pk_columns_input!
+  ): document_relation
+
+  # update data of the table: "document_relation_type"
+  update_document_relation_type(
+    # sets the columns of the filtered rows to the given values
+    _set: document_relation_type_set_input
+
+    # filter the rows which have to be updated
+    where: document_relation_type_bool_exp!
+  ): document_relation_type_mutation_response
+
+  # update single row of the table: "document_relation_type"
+  update_document_relation_type_by_pk(
+    # sets the columns of the filtered rows to the given values
+    _set: document_relation_type_set_input
+    pk_columns: document_relation_type_pk_columns_input!
+  ): document_relation_type
 
   # update data of the table: "document_type"
   update_document_type(
@@ -1959,6 +3109,40 @@ type query_root {
     where: document_field_bool_exp
   ): document_fieldConnection!
 
+  # fetch data from the table: "document_field_group"
+  document_field_group_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_groupConnection!
+
+  # fetch data from the table: "document_field_section"
+  document_field_section_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_section_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_section_order_by!]
+
+    # filter the rows returned
+    where: document_field_section_bool_exp
+  ): document_field_sectionConnection!
+
   # fetch data from the table: "document_field_value"
   document_field_value_connection(
     after: String
@@ -1975,6 +3159,40 @@ type query_root {
     # filter the rows returned
     where: document_field_value_bool_exp
   ): document_field_valueConnection!
+
+  # fetch data from the table: "document_relation"
+  document_relation_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_relation_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_relation_order_by!]
+
+    # filter the rows returned
+    where: document_relation_bool_exp
+  ): document_relationConnection!
+
+  # fetch data from the table: "document_relation_type"
+  document_relation_type_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_relation_type_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_relation_type_order_by!]
+
+    # filter the rows returned
+    where: document_relation_type_bool_exp
+  ): document_relation_typeConnection!
 
   # fetch data from the table: "document_type"
   document_type_connection(
@@ -2104,6 +3322,40 @@ type subscription_root {
     where: document_field_bool_exp
   ): document_fieldConnection!
 
+  # fetch data from the table: "document_field_group"
+  document_field_group_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_group_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_group_order_by!]
+
+    # filter the rows returned
+    where: document_field_group_bool_exp
+  ): document_field_groupConnection!
+
+  # fetch data from the table: "document_field_section"
+  document_field_section_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_field_section_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_field_section_order_by!]
+
+    # filter the rows returned
+    where: document_field_section_bool_exp
+  ): document_field_sectionConnection!
+
   # fetch data from the table: "document_field_value"
   document_field_value_connection(
     after: String
@@ -2120,6 +3372,40 @@ type subscription_root {
     # filter the rows returned
     where: document_field_value_bool_exp
   ): document_field_valueConnection!
+
+  # fetch data from the table: "document_relation"
+  document_relation_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_relation_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_relation_order_by!]
+
+    # filter the rows returned
+    where: document_relation_bool_exp
+  ): document_relationConnection!
+
+  # fetch data from the table: "document_relation_type"
+  document_relation_type_connection(
+    after: String
+    before: String
+
+    # distinct select on columns
+    distinct_on: [document_relation_type_select_column!]
+    first: Int
+    last: Int
+
+    # sort the rows by one or more columns
+    order_by: [document_relation_type_order_by!]
+
+    # filter the rows returned
+    where: document_relation_type_bool_exp
+  ): document_relation_typeConnection!
 
   # fetch data from the table: "document_type"
   document_type_connection(

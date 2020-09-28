@@ -1,0 +1,135 @@
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 0.4rem;
+}
+
+.sectionButtonBar button {
+  padding: 0.2rem;
+  font-size: 11px;
+  width: 80px;
+}
+
+.section {
+  margin: 0.5rem 0;
+  .sectionContent {
+    margin-top: 0.4rem;
+    //border-top: 1px solid $section-border-color;
+  }
+
+  .sectionInformationContainer {
+    display: grid;
+    grid-template-columns: max-content max-content;
+  }
+
+  .sectionInformationItemName {
+    width: var(--section-left-column-width);
+  }
+
+  .informationFormItem:not(:last-child) {
+    margin-bottom: 0.2rem;
+  }
+  .informationFormItem label {
+    width: var(--section-left-column-width);
+  }
+  .informationFormItem .informationFormItemField {
+    margin-left: var(--section-left-column-gap);
+    width: 360px;
+  }
+  .informationFormItem > input {
+    min-height: 38px;
+  }
+
+  .informationFormItem {
+    display: flex;
+
+    .informationFormSelect input {
+      border: 0;
+      box-shadow: none;
+    }
+  }
+
+  .sectionInformationItemValue {
+    grid-column: 2;
+    margin-left: var(--section-left-column-gap);
+  }
+
+  .sectionButtonBar {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .sectionButtonBar button {
+    flex-basis: 80px;
+    margin: 0 0rem 0 0.8rem;
+  }
+}
+
+.sectionHalf,
+.sectionTitleHalf {
+  width: 49.75%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.sectionHalf:not(:last-child) {
+  margin-right: 0.5%;
+}
+
+.sectionTitleHalf:not(:last-child) {
+  margin-right: 0.5%;
+}
+
+.subsectionTwoRow {
+  grid-template-columns: 120px auto !important;
+}
+
+.subsection {
+  display: grid;
+  grid-template-columns: 120px auto 80px;
+  grid-gap: 4rem;
+  padding: 0.8rem 0.4rem;
+
+  width: 100%;
+
+  .subsectionEditButton {
+    opacity: 0;
+  }
+
+  .subsectionEditButton button {
+    padding: 0.2rem;
+    font-size: 11px;
+    background-color: var(--bg-content);
+    border: 1px solid var(--border-color);
+    color: $text-dark;
+  }
+  .subsectionEditButton button&:hover {
+    background-color: var(--bg-content-contrast);
+  }
+
+  .subsection.isEditting {
+    background-color: var(--bg-content-contrast);
+  }
+
+  .subsection:hover {
+    background-color: var(--bg-content-contrast);
+    //cursor: pointer;
+
+    .subsubsection {
+      background-color: var(--bg-content-contrast);
+    }
+
+    .subsectionEditButton {
+      opacity: 1;
+    }
+  }
+}
+
+.subsubsectionContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 2rem;
+}
+
+.subsubsection {
+  padding: 1rem;
+}
