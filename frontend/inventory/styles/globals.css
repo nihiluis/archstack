@@ -12,9 +12,9 @@
 	--focused-color: #8575ff;
 	--unfocused-color: #9996a9;
 	--bg-content: #fff;
-	--bg-content-contrast: #fefefe;
+	--bg-content-contrast: #fbfbfb;
 	--border-color: #fefefe;
-	--section-left-column-width: 180px;
+	--section-left-column-width: 8rem;
 	--section-left-column-gap: 1.5rem;
 }
 

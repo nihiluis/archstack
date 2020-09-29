@@ -12,56 +12,64 @@
 
 .section {
   margin: 0.5rem 0;
-  .sectionContent {
-    margin-top: 0.4rem;
-    //border-top: 1px solid $section-border-color;
-  }
+}
 
-  .sectionInformationContainer {
-    display: grid;
-    grid-template-columns: max-content max-content;
-  }
+.sectionInformationContainer {
+  display: grid;
+  grid-template-columns: max-content max-content;
+}
 
-  .sectionInformationItemName {
-    width: var(--section-left-column-width);
-  }
+.sectionInformationItemName {
+  width: var(--section-left-column-width);
+}
 
-  .informationFormItem:not(:last-child) {
-    margin-bottom: 0.2rem;
-  }
-  .informationFormItem label {
-    width: var(--section-left-column-width);
-  }
-  .informationFormItem .informationFormItemField {
-    margin-left: var(--section-left-column-gap);
-    width: 360px;
-  }
-  .informationFormItem > input {
-    min-height: 38px;
-  }
+.informationFormItem:not(:last-child) {
+  margin-bottom: 0.2rem;
+}
+.informationFormItem label {
+  width: var(--section-left-column-width);
+}
+.informationFormItem .informationFormItemField {
+  margin-left: var(--section-left-column-gap);
+  width: 360px;
+}
+.informationFormItem > input {
+  min-height: 38px;
+}
 
-  .informationFormItem {
-    display: flex;
+.informationFormItem {
+  display: flex;
+}
 
-    .informationFormSelect input {
-      border: 0;
-      box-shadow: none;
-    }
-  }
+.informationFormItem .informationFormSelect input {
+  border: 0;
+  box-shadow: none;
+}
 
-  .sectionInformationItemValue {
-    grid-column: 2;
-    margin-left: var(--section-left-column-gap);
-  }
+.sectionInformationItemValue {
+  grid-column: 2;
+  margin-left: var(--section-left-column-gap);
+}
 
-  .sectionButtonBar {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .sectionButtonBar button {
-    flex-basis: 80px;
-    margin: 0 0rem 0 0.8rem;
-  }
+.sectionButtonBar {
+  display: flex;
+  justify-content: flex-end;
+}
+.sectionButtonBar button {
+  flex-basis: 80px;
+  margin: 0 0rem 0 0.8rem;
+}
+
+.sectionContent {
+  margin-top: 0.4rem;
+  //border-top: 1px solid $section-border-color;
+}
+
+.sectionTitle {
+  @apply text-3xl;
+  @apply font-semibold;
+	@apply text-gray-600;
+	@apply pl-2;
 }
 
 .sectionHalf,
@@ -83,44 +91,51 @@
   grid-template-columns: 120px auto !important;
 }
 
+.subsectionTitle {
+  @apply font-semibold;
+  @apply text-gray-700;
+	@apply text-lg;
+	@apply pl-2;
+}
+
 .subsection {
   display: grid;
   grid-template-columns: 120px auto 80px;
-  grid-gap: 4rem;
-  padding: 0.8rem 0.4rem;
+  grid-gap: 1rem;
+  padding: 0.8rem 0rem;
 
   width: 100%;
+}
+
+.subsectionEditButton {
+  opacity: 0;
+}
+
+.subsectionEditButton button {
+  padding: 0.2rem;
+  font-size: 11px;
+  background-color: var(--bg-content);
+  border: 1px solid var(--border-color);
+  color: $text-dark;
+}
+.subsectionEditButton button&:hover {
+  background-color: var(--bg-content-contrast);
+}
+
+.subsection.isEditting {
+  background-color: var(--bg-content-contrast);
+}
+
+.subsection:hover {
+  background-color: var(--bg-content-contrast);
+  //cursor: pointer;
+
+  .subsubsection {
+    background-color: var(--bg-content-contrast);
+  }
 
   .subsectionEditButton {
-    opacity: 0;
-  }
-
-  .subsectionEditButton button {
-    padding: 0.2rem;
-    font-size: 11px;
-    background-color: var(--bg-content);
-    border: 1px solid var(--border-color);
-    color: $text-dark;
-  }
-  .subsectionEditButton button&:hover {
-    background-color: var(--bg-content-contrast);
-  }
-
-  .subsection.isEditting {
-    background-color: var(--bg-content-contrast);
-  }
-
-  .subsection:hover {
-    background-color: var(--bg-content-contrast);
-    //cursor: pointer;
-
-    .subsubsection {
-      background-color: var(--bg-content-contrast);
-    }
-
-    .subsectionEditButton {
-      opacity: 1;
-    }
+    opacity: 1;
   }
 }
 
