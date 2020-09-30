@@ -128,18 +128,30 @@ export default function WorkspaceComponent({
 
 const WorkspaceContentWrapper = withRelay(WorkspaceContent)
 
+export type WorkspaceDocumentType = WorkspaceQueryResponse["document_type_connection"]["edges"][0]
+
 function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   // somehow the downloaded schema doesnt have a document_type_connection, but document_types..?
 
   const query = graphql`
     query WorkspaceQuery {
-      document_type_connection {
+      document_type_connection(order_by: { name: asc }) {
         edges {
           node {
             id
             external_id
             name
             color
+            sub_type_of {
+              id
+            }
+            sub_types_connection {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
             ...FilterSidebar_document_types
           }
           cursor

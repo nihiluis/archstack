@@ -102,6 +102,14 @@ function DocumentListComponent(props: {
                 id
                 name
                 color
+                sub_type_of {
+                  id
+                }
+                sub_types {
+                  id
+                  name
+                  color
+                }
               }
               ...DocumentListItem_field_values
             }

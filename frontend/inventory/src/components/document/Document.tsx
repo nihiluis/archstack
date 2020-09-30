@@ -1,11 +1,10 @@
-import React, { Suspense, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
-import { graphql, useLazyLoadQuery, useFragment } from "react-relay/hooks"
+import { graphql, useLazyLoadQuery } from "react-relay/hooks"
 import {
   DocumentQuery,
   DocumentQueryResponse,
 } from "./__generated__/DocumentQuery.graphql"
-import { DocumentField_field$key } from "./__generated__/DocumentField_field.graphql"
 import Section from "../ui/section/Section"
 import SectionContent from "../ui/section/SectionContent"
 import SectionHeader from "../ui/section/SectionHeader"
