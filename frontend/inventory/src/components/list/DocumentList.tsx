@@ -169,15 +169,17 @@ function DocumentListItem(props: ItemProps) {
         type {
           fields_connection(
             first: 6
-            where: { preview_info: { show: { _eq: true } } }
-            order_by: { order: asc }
+            where: { field: { preview_info: { show: { _eq: true } } } }
+            order_by: { field: { order: asc } }
           ) @connection(key: "document_fields_connection") {
             edges {
               node {
-                nodeId: id
-                name
-                preview_info {
-                  type
+                field {
+                  nodeId: id
+                  name
+                  preview_info {
+                    type
+                  }
                 }
               }
             }
@@ -228,15 +230,15 @@ function DocumentListItem(props: ItemProps) {
           />
           <Suspense fallback="Loading...">
             {(data.type.fields_connection?.edges || [])
-              .filter(edge => edge.node.preview_info.type === "label")
+              .filter(edge => edge.node.field.preview_info.type === "label")
               .map(edge => {
                 const value = data.field_values_connection?.edges.find(
-                  edge2 => edge2.node.field.nodeId === edge.node.nodeId
+                  edge2 => edge2.node.field.nodeId === edge.node.field.nodeId
                 )
 
                 return (
                   <DocumentListItemFieldText
-                    key={`DocumentListItemField-${edge.node.nodeId}`}
+                    key={`DocumentListItemField-${edge.node.field.nodeId}`}
                     field={edge.node}
                     value={value?.node}
                   />
@@ -257,7 +259,7 @@ interface FieldProps {
 function DocumentListItemFieldText(props: FieldProps): JSX.Element {
   return (
     <div className="mr-8">
-      <p className="font-semibold text-gray-600">{props.field.name}</p>
+      <p className="font-semibold text-gray-600">{props.field.field.name}</p>
       <p className="font-unfocused">{props.value?.value || "-"}</p>
     </div>
   )

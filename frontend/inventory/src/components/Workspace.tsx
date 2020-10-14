@@ -144,6 +144,7 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
             color
             sub_type_of {
               id
+              color
             }
             sub_types_connection {
               edges {

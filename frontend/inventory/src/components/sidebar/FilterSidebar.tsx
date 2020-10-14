@@ -9,6 +9,7 @@ import { DocumentTypesContext, WorkspaceDocumentType } from "../Workspace"
 import { WorkspaceQueryResponse } from "../__generated__/WorkspaceQuery.graphql"
 import Badge from "../ui/Badge"
 import { SidebarTitle, SidebarCategory } from "../ui/Sidebar"
+import { cx } from "../../lib/reexports"
 
 export default function FilterSidebar(): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
@@ -69,11 +70,13 @@ function FilterType({
     graphql`
       fragment FilterSidebar_document_types on document_type {
         fields_connection(first: 1000)
-          @connection(key: "document_type_fields_connection") {
+          @connection(key: "FilterSidebar_document_type_fields_connection") {
           edges {
             node {
-              id
-              name
+              field {
+                id
+                name
+              }
             }
           }
         }
@@ -82,11 +85,23 @@ function FilterType({
     documentType
   )
 
+  const isSubType = !!documentType.sub_type_of
+  const classes = cx("my-2 w-3/4", {
+    //"border-l-4": isSubType,
+    "ml-4": isSubType,
+  })
+  const style = isSubType
+    ? {
+        /*borderColor: documentType.sub_type_of.color*/
+      }
+    : {}
+
   return (
     <Badge
-      className="my-2 w-3/4"
+      className={classes}
       color={documentType.color}
-      title={documentType.name}
+      style={style}
+      title={documentType.name.substring(0, 15)}
     />
   )
 }
