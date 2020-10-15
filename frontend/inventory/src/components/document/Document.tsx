@@ -48,24 +48,26 @@ const query = graphql`
                         fields_connection {
                           edges {
                             node {
-                              id
-                              description
-                              created_at
-                              id
-                              mandatory
-                              name
-                              order
-                              updated_at
-                              field_type
-                              external_id
-                              field_values_connection(
-                                where: { document: { id: { _eq: $id } } }
-                                first: 1
-                              ) {
-                                edges {
-                                  node {
-                                    id
-                                    value
+                              field {
+                                id
+                                description
+                                created_at
+                                id
+                                mandatory
+                                name
+                                order
+                                updated_at
+                                field_type
+                                external_id
+                                field_values_connection(
+                                  where: { document: { id: { _eq: $id } } }
+                                  first: 1
+                                ) {
+                                  edges {
+                                    node {
+                                      id
+                                      value
+                                    }
                                   }
                                 }
                               }
@@ -114,12 +116,19 @@ export default function Document(props: Props): JSX.Element {
       )}
       {hasDocument && (
         <div>
-          <div className="mb-2 flex items-center">
-            <h1 className="font-semibold mb-1 text-3xl">{documentData.name}</h1>
-            <div
-              className="rounded-full py-1 px-2 text-white table ml-4"
-              style={{ backgroundColor: documentData.type.color }}>
-              {documentData.type.name}
+          <div>
+            <div className="mb-1 flex items-center">
+              <h1 className="font-semibold mb-2 text-3xl">
+                {documentData.name}
+              </h1>
+              <div
+                className="rounded-full py-1 px-2 text-white table ml-4"
+                style={{ backgroundColor: documentData.type.color }}>
+                {documentData.type.name}
+              </div>
+            </div>
+            <div className="rounded-md py-1 px-3 mb-4 text-xl text-gray-600 bg-white max-w-md">
+              {documentData.description}
             </div>
           </div>
           <TabMenu
@@ -142,13 +151,14 @@ export default function Document(props: Props): JSX.Element {
                           <SectionInformation
                             items={e2.node.fields_connection.edges.map(e3 => {
                               const value =
-                                e3.node.field_values_connection.edges.length > 0
-                                  ? e3.node.field_values_connection.edges[0]
-                                      .node
+                                e3.node.field.field_values_connection.edges
+                                  .length > 0
+                                  ? e3.node.field.field_values_connection
+                                      .edges[0].node
                                   : null
 
                               return {
-                                name: e3.node.name,
+                                name: e3.node.field.name,
                                 value: value?.value ?? "",
                               }
                             })}
