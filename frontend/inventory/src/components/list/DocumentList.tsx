@@ -28,6 +28,7 @@ import {
 import Badge from "../ui/Badge"
 import Link from "next/link"
 import { getIdFromNodeId } from "../../lib/hasura"
+import { getDocumentName } from "../../lib/document"
 
 interface Props {}
 
@@ -98,6 +99,10 @@ function DocumentListComponent(props: {
               description
               created_at
               updated_at
+              parent {
+                id
+                name
+              }
               type {
                 id
                 name
@@ -217,7 +222,7 @@ function DocumentListItem(props: ItemProps) {
             />
             <div>
               <Link href={`/document/[id]`} as={`/document/${id}`}>
-                <a className="font-semibold">{name}</a>
+                <a className="font-semibold flex">{getDocumentName(props.item)}</a>
               </Link>
               <p className="font-unfocused">{description || "-"}</p>
             </div>

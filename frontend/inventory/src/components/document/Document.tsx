@@ -14,6 +14,7 @@ import SubsectionTitle from "../ui/section/SubsectionTitle"
 import SubsectionContent from "../ui/section/SubsectionContent"
 import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
 import SectionInformation from "../ui/section/SectionInformation"
+import { getDocumentName } from "../../lib/document"
 
 interface Props {
   documentId: string
@@ -28,6 +29,10 @@ const query = graphql`
           created_at
           description
           external_id
+          parent {
+            id
+            name
+          }
           name
           type {
             color
@@ -117,9 +122,9 @@ export default function Document(props: Props): JSX.Element {
       {hasDocument && (
         <div>
           <div>
-            <div className="mb-1 flex items-center">
-              <h1 className="font-semibold mb-2 text-3xl">
-                {documentData.name}
+            <div className="mb-2 flex items-center">
+              <h1 className="font-semibold text-3xl flex">
+                {getDocumentName(documentData)}
               </h1>
               <div
                 className="rounded-full py-1 px-2 text-white table ml-4"

@@ -6,7 +6,7 @@
     "start:dev": "next dev -p 3001",
     "build": "next build",
     "start:prod": "next start",
-    "relay": "yarn run relay-compiler --schema schemas/schema.graphql --language typescript --src ."
+    "relay": "yarn run relay-compiler --schema schema.graphql --language typescript --src ."
   },
   "dependencies": {
     "archstack-core": "git+ssh://git@gitlab.com:archstack/core-app.git",
