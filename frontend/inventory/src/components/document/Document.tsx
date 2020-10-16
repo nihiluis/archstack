@@ -15,6 +15,10 @@ import SubsectionContent from "../ui/section/SubsectionContent"
 import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
 import SectionInformation from "../ui/section/SectionInformation"
 import { getDocumentName } from "../../lib/document"
+import Link from "next/link"
+import { getIdFromNodeId } from "../../lib/hasura"
+import MiniBadge from "../ui/MiniBadge"
+import Badge from "../ui/Badge"
 
 interface Props {
   documentId: string
@@ -32,6 +36,45 @@ const query = graphql`
           parent {
             id
             name
+            type {
+              id
+              name
+              color
+            }
+            children_connection {
+              edges {
+                node {
+                  id
+                  name
+                  parent {
+                    id
+                    name
+                  }
+                  type {
+                    id
+                    name
+                    color
+                  }
+                }
+              }
+            }
+          }
+          children_connection {
+            edges {
+              node {
+                id
+                name
+                parent {
+                  id
+                  name
+                }
+                type {
+                  id
+                  name
+                  color
+                }
+              }
+            }
           }
           name
           type {
@@ -94,22 +137,65 @@ const query = graphql`
   }
 `
 
+type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]
+type DocumentHierarchyItem = {
+  readonly node: {
+    readonly id: string
+    readonly name: string
+    readonly type: {
+      readonly id: string
+      readonly name: string
+      readonly color: string
+    }
+  }
+}
+type DocumentHierarchyItems = readonly DocumentHierarchyItem[]
+type DocumentHierarchyItemMap = { [key: string]: DocumentHierarchyItem[] }
+
+function organizeHierarchyItems(
+  items: DocumentHierarchyItems
+): DocumentHierarchyItemMap {
+  const map: DocumentHierarchyItemMap = {}
+
+  for (let item of items) {
+    if (!map.hasOwnProperty(item.node.type.id)) {
+      map[item.node.type.id] = []
+    }
+
+    map[item.node.type.id].push(item)
+  }
+
+  return map
+}
+
+const tabItems = ["Data", "Subscriptions", "Comments", "History"]
+
 export default function Document(props: Props): JSX.Element {
   const data = useLazyLoadQuery<DocumentQuery>(query, {
     id: props.documentId,
   })
 
-  type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]
-
-  const tabItems = ["Data", "Subscriptions", "Comments", "History"]
   const [activeTab, setActiveTab] = useState(0)
-
-  useEffect(() => {}, [data])
 
   const hasDocument = data.document_connection.edges.length === 1
   const documentData = hasDocument
     ? data.document_connection.edges[0].node
     : null
+
+  const documentParent = documentData.parent
+
+  const documentChildren = documentData.children_connection?.edges ?? []
+  const hasDocumentChildren = documentChildren.length > 0
+
+  const documentSiblings = documentParent
+    ? documentParent.children_connection?.edges.filter(
+        e => e.node.id !== documentData.id
+      ) ?? []
+    : []
+  const hasDocumentSiblings = documentSiblings.length > 0
+
+  const documentChildrenMap = organizeHierarchyItems(documentChildren)
+  const documentSiblingMap = organizeHierarchyItems(documentSiblings)
 
   const groups: Group[] =
     (documentData?.type.groups_connection.edges as Group[]) ?? []
@@ -133,7 +219,7 @@ export default function Document(props: Props): JSX.Element {
               </div>
             </div>
             <div className="rounded-md py-1 px-3 mb-4 text-xl text-gray-600 bg-white max-w-md">
-              {documentData.description}
+              {documentData.description || "-"}
             </div>
           </div>
           <TabMenu
@@ -143,6 +229,107 @@ export default function Document(props: Props): JSX.Element {
           />
           <TabContainer>
             <Tab showWhenTab={0} currentTab={activeTab}>
+              <Section>
+                <SectionHeader>
+                  <SectionTitle title="Hierarchy" size="full" />
+                </SectionHeader>
+                <SectionContent size="full">
+                  <Subsection size="full">
+                    <SubsectionTitle title="Parent" />
+                    <SubsectionContent size="full">
+                      {!documentParent && <p>-</p>}
+                      {documentParent && (
+                        <React.Fragment>
+                          <Badge title={documentParent.type.name} color={documentParent.type.color} className="table mb-2" />
+                          <Link
+                            href={`/document/[id]`}
+                            as={`/document/${getIdFromNodeId(
+                              documentParent.id
+                            )}`}>
+                            <a className="font-semibold flex">
+                              {getDocumentName(documentParent)}
+                            </a>
+                          </Link>
+                        </React.Fragment>
+                      )}
+                    </SubsectionContent>
+                  </Subsection>
+                  <Subsection size="full">
+                    <SubsectionTitle title="Children" />
+                    <SubsectionContent size="full">
+                      {!hasDocumentChildren && <p>-</p>}
+                      {hasDocumentChildren && (
+                        <div className="flex">
+                          {Object.entries(documentChildrenMap).map(cont => {
+                            const [_, edges] = cont
+
+                            const type = edges[0].node.type
+
+                            return (
+                              <div className="mr-8">
+                                <Badge title={type.name} color={type.color} className="table" />
+                                <div className="mt-2">
+                                  {edges.map(e => {
+                                    const id = getIdFromNodeId(e.node.id)
+
+                                    return (
+                                      <Link
+                                        key={`document-child-link-${id}`}
+                                        href={`/document/[id]`}
+                                        as={`/document/${id}`}>
+                                        <a className="font-semibold flex">
+                                          {getDocumentName(e.node)}
+                                        </a>
+                                      </Link>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </SubsectionContent>
+                  </Subsection>
+                  <Subsection size="full">
+                    <SubsectionTitle title="Siblings" />
+                    <SubsectionContent size="full">
+                      {!hasDocumentSiblings && <p>-</p>}
+                      {hasDocumentSiblings && (
+                        <div className="flex">
+                          {Object.entries(documentSiblingMap).map(cont => {
+                            const [_, edges] = cont
+
+                            const type = edges[0].node.type
+
+                            return (
+                              <div>
+                                <Badge title={type.name} color={type.color} className="table" />
+                                <div className="mt-2">
+                                  {edges.map(e => {
+                                    const id = getIdFromNodeId(e.node.id)
+
+                                    return (
+                                      <Link
+                                        key={`document-child-link-${id}`}
+                                        href={`/document/[id]`}
+                                        as={`/document/${id}`}>
+                                        <a className="font-semibold flex">
+                                          {getDocumentName(e.node)}
+                                        </a>
+                                      </Link>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </SubsectionContent>
+                  </Subsection>
+                </SectionContent>
+              </Section>
               {groups.map(e => (
                 <Section key={`section-${e.node.id}`}>
                   <SectionHeader>
