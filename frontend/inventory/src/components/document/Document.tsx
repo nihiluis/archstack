@@ -5,20 +5,11 @@ import {
   DocumentQuery,
   DocumentQueryResponse,
 } from "./__generated__/DocumentQuery.graphql"
-import Section from "../ui/section/Section"
-import SectionContent from "../ui/section/SectionContent"
-import SectionHeader from "../ui/section/SectionHeader"
-import SectionTitle from "../ui/section/SectionTitle"
-import Subsection from "../ui/section/Subsection"
-import SubsectionTitle from "../ui/section/SubsectionTitle"
-import SubsectionContent from "../ui/section/SubsectionContent"
+
 import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
-import SectionInformation from "../ui/section/SectionInformation"
 import { getDocumentName } from "../../lib/document"
-import Link from "next/link"
-import { getIdFromNodeId } from "../../lib/hasura"
-import MiniBadge from "../ui/MiniBadge"
-import Badge from "../ui/Badge"
+import DocumentGroupSection from "./DocumentGroupSection"
+import DocumentHierarchySection from "./DocumentHierarchySection"
 
 interface Props {
   documentId: string
@@ -88,45 +79,7 @@ const query = graphql`
             groups_connection {
               edges {
                 node {
-                  id
-                  name
-                  sections_connection {
-                    edges {
-                      node {
-                        fields_connection {
-                          edges {
-                            node {
-                              field {
-                                id
-                                description
-                                created_at
-                                id
-                                mandatory
-                                name
-                                order
-                                updated_at
-                                field_type
-                                external_id
-                                field_values_connection(
-                                  where: { document: { id: { _eq: $id } } }
-                                  first: 1
-                                ) {
-                                  edges {
-                                    node {
-                                      id
-                                      value
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                        id
-                        name
-                      }
-                    }
-                  }
+                  ...DocumentGroupSection_group
                 }
               }
             }
@@ -138,7 +91,7 @@ const query = graphql`
 `
 
 type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]
-type DocumentHierarchyItem = {
+export type DocumentHierarchyItem = {
   readonly node: {
     readonly id: string
     readonly name: string
@@ -150,7 +103,9 @@ type DocumentHierarchyItem = {
   }
 }
 type DocumentHierarchyItems = readonly DocumentHierarchyItem[]
-type DocumentHierarchyItemMap = { [key: string]: DocumentHierarchyItem[] }
+export type DocumentHierarchyItemMap = {
+  [key: string]: DocumentHierarchyItem[]
+}
 
 function organizeHierarchyItems(
   items: DocumentHierarchyItems
@@ -229,137 +184,18 @@ export default function Document(props: Props): JSX.Element {
           />
           <TabContainer>
             <Tab showWhenTab={0} currentTab={activeTab}>
-              <Section>
-                <SectionHeader>
-                  <SectionTitle title="Hierarchy" size="full" />
-                </SectionHeader>
-                <SectionContent size="full">
-                  <Subsection size="full">
-                    <SubsectionTitle title="Parent" />
-                    <SubsectionContent size="full">
-                      {!documentParent && <p>-</p>}
-                      {documentParent && (
-                        <React.Fragment>
-                          <Badge title={documentParent.type.name} color={documentParent.type.color} className="table mb-2" />
-                          <Link
-                            href={`/document/[id]`}
-                            as={`/document/${getIdFromNodeId(
-                              documentParent.id
-                            )}`}>
-                            <a className="font-semibold flex">
-                              {getDocumentName(documentParent)}
-                            </a>
-                          </Link>
-                        </React.Fragment>
-                      )}
-                    </SubsectionContent>
-                  </Subsection>
-                  <Subsection size="full">
-                    <SubsectionTitle title="Children" />
-                    <SubsectionContent size="full">
-                      {!hasDocumentChildren && <p>-</p>}
-                      {hasDocumentChildren && (
-                        <div className="flex">
-                          {Object.entries(documentChildrenMap).map(cont => {
-                            const [_, edges] = cont
-
-                            const type = edges[0].node.type
-
-                            return (
-                              <div className="mr-8">
-                                <Badge title={type.name} color={type.color} className="table" />
-                                <div className="mt-2">
-                                  {edges.map(e => {
-                                    const id = getIdFromNodeId(e.node.id)
-
-                                    return (
-                                      <Link
-                                        key={`document-child-link-${id}`}
-                                        href={`/document/[id]`}
-                                        as={`/document/${id}`}>
-                                        <a className="font-semibold flex">
-                                          {getDocumentName(e.node)}
-                                        </a>
-                                      </Link>
-                                    )
-                                  })}
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                    </SubsectionContent>
-                  </Subsection>
-                  <Subsection size="full">
-                    <SubsectionTitle title="Siblings" />
-                    <SubsectionContent size="full">
-                      {!hasDocumentSiblings && <p>-</p>}
-                      {hasDocumentSiblings && (
-                        <div className="flex">
-                          {Object.entries(documentSiblingMap).map(cont => {
-                            const [_, edges] = cont
-
-                            const type = edges[0].node.type
-
-                            return (
-                              <div>
-                                <Badge title={type.name} color={type.color} className="table" />
-                                <div className="mt-2">
-                                  {edges.map(e => {
-                                    const id = getIdFromNodeId(e.node.id)
-
-                                    return (
-                                      <Link
-                                        key={`document-child-link-${id}`}
-                                        href={`/document/[id]`}
-                                        as={`/document/${id}`}>
-                                        <a className="font-semibold flex">
-                                          {getDocumentName(e.node)}
-                                        </a>
-                                      </Link>
-                                    )
-                                  })}
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                    </SubsectionContent>
-                  </Subsection>
-                </SectionContent>
-              </Section>
+              <DocumentHierarchySection
+                documentParent={documentParent}
+                hasDocumentChildren={hasDocumentChildren}
+                hasDocumentSiblings={hasDocumentSiblings}
+                documentChildrenMap={documentChildrenMap}
+                documentSiblingMap={documentSiblingMap}
+              />
               {groups.map(e => (
-                <Section key={`section-${e.node.id}`}>
-                  <SectionHeader>
-                    <SectionTitle title={e.node.name} size="full" />
-                  </SectionHeader>
-                  <SectionContent size="full">
-                    {e.node.sections_connection.edges.map(e2 => (
-                      <Subsection key={`subsection-${e2.node.id}`} size="full">
-                        <SubsectionTitle title={e2.node.name} />
-                        <SubsectionContent size="full">
-                          <SectionInformation
-                            items={e2.node.fields_connection.edges.map(e3 => {
-                              const value =
-                                e3.node.field.field_values_connection.edges
-                                  .length > 0
-                                  ? e3.node.field.field_values_connection
-                                      .edges[0].node
-                                  : null
-
-                              return {
-                                name: e3.node.field.name,
-                                value: value?.value ?? "",
-                              }
-                            })}
-                          />
-                        </SubsectionContent>
-                      </Subsection>
-                    ))}
-                  </SectionContent>
-                </Section>
+                <DocumentGroupSection
+                  key={`document-group-section-wrapper-${(e.node as any).id}`}
+                  item={e.node}
+                />
               ))}
             </Tab>
           </TabContainer>

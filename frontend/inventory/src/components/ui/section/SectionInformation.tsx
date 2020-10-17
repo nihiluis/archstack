@@ -21,21 +21,32 @@ const SectionInformation: React.FC<Props> = props => {
   return (
     <ul className={classes}>
       {props.items.map(({ name, value }) => (
-        <React.Fragment key={`si-${name}-fragment`}>
-          <li
-            key={`si-${name}-name`}
-            className={style.sectionInformationItemName}>
-            <p>{name}</p>
-          </li>
-          <li
-            key={`si-${name}-value`}
-            className={style.sectionInformationItemValue}>
-            <p>{value || "-"}</p>
-          </li>
-        </React.Fragment>
+        <SectionInformationItem key={`sii-${name}`} name={name} value={value} />
       ))}
     </ul>
   )
 }
 
 export default SectionInformation
+
+interface ItemProps {
+  name: string
+  value?: string
+}
+
+export function SectionInformationItem(props: ItemProps): JSX.Element {
+  const { name, value } = props
+
+  return (
+    <div className="flex" key={`si-${name}-fragment`}>
+      <li key={`si-${name}-name`} className={style.sectionInformationItemName}>
+        <p>{name}</p>
+      </li>
+      <li
+        key={`si-${name}-value`}
+        className={style.sectionInformationItemValue}>
+        <p>{value || "-"}</p>
+      </li>
+    </div>
+  )
+}
