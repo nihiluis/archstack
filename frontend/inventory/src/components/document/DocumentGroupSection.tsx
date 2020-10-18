@@ -12,11 +12,13 @@ import SubsectionTitle from "../ui/section/SubsectionTitle"
 import SubsectionContent from "../ui/section/SubsectionContent"
 import SectionInformation from "../ui/section/SectionInformation"
 import DocumentRelationTypeSubsection from "./DocumentRelationTypeSubsection"
+import { Document } from "./Document"
 
 type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]["node"]
 
 interface Props {
-  item: Group
+  document: Document
+  group: Group
 }
 
 export default function DocumentGroupSection(props: Props): JSX.Element {
@@ -71,7 +73,7 @@ export default function DocumentGroupSection(props: Props): JSX.Element {
         }
       }
     `,
-    props.item
+    props.group
   )
 
   return (
@@ -99,7 +101,11 @@ export default function DocumentGroupSection(props: Props): JSX.Element {
           </Subsection>
         ))}
         {(data.relation_types_connection?.edges ?? []).map(e => (
-          <DocumentRelationTypeSubsection item={e.node} />
+          <DocumentRelationTypeSubsection
+            key={`DocumentRelationTypeSubsection-${(e.node as any).id}`}
+            document={props.document}
+            relationType={e.node}
+          />
         ))}
       </SectionContent>
     </Section>

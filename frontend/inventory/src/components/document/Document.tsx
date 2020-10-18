@@ -24,6 +24,49 @@ const query = graphql`
           created_at
           description
           external_id
+          from_relations_connection {
+            edges {
+              node {
+                type {
+                  id
+                }
+                from {
+                  id
+                }
+                to {
+                  id
+                  name
+                  parent {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+          }
+          to_relations_connection {
+            edges {
+              node {
+                type {
+                  id
+                }
+                from {
+                  id
+                  name
+                  parent {
+                    id
+                    name
+                  }
+                }
+                to {
+                  id
+                  type {
+                    id
+                  }
+                }
+              }
+            }
+          }
           parent {
             id
             name
@@ -89,8 +132,8 @@ const query = graphql`
     }
   }
 `
-
-type Group = DocumentQueryResponse["document_connection"]["edges"][0]["node"]["type"]["groups_connection"]["edges"][0]
+export type Document = DocumentQueryResponse["document_connection"]["edges"][0]["node"]
+type Group = Document["type"]["groups_connection"]["edges"][0]
 export type DocumentHierarchyItem = {
   readonly node: {
     readonly id: string
@@ -194,7 +237,8 @@ export default function Document(props: Props): JSX.Element {
               {groups.map(e => (
                 <DocumentGroupSection
                   key={`document-group-section-wrapper-${(e.node as any).id}`}
-                  item={e.node}
+                  document={documentData}
+                  group={e.node}
                 />
               ))}
             </Tab>
