@@ -119,6 +119,7 @@ function DocumentRelationTypeSubsectionInner(props: InnerProps): JSX.Element {
             </Link>
           )
         })}
+        {items.length === 0 && <p>-</p>}
       </SubsectionContent>
     </Subsection>
   )

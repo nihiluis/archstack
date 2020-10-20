@@ -23,6 +23,7 @@ export interface AuthState {
   authenticated: boolean
   error: string
   token: string
+  userId: string
 }
 
 interface Props {
@@ -45,12 +46,12 @@ export default function Auth(props: PropsWithChildren<Props>) {
       if (!auth.authenticated) {
         setAuthLoading(true)
 
-        const { success, token, error } = await checkAuth(initialToken)
+        const { success, token, userId, error } = await checkAuth(initialToken)
 
         if (!isCancelled) {
           setAuthLoading(false)
           setSessionToken(token)
-          setAuth({ authenticated: success, token, error })
+          setAuth({ authenticated: success, token, userId, error })
         }
       } else if (authLoading) {
         setAuthLoading(false)

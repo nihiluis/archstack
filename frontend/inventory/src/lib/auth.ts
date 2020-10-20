@@ -6,6 +6,7 @@ interface AuthResult {
   success: boolean
   error: string
   token: string
+  userId: string
 }
 
 export async function checkAuth(
@@ -21,12 +22,13 @@ export async function checkAuth(
   )
 
   if (error || !res.data.hasOwnProperty("token")) {
-    return { success: false, token: "", error: error.message }
+    return { success: false, token: "", userId: "", error: error.message }
   }
 
   const token: string = res.data.token
+  const userId: string = res.data.userId
 
-  return { success: true, token, error: "" }
+  return { success: true, token, userId, error: "" }
 }
 
 export async function login(
@@ -44,12 +46,13 @@ export async function login(
   )
 
   if (error || !res.data.hasOwnProperty("token")) {
-    return { success: false, token: "", error: error.message }
+    return { success: false, token: "", userId: "", error: error.message }
   }
 
   const token: string = res.data.token
+  const userId: string = res.data.userId
 
-  return { success: true, token, error: "" }
+  return { success: true, token, userId, error: "" }
 }
 
 const SESSION_TOKEN_KEY = "token"
