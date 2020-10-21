@@ -7,6 +7,7 @@ import Layout from "../src/components/ui/Layout"
 import FilterSidebar from "../src/components/sidebar/FilterSidebar"
 import DocumentList from "../src/components/list/DocumentList"
 import { initEnvironment } from "../src/relay/relay"
+import RightSidebar from "../src/components/sidebar/RightSidebar"
 
 export default function Index() {
   return (
@@ -16,7 +17,7 @@ export default function Index() {
           showSidebarLeft={true}
           showSidebarRight={true}
           sidebarLeftComponent={<FilterSidebar />}
-          sidebarRightComponent={null}>
+          sidebarRightComponent={<RightSidebar />}>
           <DocumentList />
         </Layout>
       </Workspace>

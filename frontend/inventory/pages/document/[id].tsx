@@ -6,6 +6,7 @@ import Workspace, { WorkspaceContext } from "../../src/components/Workspace"
 import Layout from "../../src/components/ui/Layout"
 import { useRouter } from "next/router"
 import Document from "../../src/components/document/Document"
+import RightSidebar from "../../src/components/sidebar/RightSidebar"
 
 export default function Index() {
   const { workspace } = useContext(WorkspaceContext)
@@ -21,7 +22,7 @@ export default function Index() {
           showSidebarLeft={true}
           showSidebarRight={true}
           sidebarLeftComponent={null}
-          sidebarRightComponent={null}>
+          sidebarRightComponent={<RightSidebar />}>
           <Suspense fallback="Loading...">
             <Document documentId={id as string} />
           </Suspense>

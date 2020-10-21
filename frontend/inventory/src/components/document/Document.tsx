@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, Suspense } from "react"
 
 import { graphql, useLazyLoadQuery } from "react-relay/hooks"
 import {
@@ -10,6 +10,8 @@ import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
 import { getDocumentName } from "../../lib/document"
 import DocumentGroupSection from "./DocumentGroupSection"
 import DocumentHierarchySection from "./DocumentHierarchySection"
+import AddDocumentView from "./AddDocumentView"
+import { getIdFromNodeId } from "../../lib/hasura"
 
 interface Props {
   documentId: string
@@ -205,6 +207,9 @@ export default function Document(props: Props): JSX.Element {
       )}
       {hasDocument && (
         <div>
+          <Suspense fallback={null}>
+            <AddDocumentView documentId={getIdFromNodeId(documentData.id)} />
+          </Suspense>
           <div>
             <div className="mb-2 flex items-center">
               <h1 className="font-semibold text-3xl flex">

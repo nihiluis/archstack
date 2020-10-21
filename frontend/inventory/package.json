@@ -16,9 +16,10 @@
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-relay": "^0.0.0-experimental-183bdd28",
+    "react-relay": "0.0.0-experimental-183bdd28",
     "react-select-search": "^2.0.6",
     "relay-runtime": "^10.0.1",
+    "uuid": "^8.3.1",
     "yup": "^0.29.3"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@types/react": "^16.9.48",
     "@types/react-relay": "^7.0.9",
     "@types/relay-runtime": "^10.0.3",
+    "@types/uuid": "^8.3.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
     "babel-plugin-relay": "^10.0.1",
     "graphql": "^15.3.0",
