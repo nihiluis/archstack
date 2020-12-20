@@ -23,7 +23,7 @@ func NewService(datastore *datastore.Datastore) (*Relationships, error) {
 
 // WorkspaceAndUser represents a many to many relationship between workspaces and users
 type WorkspaceAndUser struct {
-	tableName struct{} `pg:"workspaces_users"`
+	tableName struct{} `pg:"workspace_user"`
 
 	WorkspaceID uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
 	UserID      uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
