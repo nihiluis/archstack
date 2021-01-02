@@ -9,7 +9,6 @@ import {
 import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
 import { getDocumentName } from "../../lib/document"
 import DocumentGroupSection from "./DocumentGroupSection"
-import DocumentHierarchySection from "./DocumentHierarchySection"
 import AddDocumentView from "./AddDocumentView"
 import { getIdFromNodeId } from "../../lib/hasura"
 
@@ -136,37 +135,6 @@ const query = graphql`
 `
 export type Document = DocumentQueryResponse["document_connection"]["edges"][0]["node"]
 type Group = Document["type"]["groups_connection"]["edges"][0]
-export type DocumentHierarchyItem = {
-  readonly node: {
-    readonly id: string
-    readonly name: string
-    readonly type: {
-      readonly id: string
-      readonly name: string
-      readonly color: string
-    }
-  }
-}
-type DocumentHierarchyItems = readonly DocumentHierarchyItem[]
-export type DocumentHierarchyItemMap = {
-  [key: string]: DocumentHierarchyItem[]
-}
-
-function organizeHierarchyItems(
-  items: DocumentHierarchyItems
-): DocumentHierarchyItemMap {
-  const map: DocumentHierarchyItemMap = {}
-
-  for (let item of items) {
-    if (!map.hasOwnProperty(item.node.type.id)) {
-      map[item.node.type.id] = []
-    }
-
-    map[item.node.type.id].push(item)
-  }
-
-  return map
-}
 
 const tabItems = ["Data", "Subscriptions", "Comments", "History"]
 
@@ -181,21 +149,6 @@ export default function Document(props: Props): JSX.Element {
   const documentData = hasDocument
     ? data.document_connection.edges[0].node
     : null
-
-  const documentParent = documentData.parent
-
-  const documentChildren = documentData.children_connection?.edges ?? []
-  const hasDocumentChildren = documentChildren.length > 0
-
-  const documentSiblings = documentParent
-    ? documentParent.children_connection?.edges.filter(
-        e => e.node.id !== documentData.id
-      ) ?? []
-    : []
-  const hasDocumentSiblings = documentSiblings.length > 0
-
-  const documentChildrenMap = organizeHierarchyItems(documentChildren)
-  const documentSiblingMap = organizeHierarchyItems(documentSiblings)
 
   const groups: Group[] =
     (documentData?.type.groups_connection.edges as Group[]) ?? []
@@ -232,13 +185,6 @@ export default function Document(props: Props): JSX.Element {
           />
           <TabContainer>
             <Tab showWhenTab={0} currentTab={activeTab}>
-              <DocumentHierarchySection
-                documentParent={documentParent}
-                hasDocumentChildren={hasDocumentChildren}
-                hasDocumentSiblings={hasDocumentSiblings}
-                documentChildrenMap={documentChildrenMap}
-                documentSiblingMap={documentSiblingMap}
-              />
               {groups.map(e => (
                 <DocumentGroupSection
                   key={`document-group-section-wrapper-${(e.node as any).id}`}
