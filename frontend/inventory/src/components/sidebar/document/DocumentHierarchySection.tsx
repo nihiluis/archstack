@@ -8,6 +8,8 @@ import {
 import Badge from "../../ui/Badge"
 import { getIdFromNodeId } from "../../../lib/hasura"
 import { getDocumentName } from "../../../lib/document"
+import MiniBadge from "../../ui/MiniBadge"
+import { cx } from "../../../lib/reexports"
 
 interface Props {
   document: DocumentHierarchyItem["node"]
@@ -16,6 +18,38 @@ interface Props {
   hasDocumentSiblings: boolean
   documentChildrenMap: DocumentHierarchyItemMap
   documentSiblingMap: DocumentHierarchyItemMap
+}
+
+interface ItemProps {
+  document: DocumentHierarchyItem["node"]
+  smallText?: boolean
+  semiBold?: boolean
+  className?: string
+}
+
+function Item(props: ItemProps) {
+  const { document, smallText, semiBold, className } = props
+
+  return (
+    <div className={cx(className, "flex", "p-1", "rounded")}>
+      <MiniBadge
+        title={document.type.name}
+        color={document.type.color}
+        className="table mr-2"
+      />
+      <Link
+        href={`/document/[id]`}
+        as={`/document/${getIdFromNodeId(document.id)}`}>
+        <a
+          className={cx(
+            { "text-sm": smallText, "font-semibold": semiBold },
+            "flex"
+          )}>
+          {getDocumentName(document, false)}
+        </a>
+      </Link>
+    </div>
+  )
 }
 
 export default function DocumentHierarchySection(props: Props): JSX.Element {
@@ -30,26 +64,11 @@ export default function DocumentHierarchySection(props: Props): JSX.Element {
 
   return (
     <>
-      {!documentParent && <p>-</p>}
-      {documentParent && (
-        <React.Fragment>
-          <Badge
-            title={documentParent.type.name}
-            color={documentParent.type.color}
-            className="table mb-2"
-          />
-          <Link
-            href={`/document/[id]`}
-            as={`/document/${getIdFromNodeId(documentParent.id)}`}>
-            <a className="font-semibold flex">
-              {getDocumentName(documentParent)}
-            </a>
-          </Link>
-        </React.Fragment>
-      )}
+      {!documentParent && <p className="mb-2">No parent</p>}
+      {documentParent && <Item document={documentParent} semiBold />}
       {!hasDocumentSiblings && (
         <Sibling
-          id={getIdFromNodeId(document.id)}
+          primary
           hasChildren={hasDocumentChildren}
           document={document}
           childrenMap={documentChildrenMap}
@@ -84,16 +103,15 @@ function Siblings(props: SiblingsProps): JSX.Element {
 
         return (
           <div className="mr-8" key={`hierarchy-item-type-${type.id}`}>
-            <Badge title={type.name} color={type.color} className="table" />
             <div className="mt-2">
               {edges.map(e => {
                 const id = getIdFromNodeId(e.node.id)
 
-                const hasChildren = id === getIdFromNodeId(props.document.id)
+                const hasChildren = id === getIdFromNodeId(document.id)
 
                 return (
                   <Sibling
-                    id={id}
+                    primary={hasChildren}
                     hasChildren={hasChildren}
                     document={e.node}
                     childrenMap={childrenMap}
@@ -109,26 +127,26 @@ function Siblings(props: SiblingsProps): JSX.Element {
 }
 
 interface SiblingProps {
-  id: string
+  primary: boolean
   hasChildren: boolean
   document: DocumentHierarchyItem["node"]
   childrenMap: DocumentHierarchyItemMap
 }
 
 function Sibling({
-  id,
+  primary,
   hasChildren,
   document,
   childrenMap,
 }: SiblingProps): JSX.Element {
   return (
     <div>
-      <Link
-        key={`document-child-link-${id}`}
-        href={`/document/[id]`}
-        as={`/document/${id}`}>
-        <a className="font-semibold flex">{getDocumentName(document)}</a>
-      </Link>
+      <Item
+        document={document}
+        smallText
+        semiBold
+        className={cx("pl-2", { "bg-gray-300": primary })}
+      />
       {hasChildren && (
         <Children document={document} childrenMap={childrenMap} />
       )}
@@ -153,22 +171,10 @@ function Children(props: ChildrenProps): JSX.Element {
 
         return (
           <div className="mr-8" key={`hierarchy-item-type-${type.id}`}>
-            <Badge title={type.name} color={type.color} className="table" />
             <div className="mt-2">
-              {edges.map(e => {
-                const id = getIdFromNodeId(e.node.id)
-
-                return (
-                  <Link
-                    key={`document-child-link-${id}`}
-                    href={`/document/[id]`}
-                    as={`/document/${id}`}>
-                    <a className="font-semibold flex">
-                      {getDocumentName(e.node)}
-                    </a>
-                  </Link>
-                )
-              })}
+              {edges.map(e => (
+                <Item document={e.node} smallText className="ml-4" />
+              ))}
             </div>
           </div>
         )
