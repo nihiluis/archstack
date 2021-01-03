@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { useFragment, graphql } from "react-relay/hooks"
 
 import {
@@ -10,9 +10,18 @@ import { WorkspaceQueryResponse } from "../__generated__/WorkspaceQuery.graphql"
 import Badge from "../ui/Badge"
 import { SidebarTitle, SidebarCategory } from "../ui/Sidebar"
 import { cx } from "../../lib/reexports"
+import { TypeFilters } from "../../../pages"
+import { getIdFromNodeId } from "../../lib/hasura"
 
-export default function FilterSidebar(): JSX.Element {
+interface Props {
+  typeFilters: TypeFilters
+  setTypeFilters: (typeFilters: TypeFilters) => void
+}
+
+export default function FilterSidebar(props: Props): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
+
+  const { typeFilters, setTypeFilters } = props
 
   const idTypeMap: { [key: string]: WorkspaceDocumentType } = {}
   for (let edge of documentTypeData.document_type_connection.edges) {
@@ -23,6 +32,16 @@ export default function FilterSidebar(): JSX.Element {
     .slice()
     .filter(edge => !edge.node.sub_type_of)
   const types = rootTypes.slice()
+
+  useEffect(() => {
+    const tmpTypeFilters: TypeFilters = {}
+
+    types.forEach(
+      type => (tmpTypeFilters[getIdFromNodeId(type.node.id)] = true)
+    )
+
+    setTypeFilters(tmpTypeFilters)
+  }, [])
 
   function insertSubTypes(type: WorkspaceDocumentType) {
     if (type.node.sub_types_connection.edges.length > 0) {
@@ -44,28 +63,46 @@ export default function FilterSidebar(): JSX.Element {
     insertSubTypes(type)
   }
 
+  function toggleTypeFilter(type: string) {
+    const newTypeFilters = { ...typeFilters }
+    newTypeFilters[type] = !newTypeFilters[type]
+
+    setTypeFilters(newTypeFilters)
+  }
+
   return (
     <React.Fragment>
       <div className="mt-4" />
-      <p className="ml-4 mb-3">Filter by</p>
       <SidebarTitle>Document type</SidebarTitle>
       <SidebarCategory>
-        {types.map(type => (
-          <FilterType
-            key={`filterType-${type.node.id}`}
-            documentType={type.node}
-          />
-        ))}
+        {types.map(type => {
+          const id = getIdFromNodeId(type.node.id)
+
+          return (
+            <FilterType
+              key={`filterType-${type.node.id}`}
+              documentType={type.node}
+              toggleTypeFilter={toggleTypeFilter}
+              active={typeFilters[id]}
+            />
+          )
+        })}
       </SidebarCategory>
     </React.Fragment>
   )
 }
 
+interface FilterTypeProps {
+  documentType: WorkspaceQueryResponse["document_type_connection"]["edges"][number]["node"]
+  active: boolean
+  toggleTypeFilter: (type: string) => void
+}
+
 function FilterType({
   documentType,
-}: {
-  documentType: WorkspaceQueryResponse["document_type_connection"]["edges"][number]["node"]
-}) {
+  active,
+  toggleTypeFilter,
+}: FilterTypeProps) {
   const data = useFragment<FilterSidebar_document_types$key>(
     graphql`
       fragment FilterSidebar_document_types on document_type {
@@ -86,7 +123,7 @@ function FilterType({
   )
 
   const isSubType = !!documentType.sub_type_of
-  const classes = cx("my-2 w-3/4", {
+  const classes = cx("my-2 table", {
     //"border-l-4": isSubType,
     "ml-4": isSubType,
   })
@@ -96,11 +133,17 @@ function FilterType({
       }
     : {}
 
+  function onClick() {
+    toggleTypeFilter(getIdFromNodeId(documentType.id))
+  }
+
   return (
     <Badge
       className={classes}
       color={documentType.color}
+      outline={!active}
       style={style}
+      onClick={onClick}
       title={documentType.name.substring(0, 15)}
     />
   )

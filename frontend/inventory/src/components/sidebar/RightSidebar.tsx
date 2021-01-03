@@ -77,6 +77,11 @@ function RightSidebar(): JSX.Element {
   return (
     <React.Fragment>
       <div className="mb-4" />
+      <SidebarTitle>Actions</SidebarTitle>
+      <SidebarCategory>
+        <p>Create Document</p>
+        <p>Export data</p>
+      </SidebarCategory>
       <SidebarTitle>Recently viewed</SidebarTitle>
       <SidebarCategory>
         <ul>

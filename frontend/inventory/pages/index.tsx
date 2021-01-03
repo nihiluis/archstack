@@ -13,15 +13,33 @@ export default function Index() {
   return (
     <Auth require>
       <Workspace>
-        <Layout
-          showSidebarLeft={true}
-          showSidebarRight={true}
-          sidebarLeftComponent={<FilterSidebar />}
-          sidebarRightComponent={<RightSidebar />}>
-          <DocumentList />
-        </Layout>
+        <IndexInner />
       </Workspace>
     </Auth>
+  )
+}
+
+export interface TypeFilters {
+  [key: string]: boolean
+}
+
+function IndexInner() {
+  const [typeFilters, setTypeFilters] = useState<TypeFilters>({})
+  const [fieldFilters, setFieldFilters] = useState([])
+
+  return (
+    <Layout
+      showSidebarLeft={true}
+      showSidebarRight={true}
+      sidebarLeftComponent={
+        <FilterSidebar
+          typeFilters={typeFilters}
+          setTypeFilters={setTypeFilters}
+        />
+      }
+      sidebarRightComponent={<RightSidebar />}>
+      <DocumentList />
+    </Layout>
   )
 }
 
