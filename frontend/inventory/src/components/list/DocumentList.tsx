@@ -1,4 +1,4 @@
-import React, { Suspense } from "react"
+import React, { Suspense, useEffect, unstable_useTransition } from "react"
 
 import * as RefreshSVG from "../icons/Refresh.svg"
 import * as ChevronDownSVG from "../icons/ChevronDown.svg"
@@ -29,8 +29,12 @@ import Badge from "../ui/Badge"
 import Link from "next/link"
 import { getIdFromNodeId } from "../../lib/hasura"
 import { getDocumentName } from "../../lib/document"
+import { TypeFilters } from "../../../pages"
 
-interface Props {}
+interface Props {
+  typeFilters: TypeFilters
+  nameFilter: string
+}
 
 export default function DocumentList(props: Props): JSX.Element {
   const data = useLazyLoadQuery<DocumentListQuery>(
@@ -42,11 +46,18 @@ export default function DocumentList(props: Props): JSX.Element {
     {}
   )
 
+  const types: string[] = []
+  Object.entries(props.typeFilters).forEach(([typeId, active]) => {
+    if (active) {
+      types.push(typeId)
+    }
+  })
+
   return (
     <div>
       <Menu />
       <Suspense fallback="Loading...">
-        <DocumentListComponent data={data} />
+        <DocumentListComponent data={data} types={types} name={props.nameFilter} />
       </Suspense>
     </div>
   )
@@ -74,8 +85,17 @@ function Menu(): JSX.Element {
 
 function DocumentListComponent(props: {
   data: DocumentListQueryResponse
+  types: string[]
+  name: string
 }): JSX.Element {
-  const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment<
+  //const [startTransition] = useTransition()
+  const {
+    data,
+    loadNext,
+    hasNext,
+    isLoadingNext,
+    refetch,
+  } = usePaginationFragment<
     DocumentListPaginationQuery,
     DocumentListComponent_document$key
   >(
@@ -84,12 +104,15 @@ function DocumentListComponent(props: {
       @argumentDefinitions(
         cursor: { type: "String" }
         first: { type: "Int", defaultValue: 10 }
+        types: { type: "[uuid!]" }
+        name: { type: "String" }
       )
       @refetchable(queryName: "DocumentListPaginationQuery") {
         document_connection(
           first: $first
           after: $cursor
           order_by: { created_at: desc }
+          where: { type: { id: { _in: $types } }, name: {_ilike: $name } }
         ) @connection(key: "DocumentList_document_connection") {
           edges {
             node {
@@ -125,6 +148,17 @@ function DocumentListComponent(props: {
     `,
     props.data
   )
+
+  useEffect(() => {
+    // When the searchTerm provided via props changes, refetch the connection
+    // with the new searchTerm
+    //startTransition(() => {
+    refetch(
+      { first: 10, types: props.types, name: `%${props.name}%` },
+      { fetchPolicy: "store-or-network" }
+    )
+    //})
+  }, [props.types, props.name])
 
   return (
     <div className="mt-2">
@@ -222,7 +256,9 @@ function DocumentListItem(props: ItemProps) {
             />
             <div>
               <Link href={`/document/[id]`} as={`/document/${id}`}>
-                <a className="font-semibold flex">{getDocumentName(props.item)}</a>
+                <a className="font-semibold flex">
+                  {getDocumentName(props.item)}
+                </a>
               </Link>
               <p className="font-unfocused">{description || "-"}</p>
             </div>

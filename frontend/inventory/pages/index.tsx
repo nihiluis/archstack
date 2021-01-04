@@ -38,7 +38,7 @@ function IndexInner() {
         />
       }
       sidebarRightComponent={<RightSidebar />}>
-      <DocumentList />
+      <DocumentList typeFilters={typeFilters} nameFilter="" />
     </Layout>
   )
 }

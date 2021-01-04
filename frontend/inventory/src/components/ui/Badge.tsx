@@ -11,17 +11,23 @@ interface Props {
 }
 
 export default function Badge(props: Props): JSX.Element {
-  const style: any = props.style || {}
+  const style: any = { ...props.style } || {}
 
   if (props.color && !props.outline) {
     style.backgroundColor = props.color
+  }
+  if (props.color) {
+    style.borderColor = props.color
   }
 
   return (
     <div
       className={cx(
-        "rounded-full px-2 py-1 text-white text-sm",
-        { "bg-gray-600": !props.outline },
+        "rounded-full px-2 py-1 text-sm border-2",
+        {
+          "bg-gray-600 text-white border-white border-opacity-0": !props.outline,
+        },
+        { "text-standard": props.outline },
         props.className
       )}
       onClick={props.onClick}
