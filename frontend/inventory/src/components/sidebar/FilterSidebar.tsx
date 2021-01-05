@@ -12,16 +12,33 @@ import { SidebarTitle, SidebarCategory } from "../ui/Sidebar"
 import { cx } from "../../lib/reexports"
 import { TypeFilters } from "../../../pages"
 import { getIdFromNodeId } from "../../lib/hasura"
+import Input from "../ui/input"
+import FormRow from "../ui/FormRow"
 
 interface Props {
   typeFilters: TypeFilters
   setTypeFilters: (typeFilters: TypeFilters) => void
+  nameFilter: string
+  setNameFilter: (name: string) => void
+  parentNameFilter: string
+  setParentNameFilter: (parentName: string) => void
+  descriptionFilter: string
+  setDescriptionFilter: (description: string) => void
 }
 
 export default function FilterSidebar(props: Props): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
 
-  const { typeFilters, setTypeFilters } = props
+  const {
+    typeFilters,
+    setTypeFilters,
+    nameFilter,
+    setNameFilter,
+    parentNameFilter,
+    setParentNameFilter,
+    descriptionFilter,
+    setDescriptionFilter,
+  } = props
 
   const idTypeMap: { [key: string]: WorkspaceDocumentType } = {}
   for (let edge of documentTypeData.document_type_connection.edges) {
@@ -73,6 +90,39 @@ export default function FilterSidebar(props: Props): JSX.Element {
   return (
     <React.Fragment>
       <div className="mt-4" />
+      <SidebarTitle>General</SidebarTitle>
+      <SidebarCategory>
+        <FormRow label="Name">
+          <Input
+            name="name"
+            value={nameFilter}
+            handleChange={name => {
+              setNameFilter(name)
+            }}
+            type="text"
+          />
+        </FormRow>
+        <FormRow label="Parent name">
+          <Input
+            name="parentName"
+            value={parentNameFilter}
+            handleChange={name => {
+              setParentNameFilter(name)
+            }}
+            type="text"
+          />
+        </FormRow>
+        <FormRow label="Description">
+          <Input
+            name="description"
+            value={descriptionFilter}
+            handleChange={name => {
+              setDescriptionFilter(name)
+            }}
+            type="text"
+          />
+        </FormRow>
+      </SidebarCategory>
       <SidebarTitle>Document type</SidebarTitle>
       <SidebarCategory>
         {types.map(type => {

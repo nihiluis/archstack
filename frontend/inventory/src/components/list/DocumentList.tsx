@@ -34,6 +34,8 @@ import { TypeFilters } from "../../../pages"
 interface Props {
   typeFilters: TypeFilters
   nameFilter: string
+  parentNameFilter: string
+  descriptionFilter: string
 }
 
 export default function DocumentList(props: Props): JSX.Element {
@@ -57,7 +59,13 @@ export default function DocumentList(props: Props): JSX.Element {
     <div>
       <Menu />
       <Suspense fallback="Loading...">
-        <DocumentListComponent data={data} types={types} name={props.nameFilter} />
+        <DocumentListComponent
+          data={data}
+          types={types}
+          name={props.nameFilter}
+          parentName={props.parentNameFilter}
+          description={props.descriptionFilter}
+        />
       </Suspense>
     </div>
   )
@@ -87,6 +95,8 @@ function DocumentListComponent(props: {
   data: DocumentListQueryResponse
   types: string[]
   name: string
+  parentName: string
+  description: string
 }): JSX.Element {
   //const [startTransition] = useTransition()
   const {
@@ -106,13 +116,24 @@ function DocumentListComponent(props: {
         first: { type: "Int", defaultValue: 10 }
         types: { type: "[uuid!]" }
         name: { type: "String" }
+        parent_name: { type: "String" }
+        parent_is_null: { type: "Boolean" }
+        description: { type: "String" }
       )
       @refetchable(queryName: "DocumentListPaginationQuery") {
         document_connection(
           first: $first
           after: $cursor
           order_by: { created_at: desc }
-          where: { type: { id: { _in: $types } }, name: {_ilike: $name } }
+          where: {
+            type: { id: { _in: $types } }
+            name: { _ilike: $name }
+            description: { _ilike: $description }
+            _or: [
+              { parent_id: { _is_null: $parent_is_null } }
+              { parent: { name: { _ilike: $parent_name } } }
+            ]
+          }
         ) @connection(key: "DocumentList_document_connection") {
           edges {
             node {
@@ -153,8 +174,16 @@ function DocumentListComponent(props: {
     // When the searchTerm provided via props changes, refetch the connection
     // with the new searchTerm
     //startTransition(() => {
+    console.log(`%${props.parentName}%`)
     refetch(
-      { first: 10, types: props.types, name: `%${props.name}%` },
+      {
+        first: 10,
+        types: props.types,
+        name: `%${props.name}%`,
+        parent_name: `%${props.parentName}%`,
+        parent_is_null: props.parentName.length === 0,
+        description: `%${props.description}%`,
+      },
       { fetchPolicy: "store-or-network" }
     )
     //})

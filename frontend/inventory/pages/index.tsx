@@ -25,7 +25,15 @@ export interface TypeFilters {
 
 function IndexInner() {
   const [typeFilters, setTypeFilters] = useState<TypeFilters>({})
+  const [focusedType, setFocusedType] = useState<{}>()
   const [fieldFilters, setFieldFilters] = useState([])
+  const [nameFilter, setNameFilter] = useState<string>("")
+  const [descriptionFilter, setDescriptionFilter] = useState<string>("")
+  const [parentNameFilter, setParentNameFilter] = useState<string>("")
+
+  // grab all fields for specified focusedType
+  // render these fields in sidebar
+  // 
 
   return (
     <Layout
@@ -35,10 +43,21 @@ function IndexInner() {
         <FilterSidebar
           typeFilters={typeFilters}
           setTypeFilters={setTypeFilters}
+          nameFilter={nameFilter}
+          setNameFilter={setNameFilter}
+          parentNameFilter={parentNameFilter}
+          setParentNameFilter={setParentNameFilter}
+          descriptionFilter={descriptionFilter}
+          setDescriptionFilter={setDescriptionFilter}
         />
       }
       sidebarRightComponent={<RightSidebar />}>
-      <DocumentList typeFilters={typeFilters} nameFilter="" />
+      <DocumentList
+        typeFilters={typeFilters}
+        nameFilter={nameFilter}
+        parentNameFilter={parentNameFilter}
+        descriptionFilter={descriptionFilter}
+      />
     </Layout>
   )
 }
