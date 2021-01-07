@@ -14,6 +14,7 @@ import { FieldFilters, TypeFilters } from "../../../pages"
 import { getIdFromNodeId } from "../../lib/hasura"
 import Input from "../ui/input"
 import FormRow from "../ui/FormRow"
+import { FilterSidebarQuery } from "./__generated__/FilterSidebarQuery.graphql"
 
 interface Props {
   typeFilters: TypeFilters
@@ -32,26 +33,25 @@ interface Props {
 
 export default function FilterSidebar(props: Props): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
-  const data = useLazyLoadQuery<>(
+  const fieldData = useLazyLoadQuery<FilterSidebarQuery>(
     graphql`
-      query FilterSidebarQuery {
-        document_type_connection(
-          first: 50
-          order_by: { timestamp: desc }
-          where: {}
-        )
-          @connection(
-            key: "FilterSidebarQuery_document_type_connection"
-          ) {
+      query FilterSidebarQuery($id: uuid) {
+        document_type_connection(where: { id: { _eq: $id } }) {
           edges {
             node {
-              id
+              fields {
+                field {
+                  id
+                  name
+                  field_type
+                }
+              }
             }
           }
         }
       }
     `,
-    {}
+    { id: props.focusedType || null }
   )
 
   const {
@@ -109,13 +109,21 @@ export default function FilterSidebar(props: Props): JSX.Element {
     insertSubTypes(type)
   }
 
+  const fields = fieldData.document_type_connection.edges.flatMap(edge =>
+    edge.node.fields.map(field => field.field)
+  )
+
   function toggleTypeFilter(type: string) {
     const newTypeFilters = { ...typeFilters }
     newTypeFilters[type] = !newTypeFilters[type]
 
+    setTypeFilters(newTypeFilters)
+  }
+
+  function updateFocusedType() {
     let focusedType = ""
 
-    for (let [type, active] of Object.entries(newTypeFilters)) {
+    for (let [type, active] of Object.entries(typeFilters)) {
       if (active) {
         if (focusedType) {
           focusedType = ""
@@ -127,8 +135,9 @@ export default function FilterSidebar(props: Props): JSX.Element {
     }
 
     setFocusedType(focusedType)
-    setTypeFilters(newTypeFilters)
   }
+
+  useEffect(updateFocusedType, [typeFilters])
 
   return (
     <React.Fragment>
@@ -187,15 +196,24 @@ export default function FilterSidebar(props: Props): JSX.Element {
       {focusedType && (
         <React.Fragment>
           <SidebarTitle>Fields</SidebarTitle>
-          <SidebarCategory></SidebarCategory>
+          <SidebarCategory>
+            {fields.map(field => (
+              <div key={`sidebar-field-${field.id}`}>
+                <p className="mb-1">{field.name}</p>
+                <Input name={field.id} value="" type="text" className="w-3/4" />
+              </div>
+            ))}
+          </SidebarCategory>
         </React.Fragment>
       )}
     </React.Fragment>
   )
 }
 
+type DocumentType = WorkspaceQueryResponse["document_type_connection"]["edges"][number]["node"]
+
 interface FilterTypeProps {
-  documentType: WorkspaceQueryResponse["document_type_connection"]["edges"][number]["node"]
+  documentType: DocumentType
   active: boolean
   toggleTypeFilter: (type: string) => void
 }

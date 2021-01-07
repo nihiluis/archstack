@@ -6,7 +6,7 @@ interface Props {
   type: string
   name: string
   value: string
-  handleChange: (text: string) => void
+  handleChange?: (text: string) => void
   className?: string
 }
 
@@ -19,7 +19,7 @@ export default function Input(props: Props): JSX.Element {
       name={name}
       className={cx(inputStyle.input, className)}
       onChange={event => {
-        handleChange(event.target.value)
+        if (handleChange) handleChange(event.target.value)
         event.preventDefault()
       }}
       value={value}
