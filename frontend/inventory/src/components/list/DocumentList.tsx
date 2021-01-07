@@ -116,9 +116,8 @@ function DocumentListComponent(props: {
         first: { type: "Int", defaultValue: 10 }
         types: { type: "[uuid!]" }
         name: { type: "String" }
-        parent_name: { type: "String" }
-        parent_is_null: { type: "Boolean" }
         description: { type: "String" }
+        where_or: { type: "[document_bool_exp]" }
       )
       @refetchable(queryName: "DocumentListPaginationQuery") {
         document_connection(
@@ -129,10 +128,7 @@ function DocumentListComponent(props: {
             type: { id: { _in: $types } }
             name: { _ilike: $name }
             description: { _ilike: $description }
-            _or: [
-              { parent_id: { _is_null: $parent_is_null } }
-              { parent: { name: { _ilike: $parent_name } } }
-            ]
+            _or: $where_or
           }
         ) @connection(key: "DocumentList_document_connection") {
           edges {
@@ -174,14 +170,15 @@ function DocumentListComponent(props: {
     // When the searchTerm provided via props changes, refetch the connection
     // with the new searchTerm
     //startTransition(() => {
-    console.log(`%${props.parentName}%`)
     refetch(
       {
         first: 10,
         types: props.types,
         name: `%${props.name}%`,
-        parent_name: `%${props.parentName}%`,
-        parent_is_null: props.parentName.length === 0,
+        where_or: [
+            { parent_id: { _is_null: props.parentName.length === 0 } },
+            { parent: { name: { _ilike: `%${props.parentName}%` } } }
+        ],
         description: `%${props.description}%`,
       },
       { fetchPolicy: "store-or-network" }

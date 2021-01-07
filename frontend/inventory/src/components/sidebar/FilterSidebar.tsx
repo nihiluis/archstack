@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react"
-import { useFragment, graphql } from "react-relay/hooks"
+import { useFragment, graphql, useLazyLoadQuery } from "react-relay/hooks"
 
 import {
   FilterSidebar_document_types$key,
@@ -10,7 +10,7 @@ import { WorkspaceQueryResponse } from "../__generated__/WorkspaceQuery.graphql"
 import Badge from "../ui/Badge"
 import { SidebarTitle, SidebarCategory } from "../ui/Sidebar"
 import { cx } from "../../lib/reexports"
-import { TypeFilters } from "../../../pages"
+import { FieldFilters, TypeFilters } from "../../../pages"
 import { getIdFromNodeId } from "../../lib/hasura"
 import Input from "../ui/input"
 import FormRow from "../ui/FormRow"
@@ -24,10 +24,35 @@ interface Props {
   setParentNameFilter: (parentName: string) => void
   descriptionFilter: string
   setDescriptionFilter: (description: string) => void
+  fieldFilters: FieldFilters
+  setFieldFilters: (fieldFilters: FieldFilters) => void
+  focusedType: string
+  setFocusedType: (type: string) => void
 }
 
 export default function FilterSidebar(props: Props): JSX.Element {
   const documentTypeData = useContext(DocumentTypesContext)
+  const data = useLazyLoadQuery<>(
+    graphql`
+      query FilterSidebarQuery {
+        document_type_connection(
+          first: 50
+          order_by: { timestamp: desc }
+          where: {}
+        )
+          @connection(
+            key: "FilterSidebarQuery_document_type_connection"
+          ) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+    {}
+  )
 
   const {
     typeFilters,
@@ -38,6 +63,10 @@ export default function FilterSidebar(props: Props): JSX.Element {
     setParentNameFilter,
     descriptionFilter,
     setDescriptionFilter,
+    fieldFilters,
+    setFieldFilters,
+    focusedType,
+    setFocusedType,
   } = props
 
   const idTypeMap: { [key: string]: WorkspaceDocumentType } = {}
@@ -84,6 +113,20 @@ export default function FilterSidebar(props: Props): JSX.Element {
     const newTypeFilters = { ...typeFilters }
     newTypeFilters[type] = !newTypeFilters[type]
 
+    let focusedType = ""
+
+    for (let [type, active] of Object.entries(newTypeFilters)) {
+      if (active) {
+        if (focusedType) {
+          focusedType = ""
+          break
+        }
+
+        focusedType = type
+      }
+    }
+
+    setFocusedType(focusedType)
     setTypeFilters(newTypeFilters)
   }
 
@@ -100,6 +143,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
               setNameFilter(name)
             }}
             type="text"
+            className="w-3/4"
           />
         </FormRow>
         <FormRow label="Parent name">
@@ -110,6 +154,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
               setParentNameFilter(name)
             }}
             type="text"
+            className="w-3/4"
           />
         </FormRow>
         <FormRow label="Description">
@@ -120,6 +165,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
               setDescriptionFilter(name)
             }}
             type="text"
+            className="w-3/4"
           />
         </FormRow>
       </SidebarCategory>
@@ -138,6 +184,12 @@ export default function FilterSidebar(props: Props): JSX.Element {
           )
         })}
       </SidebarCategory>
+      {focusedType && (
+        <React.Fragment>
+          <SidebarTitle>Fields</SidebarTitle>
+          <SidebarCategory></SidebarCategory>
+        </React.Fragment>
+      )}
     </React.Fragment>
   )
 }
