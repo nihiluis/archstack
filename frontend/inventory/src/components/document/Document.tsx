@@ -9,7 +9,7 @@ import {
 import { TabMenu, Tab, TabContainer } from "../ui/TabMenu"
 import { getDocumentName } from "../../lib/document"
 import DocumentGroupSection from "./DocumentGroupSection"
-import AddDocumentView from "./AddDocumentView"
+import AddDocumentView from "./AddRecentDocumentView"
 import { getIdFromNodeId } from "../../lib/hasura"
 
 interface Props {
