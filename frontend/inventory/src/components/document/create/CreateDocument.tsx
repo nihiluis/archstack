@@ -3,119 +3,35 @@ import React, { useEffect, useState, Suspense, useContext } from "react"
 import { graphql, useLazyLoadQuery } from "react-relay/hooks"
 import { getIdFromNodeId } from "../../../lib/hasura"
 import { DocumentTypesContext } from "../../Workspace"
+import {
+  CreateDocumentQuery,
+  CreateDocumentQueryResponse,
+} from "./__generated__/CreateDocumentQuery.graphql"
 
 interface Props {
   documentId: string
 }
 
 const query = graphql`
-  query DocumentQuery($id: uuid) {
-    document_connection(where: { id: { _eq: $id } }) {
+  query CreateDocumentQuery($id: uuid) {
+    document_type_connection(where: { id: { _eq: $id } }) {
       edges {
         node {
-          id
-          created_at
-          description
-          external_id
-          from_relations_connection {
+          groups_connection {
             edges {
               node {
-                type {
-                  id
-                }
-                from {
-                  id
-                }
-                to {
-                  id
-                  name
-                  parent {
-                    id
-                    name
+                sections_connection {
+                  edges {
+                    node {
+                      fields {
+                        field {
+                          id
+                          name
+                          field_type
+                        }
+                      }
+                    }
                   }
-                }
-              }
-            }
-          }
-          to_relations_connection {
-            edges {
-              node {
-                type {
-                  id
-                }
-                from {
-                  id
-                  name
-                  parent {
-                    id
-                    name
-                  }
-                }
-                to {
-                  id
-                  type {
-                    id
-                  }
-                }
-              }
-            }
-          }
-          parent {
-            id
-            name
-            type {
-              id
-              name
-              color
-            }
-            children_connection {
-              edges {
-                node {
-                  id
-                  name
-                  parent {
-                    id
-                    name
-                  }
-                  type {
-                    id
-                    name
-                    color
-                  }
-                }
-              }
-            }
-          }
-          children_connection {
-            edges {
-              node {
-                id
-                name
-                parent {
-                  id
-                  name
-                }
-                type {
-                  id
-                  name
-                  color
-                }
-              }
-            }
-          }
-          name
-          type {
-            color
-            description
-            created_at
-            external_id
-            id
-            name
-            updated_at
-            groups_connection {
-              edges {
-                node {
-                  ...DocumentGroupSection_group
                 }
               }
             }
@@ -125,26 +41,23 @@ const query = graphql`
     }
   }
 `
-export type Document = DocumentQueryResponse["document_connection"]["edges"][0]["node"]
-type Group = Document["type"]["groups_connection"]["edges"][0]
 
-const tabItems = ["Data", "Subscriptions", "Comments", "History"]
+type Groups = CreateDocumentQueryResponse["document_type_connection"]["edges"][number]["node"]["groups_connection"]["edges"]
 
-export default function Document(props: Props): JSX.Element {
+export default function CreateDocument(props: Props): JSX.Element {
   const { types } = useContext(DocumentTypesContext)
-  const data = useLazyLoadQuery<DocumentQuery>(query, {
+  const data = useLazyLoadQuery<CreateDocumentQuery>(query, {
     id: props.documentId,
   })
 
   const [activeTab, setActiveTab] = useState(0)
 
-  const hasDocument = data.document_connection.edges.length === 1
-  const documentData = hasDocument
-    ? data.document_connection.edges[0].node
-    : null
+  const typeData =
+    data.document_type_connection.edges.length === 1
+      ? data.document_type_connection.edges[0].node
+      : null
 
-  const groups: Group[] =
-    (documentData?.type.groups_connection.edges as Group[]) ?? []
+  const groups: Groups = typeData?.groups_connection.edges ?? []
 
   return (
     <React.Fragment>

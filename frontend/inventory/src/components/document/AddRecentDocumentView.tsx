@@ -24,7 +24,7 @@ export default function AddDocumentView(props: Props): JSX.Element {
   const { auth } = useContext(AuthContext)
 
   const [commit, _] = useMutation<AddDocumentViewMutation>(graphql`
-    mutation AddDocumentViewMutation(
+    mutation AddRecentDocumentViewMutation(
       $workspace_id: uuid
       $user_id: uuid
       $document_id: uuid
