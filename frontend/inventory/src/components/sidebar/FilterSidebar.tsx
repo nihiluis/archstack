@@ -32,7 +32,7 @@ interface Props {
 }
 
 export default function FilterSidebar(props: Props): JSX.Element {
-  const documentTypeData = useContext(DocumentTypesContext)
+  const { types } = useContext(DocumentTypesContext)
   const fieldData = useLazyLoadQuery<FilterSidebarQuery>(
     graphql`
       query FilterSidebarQuery($id: uuid) {
@@ -69,16 +69,6 @@ export default function FilterSidebar(props: Props): JSX.Element {
     setFocusedType,
   } = props
 
-  const idTypeMap: { [key: string]: WorkspaceDocumentType } = {}
-  for (let edge of documentTypeData.document_type_connection.edges) {
-    idTypeMap[edge.node.id] = edge
-  }
-
-  const rootTypes = documentTypeData.document_type_connection.edges
-    .slice()
-    .filter(edge => !edge.node.sub_type_of)
-  const types = rootTypes.slice()
-
   useEffect(() => {
     const tmpTypeFilters: TypeFilters = {}
 
@@ -88,26 +78,6 @@ export default function FilterSidebar(props: Props): JSX.Element {
 
     setTypeFilters(tmpTypeFilters)
   }, [])
-
-  function insertSubTypes(type: WorkspaceDocumentType) {
-    if (type.node.sub_types_connection.edges.length > 0) {
-      let idx = types.indexOf(type) + 1
-
-      for (let edge of type.node.sub_types_connection.edges) {
-        const subType = idTypeMap[edge.node.id]
-        types.splice(idx, 0, subType)
-
-        insertSubTypes(subType)
-        idx += subType.node.sub_types_connection.edges.length
-
-        idx++
-      }
-    }
-  }
-
-  for (let type of rootTypes) {
-    insertSubTypes(type)
-  }
 
   const fields = fieldData.document_type_connection.edges.flatMap(edge =>
     edge.node.fields.map(field => field.field)

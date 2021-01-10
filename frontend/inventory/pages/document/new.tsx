@@ -5,29 +5,22 @@ import Workspace, { WorkspaceContext } from "../../src/components/Workspace"
 
 import Layout from "../../src/components/ui/Layout"
 import { useRouter } from "next/router"
-import Document from "../../src/components/document/Document"
 import RightSidebar from "../../src/components/sidebar/RightSidebar"
-import DocumentSidebarWrapper from "../../src/components/sidebar/DocumentSidebar"
 
-export default function Index() {
+export default function NewDocument() {
   const { workspace } = useContext(WorkspaceContext)
 
   const router = useRouter()
-
-  const { id } = router.query
 
   return (
     <Auth require>
       <Workspace>
         <Layout
-          showSidebarLeft={true}
+          showSidebarLeft={false}
           showSidebarRight={true}
-          sidebarLeftComponent={
-            <DocumentSidebarWrapper documentId={id as string} />
-          }
+          sidebarLeftComponent={null}
           sidebarRightComponent={<RightSidebar />}>
           <Suspense fallback="Loading...">
-            <Document documentId={id as string} />
           </Suspense>
         </Layout>
       </Workspace>

@@ -47,7 +47,12 @@ interface Props {
   require?: boolean
 }
 
-export const DocumentTypesContext = React.createContext<WorkspaceQueryResponse>(
+interface DocumentTypesContextData {
+  rawData: WorkspaceQueryResponse
+  types: WorkspaceQueryResponse["document_type_connection"]["edges"]
+}
+
+export const DocumentTypesContext = React.createContext<DocumentTypesContextData>(
   undefined
 )
 
@@ -166,6 +171,36 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
 
   const data = useLazyLoadQuery<WorkspaceQuery>(query, {})
 
+  const idTypeMap: { [key: string]: WorkspaceDocumentType } = {}
+  for (let edge of data.document_type_connection.edges) {
+    idTypeMap[edge.node.id] = edge
+  }
+
+  const rootTypes = data.document_type_connection.edges
+    .slice()
+    .filter(edge => !edge.node.sub_type_of)
+  const types = rootTypes.slice()
+
+  function insertSubTypes(type: WorkspaceDocumentType) {
+    if (type.node.sub_types_connection.edges.length > 0) {
+      let idx = types.indexOf(type) + 1
+
+      for (let edge of type.node.sub_types_connection.edges) {
+        const subType = idTypeMap[edge.node.id]
+        types.splice(idx, 0, subType)
+
+        insertSubTypes(subType)
+        idx += subType.node.sub_types_connection.edges.length
+
+        idx++
+      }
+    }
+  }
+
+  for (let type of rootTypes) {
+    insertSubTypes(type)
+  }
+
   const { environment } = useContext(ReactRelayContext)
 
   useEffect(() => {
@@ -175,7 +210,7 @@ function WorkspaceContent(props: PropsWithChildren<{}>): JSX.Element {
   //const [documentTypes, setDocumentTypes] = useState(data)
 
   return (
-    <DocumentTypesContext.Provider value={data}>
+    <DocumentTypesContext.Provider value={{ rawData: data, types }}>
       {props.children}
     </DocumentTypesContext.Provider>
   )
