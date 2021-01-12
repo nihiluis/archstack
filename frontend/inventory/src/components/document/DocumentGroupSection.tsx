@@ -49,7 +49,9 @@ export default function DocumentGroupSection(props: Props): JSX.Element {
                       name
                       order
                       updated_at
-                      field_type
+                      field_type {
+                        id
+                      }
                       external_id
                       field_values_connection(
                         where: { document: { id: { _eq: $id } } }

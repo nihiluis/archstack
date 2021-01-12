@@ -43,7 +43,9 @@ export default function FilterSidebar(props: Props): JSX.Element {
                 field {
                   id
                   name
-                  field_type
+                  field_type {
+                    id
+                  }
                 }
               }
             }
