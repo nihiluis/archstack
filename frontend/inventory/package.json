@@ -17,6 +17,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-relay": "0.0.0-experimental-183bdd28",
+    "react-select": "^3.1.1",
     "react-select-search": "^2.0.6",
     "relay-runtime": "^10.0.1",
     "uuid": "^8.3.1",
@@ -25,8 +26,9 @@
   "devDependencies": {
     "@types/classnames": "^2.2.10",
     "@types/node": "^14.6.2",
-    "@types/react": "^17.0.1",
+    "@types/react": "^17.0.0",
     "@types/react-relay": "^7.0.9",
+    "@types/react-select": "^3.1.2",
     "@types/relay-runtime": "^10.0.3",
     "@types/uuid": "^8.3.0",
     "babel-plugin-inline-react-svg": "^1.1.1",
