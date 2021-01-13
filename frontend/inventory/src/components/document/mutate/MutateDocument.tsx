@@ -11,14 +11,24 @@ import {
 import { stringify } from "querystring"
 import { group } from "console"
 import Input from "../../ui/input"
+import Field from "./field"
+import { Formik } from "formik"
 
 interface Props {
   documentId: string
 }
 
 const query = graphql`
-  query MutateDocumentQuery($id: uuid) {
-    document_type_connection(where: { id: { _eq: $id } }) {
+  query MutateDocumentQuery($document_id: uuid, $type_id: uuid) {
+    document_connection(where: { id: { _eq: $document_id } }) {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    document_type_connection(where: { id: { _eq: $type_id } }) {
       edges {
         node {
           groups_connection {
@@ -59,6 +69,10 @@ const query = graphql`
 
 type Groups = MutateDocumentQueryResponse["document_type_connection"]["edges"][number]["node"]["groups_connection"]["edges"]
 
+interface FormValues {
+  [key: string]: string
+}
+
 export default function MutateDocument(props: Props): JSX.Element {
   const { types } = useContext(DocumentTypesContext)
   const [selectedType, setSelectedType] = useState<{
@@ -66,7 +80,8 @@ export default function MutateDocument(props: Props): JSX.Element {
     label: string
   } | null>(null)
   const data = useLazyLoadQuery<MutateDocumentQuery>(query, {
-    id: selectedType?.value,
+    document_id: props.documentId || null,
+    type_id: selectedType?.value,
   })
 
   const typeData =
@@ -74,11 +89,26 @@ export default function MutateDocument(props: Props): JSX.Element {
       ? data.document_type_connection.edges[0].node
       : null
 
+  const documentData =
+    data.document_connection.edges.length === 1
+      ? data.document_connection.edges[0].node
+      : null
+
   const groups: Groups = typeData?.groups_connection.edges ?? []
+
+  const allFields = groups.flatMap(group =>
+    group.node.sections_connection.edges.flatMap(
+      section => section.node.fields_connection.edges
+    )
+  )
+
+  const initialFormValues: FormValues = {}
 
   const options = types.map(type => {
     return { value: type.node.id, label: type.node.name }
   })
+
+  function submit(values: FormValues) {}
 
   return (
     <React.Fragment>
@@ -88,11 +118,10 @@ export default function MutateDocument(props: Props): JSX.Element {
         onChange={setSelectedType}
       />
       {selectedType && (
-        <div>
-          {groups.map(group => (
-            <Group node={group.node} />
-          ))}
-        </div>
+        <Formik<FormValues>
+          initialValues={initialFormValues}
+          onSubmit={submit}
+        />
       )}
     </React.Fragment>
   )
@@ -119,7 +148,7 @@ function Group(props: GroupProps): JSX.Element {
   )
 }
 
-type Section = Group["sections_connection"]["edges"][number]["node"]
+export type Section = Group["sections_connection"]["edges"][number]["node"]
 
 interface SectionProps {
   node: Section
@@ -136,23 +165,6 @@ function Section(props: SectionProps): JSX.Element {
           <Field field={field.node.field} />
         ))}
       </div>
-    </div>
-  )
-}
-
-type Field = Section["fields_connection"]["edges"][number]["node"]["field"]
-
-interface FieldProps {
-  field: Field
-}
-
-function Field(props: FieldProps): JSX.Element {
-  const { field } = props
-
-  return (
-    <div key={`field-${field.id}`}>
-      <h4>{field.name}</h4>
-      <Input type="text" value="" name={`${field.id}`} />
     </div>
   )
 }
