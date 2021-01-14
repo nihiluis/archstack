@@ -25,6 +25,17 @@ const query = graphql`
         node {
           id
           name
+          field_values_connection {
+            edges {
+              node {
+                id
+                value
+                field {
+                  id
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -68,6 +79,7 @@ const query = graphql`
 `
 
 type Groups = MutateDocumentQueryResponse["document_type_connection"]["edges"][number]["node"]["groups_connection"]["edges"]
+type FieldValues = MutateDocumentQueryResponse["document_connection"]["edges"][number]["node"]["field_values_connection"]["edges"]
 
 interface FormValues {
   [key: string]: string
@@ -96,6 +108,7 @@ export default function MutateDocument(props: Props): JSX.Element {
 
   const groups: Groups = typeData?.groups_connection.edges ?? []
 
+
   const allFields = groups.flatMap(group =>
     group.node.sections_connection.edges.flatMap(
       section => section.node.fields_connection.edges
@@ -103,6 +116,8 @@ export default function MutateDocument(props: Props): JSX.Element {
   )
 
   const initialFormValues: FormValues = {}
+
+  allFields.forEach(field => {})
 
   const options = types.map(type => {
     return { value: type.node.id, label: type.node.name }

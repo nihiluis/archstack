@@ -5,7 +5,7 @@ interface Props {
   
 }
 
-function TextEditor(props: Props) {
+export default function TextEditor(props: Props) {
   return (
     <Input />
   )
