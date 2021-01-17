@@ -1,5 +1,6 @@
 import React from "react"
 import { Section } from "../MutateDocument"
+import EnumEditor from "./EnumEditor"
 import TextEditor from "./TextEditor"
 
 type Field = Section["fields_connection"]["edges"][number]["node"]["field"]
@@ -29,7 +30,9 @@ function FieldEditor(props: FieldProps): JSX.Element {
     case "string":
       return <TextEditor {...props} />
     case "enum":
-      return <EnumEditor {...props} />
+      const metadata = field.field_type.metadata
+
+      return <EnumEditor {...props} metadata={metadata} fieldId={field.id} />
     default:
       return null
   }

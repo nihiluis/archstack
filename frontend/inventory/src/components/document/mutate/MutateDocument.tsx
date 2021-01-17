@@ -13,6 +13,7 @@ import { group } from "console"
 import Input from "../../ui/input"
 import Field from "./field"
 import { Formik, FormikProps } from "formik"
+import Button from "../../ui/Button"
 
 interface Props {
   documentId: string
@@ -140,11 +141,12 @@ export default function MutateDocument(props: Props): JSX.Element {
       {selectedType && (
         <Formik<FormValues> initialValues={initialFormValues} onSubmit={submit}>
           {formikProps => (
-            <React.Fragment>
+            <div>
               {groups.map(group => (
                 <Group {...formikProps} node={group.node} />
               ))}
-            </React.Fragment>
+              <Button name="form-submit" type="submit" />
+            </div>
           )}
         </Formik>
       )}
