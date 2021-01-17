@@ -12,7 +12,7 @@ import { stringify } from "querystring"
 import { group } from "console"
 import Input from "../../ui/input"
 import Field from "./field"
-import { Formik } from "formik"
+import { Formik, FormikProps } from "formik"
 
 interface Props {
   documentId: string
@@ -107,7 +107,8 @@ export default function MutateDocument(props: Props): JSX.Element {
       : null
 
   const groups: Groups = typeData?.groups_connection.edges ?? []
-
+  const fieldValues: FieldValues =
+    documentData?.field_values_connection.edges ?? []
 
   const allFields = groups.flatMap(group =>
     group.node.sections_connection.edges.flatMap(
@@ -117,7 +118,11 @@ export default function MutateDocument(props: Props): JSX.Element {
 
   const initialFormValues: FormValues = {}
 
-  allFields.forEach(field => {})
+  allFields.forEach(field => (initialFormValues[field.node.field.id] = null))
+  fieldValues.forEach(
+    fieldValue =>
+      (initialFormValues[fieldValue.node.field.id] = fieldValue.node.value)
+  )
 
   const options = types.map(type => {
     return { value: type.node.id, label: type.node.name }
@@ -133,10 +138,15 @@ export default function MutateDocument(props: Props): JSX.Element {
         onChange={setSelectedType}
       />
       {selectedType && (
-        <Formik<FormValues>
-          initialValues={initialFormValues}
-          onSubmit={submit}
-        />
+        <Formik<FormValues> initialValues={initialFormValues} onSubmit={submit}>
+          {formikProps => (
+            <React.Fragment>
+              {groups.map(group => (
+                <Group {...formikProps} node={group.node} />
+              ))}
+            </React.Fragment>
+          )}
+        </Formik>
       )}
     </React.Fragment>
   )
@@ -144,19 +154,19 @@ export default function MutateDocument(props: Props): JSX.Element {
 
 type Group = Groups[number]["node"]
 
-interface GroupProps {
+interface GroupProps extends FormikProps<FormValues> {
   node: Group
 }
 
 function Group(props: GroupProps): JSX.Element {
-  const { node } = props
+  const { node, ...formikProps } = props
 
   return (
     <div key={`group-${node.id}`}>
       <h2>{node.name}</h2>
       <div>
         {node.sections_connection.edges.map(section => (
-          <Section node={section.node} />
+          <Section {...formikProps} node={section.node} />
         ))}
       </div>
     </div>
@@ -165,20 +175,29 @@ function Group(props: GroupProps): JSX.Element {
 
 export type Section = Group["sections_connection"]["edges"][number]["node"]
 
-interface SectionProps {
+interface SectionProps extends FormikProps<FormValues> {
   node: Section
 }
 
 function Section(props: SectionProps): JSX.Element {
-  const { node } = props
+  const { node, ...formikProps } = props
 
   return (
     <div key={`section-${node.id}`}>
       <h3>{node.name}</h3>
       <div>
-        {node.fields_connection.edges.map(field => (
-          <Field field={field.node.field} />
-        ))}
+        {node.fields_connection.edges.map(field => {
+          const id = field.node.field.id
+
+          return (
+            <Field
+              field={field.node.field}
+              name={id}
+              value={formikProps.values[id]}
+              handleChange={formikProps.handleChange}
+            />
+          )
+        })}
       </div>
     </div>
   )

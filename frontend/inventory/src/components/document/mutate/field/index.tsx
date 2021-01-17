@@ -6,6 +6,9 @@ type Field = Section["fields_connection"]["edges"][number]["node"]["field"]
 
 interface FieldProps {
   field: Field
+  name: string
+  value: string
+  handleChange: (text: string) => void
 }
 
 export default function Field(props: FieldProps): JSX.Element {
@@ -24,7 +27,9 @@ function FieldEditor(props: FieldProps): JSX.Element {
 
   switch (field.field_type.id) {
     case "string":
-      return <TextEditor />
+      return <TextEditor {...props} />
+    case "enum":
+      return <EnumEditor {...props} />
     default:
       return null
   }
