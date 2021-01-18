@@ -40,11 +40,17 @@ export default function EnumEditor(props: Props) {
     options[item.id] = { label: item.label, value: item.id }
   }
 
+  console.log(value)
+  console.log(options)
+  console.log(tmpMetadata)
+
+  const nullValue = value ? { value, label: options[value].label } : null
+
   return (
     <Select
       name={name}
       options={Object.values(options)}
-      value={{ value, label: options[value].label }}
+      value={nullValue}
       onChange={option => handleChange(option.value)}
     />
   )

@@ -39,12 +39,16 @@ export default function FilterSidebar(props: Props): JSX.Element {
         document_type_connection(where: { id: { _eq: $id } }) {
           edges {
             node {
-              fields {
-                field {
-                  id
-                  name
-                  field_type {
-                    id
+              fields_connection {
+                edges {
+                  node {
+                    field {
+                      id
+                      name
+                      field_type {
+                        id
+                      }
+                    }
                   }
                 }
               }

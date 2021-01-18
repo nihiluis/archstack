@@ -6,6 +6,7 @@ import Workspace, { WorkspaceContext } from "../../src/components/Workspace"
 import Layout from "../../src/components/ui/Layout"
 import { useRouter } from "next/router"
 import RightSidebar from "../../src/components/sidebar/RightSidebar"
+import MutateDocument from "../../src/components/document/mutate/MutateDocument"
 
 export default function NewDocument() {
   const { workspace } = useContext(WorkspaceContext)
@@ -21,6 +22,7 @@ export default function NewDocument() {
           sidebarLeftComponent={null}
           sidebarRightComponent={<RightSidebar />}>
           <Suspense fallback="Loading...">
+            <MutateDocument />
           </Suspense>
         </Layout>
       </Workspace>

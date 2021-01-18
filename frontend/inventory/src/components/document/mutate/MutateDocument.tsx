@@ -16,7 +16,7 @@ import { Formik, FormikProps } from "formik"
 import Button from "../../ui/Button"
 
 interface Props {
-  documentId: string
+  documentId?: string
 }
 
 const query = graphql`
@@ -62,6 +62,7 @@ const query = graphql`
                               field_type {
                                 id
                                 metadata
+                                type
                               }
                             }
                           }
@@ -94,7 +95,7 @@ export default function MutateDocument(props: Props): JSX.Element {
   } | null>(null)
   const data = useLazyLoadQuery<MutateDocumentQuery>(query, {
     document_id: props.documentId || null,
-    type_id: selectedType?.value,
+    type_id: selectedType ? getIdFromNodeId(selectedType.value) : null,
   })
 
   const typeData =
@@ -133,23 +134,27 @@ export default function MutateDocument(props: Props): JSX.Element {
 
   return (
     <React.Fragment>
-      <Select
-        options={options}
-        value={selectedType}
-        onChange={setSelectedType}
-      />
-      {selectedType && (
-        <Formik<FormValues> initialValues={initialFormValues} onSubmit={submit}>
-          {formikProps => (
-            <div>
-              {groups.map(group => (
-                <Group {...formikProps} node={group.node} />
-              ))}
-              <Button name="form-submit" type="submit" />
-            </div>
-          )}
-        </Formik>
-      )}
+      <div>
+        <Select
+          options={options}
+          value={selectedType}
+          onChange={setSelectedType}
+        />
+        {selectedType && (
+          <Formik<FormValues>
+            initialValues={initialFormValues}
+            onSubmit={submit}>
+            {formikProps => (
+              <div>
+                {groups.map(group => (
+                  <Group {...formikProps} node={group.node} />
+                ))}
+                <Button name="form-submit" type="submit" />
+              </div>
+            )}
+          </Formik>
+        )}
+      </div>
     </React.Fragment>
   )
 }
@@ -196,7 +201,7 @@ function Section(props: SectionProps): JSX.Element {
               field={field.node.field}
               name={id}
               value={formikProps.values[id]}
-              handleChange={formikProps.handleChange}
+              handleChange={value => formikProps.setFieldValue(id, value)}
             />
           )
         })}

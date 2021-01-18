@@ -26,7 +26,7 @@ export default function Field(props: FieldProps): JSX.Element {
 function FieldEditor(props: FieldProps): JSX.Element {
   const { field } = props
 
-  switch (field.field_type.id) {
+  switch (field.field_type.type) {
     case "string":
       return <TextEditor {...props} />
     case "enum":

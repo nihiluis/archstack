@@ -79,7 +79,7 @@ function RightSidebar(): JSX.Element {
       <div className="mb-4" />
       <SidebarTitle>Actions</SidebarTitle>
       <SidebarCategory>
-        <p>Create Document</p>
+        <Link href="/document/new"><a>Create Document</a></Link>
         <p>Export data</p>
       </SidebarCategory>
       <SidebarTitle>Recently viewed</SidebarTitle>
