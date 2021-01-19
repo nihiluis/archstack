@@ -2,14 +2,12 @@ import React, { useEffect, useContext } from "react"
 import { WorkspaceContext } from "../Workspace"
 import { AuthContext } from "../Auth"
 import {
-  AddDocumentViewMutation,
-  AddDocumentViewMutationVariables,
-} from "./__generated__/AddDocumentViewMutation.graphql"
+  AddRecentDocumentViewMutation,
+} from "./__generated__/AddRecentDocumentViewMutation.graphql"
 import {
   ConnectionHandler,
   ROOT_ID,
   graphql,
-  generateUniqueClientID,
 } from "relay-runtime"
 import * as uuid from "uuid"
 import { useMutation } from "react-relay/hooks"
@@ -23,7 +21,7 @@ export default function AddDocumentView(props: Props): JSX.Element {
   const { workspace } = useContext(WorkspaceContext)
   const { auth } = useContext(AuthContext)
 
-  const [commit, _] = useMutation<AddDocumentViewMutation>(graphql`
+  const [commit, _] = useMutation<AddRecentDocumentViewMutation>(graphql`
     mutation AddRecentDocumentViewMutation(
       $workspace_id: uuid
       $user_id: uuid

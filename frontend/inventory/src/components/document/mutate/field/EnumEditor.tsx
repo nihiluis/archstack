@@ -40,10 +40,6 @@ export default function EnumEditor(props: Props) {
     options[item.id] = { label: item.label, value: item.id }
   }
 
-  console.log(value)
-  console.log(options)
-  console.log(tmpMetadata)
-
   const nullValue = value ? { value, label: options[value].label } : null
 
   return (

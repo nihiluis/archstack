@@ -8,9 +8,6 @@ import {
   MutateDocumentQuery,
   MutateDocumentQueryResponse,
 } from "./__generated__/MutateDocumentQuery.graphql"
-import { stringify } from "querystring"
-import { group } from "console"
-import Input from "../../ui/input"
 import Field from "./field"
 import { Formik, FormikProps } from "formik"
 import Button from "../../ui/Button"
@@ -120,7 +117,13 @@ export default function MutateDocument(props: Props): JSX.Element {
 
   const initialFormValues: FormValues = {}
 
-  allFields.forEach(field => (initialFormValues[field.node.field.id] = null))
+  allFields.forEach(field => {
+    if (field.node.field.field_type.type === "string") {
+      initialFormValues[field.node.field.id] = ""
+    } else {
+      initialFormValues[field.node.field.id] = null
+    }
+  })
   fieldValues.forEach(
     fieldValue =>
       (initialFormValues[fieldValue.node.field.id] = fieldValue.node.value)
@@ -147,7 +150,11 @@ export default function MutateDocument(props: Props): JSX.Element {
             {formikProps => (
               <div>
                 {groups.map(group => (
-                  <Group {...formikProps} node={group.node} />
+                  <Group
+                    key={`${group.node.id}`}
+                    {...formikProps}
+                    node={group.node}
+                  />
                 ))}
                 <Button name="form-submit" type="submit" />
               </div>
@@ -173,7 +180,11 @@ function Group(props: GroupProps): JSX.Element {
       <h2>{node.name}</h2>
       <div>
         {node.sections_connection.edges.map(section => (
-          <Section {...formikProps} node={section.node} />
+          <Section
+            key={`section-${section.node.id}`}
+            {...formikProps}
+            node={section.node}
+          />
         ))}
       </div>
     </div>
@@ -198,6 +209,7 @@ function Section(props: SectionProps): JSX.Element {
 
           return (
             <Field
+              key={`field-${id}`}
               field={field.node.field}
               name={id}
               value={formikProps.values[id]}

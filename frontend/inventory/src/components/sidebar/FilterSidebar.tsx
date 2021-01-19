@@ -86,7 +86,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
   }, [])
 
   const fields = fieldData.document_type_connection.edges.flatMap(edge =>
-    edge.node.fields.map(field => field.field)
+    edge.node.fields_connection.edges.map(field => field.node.field)
   )
 
   function toggleTypeFilter(type: string) {
