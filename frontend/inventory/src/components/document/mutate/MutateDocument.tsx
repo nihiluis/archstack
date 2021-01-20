@@ -1,4 +1,10 @@
-import React, { useEffect, useState, Suspense, useContext } from "react"
+import React, {
+  useEffect,
+  useState,
+  Suspense,
+  useContext,
+  PropsWithChildren,
+} from "react"
 import Select from "react-select"
 
 import { graphql, useLazyLoadQuery } from "react-relay/hooks"
@@ -11,6 +17,7 @@ import {
 import Field from "./field"
 import { Formik, FormikProps } from "formik"
 import Button from "../../ui/Button"
+import Line from "../../ui/Line"
 
 interface Props {
   documentId?: string
@@ -84,6 +91,12 @@ interface FormValues {
   [key: string]: string
 }
 
+/**
+ * Ideas:
+ * - collapsible
+ * 
+ * @param props 
+ */
 export default function MutateDocument(props: Props): JSX.Element {
   const { types } = useContext(DocumentTypesContext)
   const [selectedType, setSelectedType] = useState<{
@@ -115,7 +128,7 @@ export default function MutateDocument(props: Props): JSX.Element {
     )
   )
 
-  const initialFormValues: FormValues = {}
+  const initialFormValues: FormValues = { parent: null }
 
   allFields.forEach(field => {
     if (field.node.field.field_type.type === "string") {
@@ -137,24 +150,94 @@ export default function MutateDocument(props: Props): JSX.Element {
 
   return (
     <React.Fragment>
-      <div>
+      <h1 className="mb-2 text-4xl">Create document</h1>
+      <div className="content">
+        <h2 className="mb-2">Type</h2>
         <Select
           options={options}
           value={selectedType}
           onChange={setSelectedType}
         />
+        <Line className="mt-4 mb-2" />
         {selectedType && (
           <Formik<FormValues>
             initialValues={initialFormValues}
             onSubmit={submit}>
             {formikProps => (
               <div>
-                {groups.map(group => (
-                  <Group
-                    key={`${group.node.id}`}
-                    {...formikProps}
-                    node={group.node}
+                <Group id="general" name="General">
+                  <Field
+                    id="name"
+                    name="Name"
+                    fieldType="string"
+                    fieldTypeMetadata={{ maxLength: 24 }}
+                    value={formikProps.values["name"]}
+                    handleChange={value =>
+                      formikProps.setFieldValue("name", value)
+                    }
                   />
+                  <Field
+                    id="description"
+                    name="Description"
+                    fieldType="string"
+                    fieldTypeMetadata={{ maxLength: 240 }}
+                    value={formikProps.values["description"]}
+                    handleChange={value =>
+                      formikProps.setFieldValue("name", value)
+                    }
+                  />
+                </Group>
+                <GroupLineBreak />
+                <Group id="hierarchy" name="Hierarchy">
+                  <Field
+                    id="parent"
+                    name="Parent"
+                    fieldType="relation"
+                    fieldTypeMetadata={{}}
+                    value={formikProps.values["parent"]}
+                    handleChange={value =>
+                      formikProps.setFieldValue("parent", value)
+                    }
+                  />
+                </Group>
+                {groups.length > 0 && <GroupLineBreak />}
+                {groups.map((group, idx) => (
+                  <React.Fragment>
+                    <Group
+                      key={`${group.node.id}`}
+                      id={group.node.id}
+                      name={group.node.name}>
+                      {group.node.sections_connection.edges.map(section => (
+                        <Section
+                          key={`section-${section.node.id}`}
+                          id={section.node.id}
+                          name={section.node.name}>
+                          {section.node.fields_connection.edges.map(field => {
+                            const id = field.node.field.id
+                            const name = field.node.field.name
+                            const fieldType = field.node.field.field_type.type
+                            const fieldTypeMetadata =
+                              field.node.field.field_type.metadata
+
+                            return (
+                              <Field
+                                key={`field-${id}`}
+                                id={id}
+                                fieldType={fieldType}
+                                fieldTypeMetadata={fieldTypeMetadata}
+                                name={name}
+                                value={formikProps.values[id]}
+                                handleChange={value =>
+                                  formikProps.setFieldValue(id, value)
+                                }
+                              />
+                            )
+                          })}
+                        </Section>
+                      ))}
+                    </Group>
+                    {idx !== groups.length - 1 && <GroupLineBreak />}
+                  </React.Fragment>
                 ))}
                 <Button name="form-submit" type="submit" />
               </div>
@@ -168,56 +251,40 @@ export default function MutateDocument(props: Props): JSX.Element {
 
 type Group = Groups[number]["node"]
 
-interface GroupProps extends FormikProps<FormValues> {
-  node: Group
+interface GroupProps extends PropsWithChildren<{}> {
+  id: string
+  name: string
 }
 
 function Group(props: GroupProps): JSX.Element {
-  const { node, ...formikProps } = props
+  const { children, id, name } = props
 
   return (
-    <div key={`group-${node.id}`}>
-      <h2>{node.name}</h2>
-      <div>
-        {node.sections_connection.edges.map(section => (
-          <Section
-            key={`section-${section.node.id}`}
-            {...formikProps}
-            node={section.node}
-          />
-        ))}
-      </div>
+    <div key={`group-${id}`}>
+      <h2 className="mb-2">{name}</h2>
+      <div>{children}</div>
     </div>
   )
 }
 
 export type Section = Group["sections_connection"]["edges"][number]["node"]
 
-interface SectionProps extends FormikProps<FormValues> {
-  node: Section
+interface SectionProps extends PropsWithChildren<{}> {
+  id: string
+  name: string
 }
 
 function Section(props: SectionProps): JSX.Element {
-  const { node, ...formikProps } = props
+  const { id, name, children } = props
 
   return (
-    <div key={`section-${node.id}`}>
-      <h3>{node.name}</h3>
-      <div>
-        {node.fields_connection.edges.map(field => {
-          const id = field.node.field.id
-
-          return (
-            <Field
-              key={`field-${id}`}
-              field={field.node.field}
-              name={id}
-              value={formikProps.values[id]}
-              handleChange={value => formikProps.setFieldValue(id, value)}
-            />
-          )
-        })}
-      </div>
+    <div key={`section-${id}`} className="mb-4">
+      <h3 className="mb-1">{name}</h3>
+      <div>{children}</div>
     </div>
   )
+}
+
+function GroupLineBreak(): JSX.Element {
+  return <Line className="mt-4 mb-4" />
 }

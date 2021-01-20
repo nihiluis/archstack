@@ -3,7 +3,7 @@ import React from "react"
 import Input from "../../../ui/input"
 
 interface Props {
-  name: string
+  id: string
   value?: string
   handleChange: (text: string) => void
 }
@@ -12,7 +12,7 @@ export default function NumberEditor(props: Props) {
   return (
     <Input
       type="number"
-      name={props.name}
+      name={props.id}
       value={props.value}
       handleChange={props.handleChange}
     />

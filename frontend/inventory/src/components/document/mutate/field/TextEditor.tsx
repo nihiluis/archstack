@@ -3,7 +3,7 @@ import Input from "../../../ui/input"
 import Textarea from "../../../ui/textarea"
 
 interface Props {
-  name: string
+  id: string
   value: string
   handleChange: (text: string) => void
   metadata?: unknown
@@ -14,11 +14,11 @@ interface Metadata {
 }
 
 export default function TextEditor(props: Props) {
-  const { name, value, handleChange, metadata } = props
+  const { id, value, handleChange, metadata } = props
 
   if (metadata && typeof metadata !== "object") {
     console.error(
-      `Illegal metadata is provided. The metadata on field ${name} of type string must be an object.`
+      `Illegal metadata is provided. The metadata on field ${id} of type string must be an object.`
     )
     return null
   }
@@ -28,8 +28,8 @@ export default function TextEditor(props: Props) {
   const isTextArea = (tmpMetadata?.maxLength ?? 0) > 28
 
   return isTextArea ? (
-    <Textarea name={name} value={value} handleChange={handleChange} />
+    <Textarea name={id} value={value} handleChange={handleChange} />
   ) : (
-    <Input type="text" name={name} value={value} handleChange={handleChange} />
+    <Input type="text" name={id} value={value} handleChange={handleChange} />
   )
 }

@@ -54,7 +54,7 @@ export default function AddDocumentView(props: Props): JSX.Element {
   `)
 
   useEffect(() => {
-    const mutationConfig: UseMutationConfig<AddDocumentViewMutation> = {
+    const mutationConfig: UseMutationConfig<AddRecentDocumentViewMutation> = {
       variables: {
         workspace_id: workspace.id,
         user_id: auth.userId,

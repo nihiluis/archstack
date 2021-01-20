@@ -4,37 +4,36 @@ import EnumEditor from "./EnumEditor"
 import NumberEditor from "./NumberEditor"
 import TextEditor from "./TextEditor"
 
-type Field = Section["fields_connection"]["edges"][number]["node"]["field"]
-
 interface FieldProps {
-  field: Field
+  id: string
   name: string
+  fieldType: string
+  fieldTypeMetadata: unknown
   value: string
   handleChange: (text: string) => void
 }
 
 export default function Field(props: FieldProps): JSX.Element {
-  const { field } = props
+  const { id, name } = props
 
   return (
-    <div key={`field-${field.id}`}>
-      <h4>{field.name}</h4>
+    <div key={`field-${id}`} className="mb-3">
+      <h4 className="mb-2">{name}</h4>
       <FieldEditor {...props} />
     </div>
   )
 }
 
 function FieldEditor(props: FieldProps): JSX.Element {
-  const { field } = props
-  
-  const metadata = field.field_type.metadata
+  const { fieldTypeMetadata, fieldType, id: fieldId } = props
 
-  switch (field.field_type.type) {
+  const metadata = fieldTypeMetadata
+
+  switch (fieldType) {
     case "string":
       return <TextEditor {...props} metadata={metadata} />
     case "enum":
-
-      return <EnumEditor {...props} metadata={metadata} fieldId={field.id} />
+      return <EnumEditor {...props} metadata={metadata} fieldId={fieldId} />
     case "number":
       return <NumberEditor {...props} />
     default:

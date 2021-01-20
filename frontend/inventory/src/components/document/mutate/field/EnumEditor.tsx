@@ -8,7 +8,7 @@ interface Option {
 }
 
 interface Props {
-  name: string
+  id: string
   value: string
   metadata: unknown
   fieldId: string
@@ -21,7 +21,7 @@ interface EnumMetadataItem {
 }
 
 export default function EnumEditor(props: Props) {
-  const { name, metadata, handleChange, fieldId, value } = props
+  const { id, metadata, handleChange, fieldId, value } = props
 
   if (!Array.isArray(metadata)) {
     console.error(
@@ -44,7 +44,7 @@ export default function EnumEditor(props: Props) {
 
   return (
     <Select
-      name={name}
+      name={id}
       options={Object.values(options)}
       value={nullValue}
       onChange={option => handleChange(option.value)}
