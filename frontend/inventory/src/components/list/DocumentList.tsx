@@ -210,7 +210,7 @@ function DocumentListComponent(props: {
             onClick={() => {
               loadNext(10)
             }}
-            className="btn-secondary"
+            secondary
             disabled={isLoadingNext}>
             {isLoadingNext ? "Loading..." : "Load More"}
           </Button>

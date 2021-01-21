@@ -1,6 +1,6 @@
 import React from "react"
 
-interface HasDocumentName {
+export interface HasDocumentName {
   name: string
   parent?: HasDocumentName
 }

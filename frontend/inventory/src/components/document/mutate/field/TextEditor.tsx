@@ -28,7 +28,7 @@ export default function TextEditor(props: Props) {
   const isTextArea = (tmpMetadata?.maxLength ?? 0) > 28
 
   return isTextArea ? (
-    <Textarea name={id} value={value} handleChange={handleChange} />
+    <Textarea className="w-128 h-32" name={id} value={value} handleChange={handleChange} />
   ) : (
     <Input type="text" name={id} value={value} handleChange={handleChange} />
   )

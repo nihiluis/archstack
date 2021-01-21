@@ -45,6 +45,7 @@ export default function EnumEditor(props: Props) {
   return (
     <Select
       name={id}
+      className="w-48"
       options={Object.values(options)}
       value={nullValue}
       onChange={option => handleChange(option.value)}

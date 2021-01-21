@@ -6,14 +6,31 @@ export interface Props {
   name: string
   className?: string
   type?: "submit" | "reset" | "button"
+  primary?: boolean
+  secondary?: boolean
+  disabled?: boolean
 }
 
 export default function Button(
   props: PropsWithChildren<Props & any>
 ): JSX.Element {
-  const { children, name, onClick, className, type = "button", ...rest } = props
+  const {
+    children,
+    name,
+    onClick,
+    className,
+    type = "button",
+    secondary,
+    primary = !secondary,
+    disabled,
+    ...rest
+  } = props
 
-  const classes = cx(className, "btn")
+  const classes = cx(className, "btn", {
+    "btn-primary": primary,
+    "btn-secondary": secondary,
+    "btn-disabled": disabled,
+  })
 
   return (
     <button
