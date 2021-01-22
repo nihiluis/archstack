@@ -7,7 +7,7 @@ import React, {
 } from "react"
 import Select from "react-select"
 
-import { graphql, useLazyLoadQuery } from "react-relay/hooks"
+import { graphql, useLazyLoadQuery, useMutation } from "react-relay/hooks"
 import { getIdFromNodeId } from "../../../lib/hasura"
 import { DocumentTypesContext, WorkspaceContext } from "../../Workspace"
 import {
@@ -19,9 +19,10 @@ import { Formik, FormikProps } from "formik"
 import Button from "../../ui/Button"
 import Line from "../../ui/Line"
 import {
-  useMutation,
-  UseMutationConfig,
-} from "react-relay/lib/relay-experimental/useMutation"
+  field_value_insert_input,
+  MutateDocumentMutation,
+} from "./__generated__/MutateDocumentMutation.graphql"
+import { UseMutationConfig } from "react-relay/lib/relay-experimental/useMutation"
 
 interface Props {
   documentId?: string
@@ -103,19 +104,38 @@ const query = graphql`
 `
 
 const mutation = graphql`
-  mutation MutateDocumentMutation($workspace_id: uuid, $document_id: uuid) {
+  mutation MutateDocumentMutation(
+    $id: uuid!
+    $name: String!
+    $description: String!
+    $external_id: String!
+    $parent_id: uuid!
+    $type_id: uuid!
+    $field_values: [field_value_insert_input!]!
+  ) {
     insert_document_one(
       object: {
-        user_id: $user_id
-        workspace_id: $workspace_id
-        document_id: $document_id
+        id: $id
+        name: $name
+        description: $description
+        external_id: $external_id
+        parent_id: $parent_id
+        type_id: $type_id
+        field_values: {
+          data: $field_values
+          on_conflict: {
+            constraint: document_field_values_field_id_document_id_key
+            update_columns: value
+          }
+        }
+      }
+      on_conflict: {
+        constraint: document_pkey
+        update_columns: [name, description, external_id, parent_id]
       }
     ) {
       id
     }
-    insert_field_value(
-      objects: {}
-    )
   }
 `
 
@@ -123,6 +143,10 @@ type Groups = MutateDocumentQueryResponse["document_type_connection"]["edges"][n
 type FieldValues = MutateDocumentQueryResponse["document_connection"]["edges"][number]["node"]["field_values_connection"]["edges"]
 
 interface FormValues {
+  name: string
+  description: string
+  external_id: string
+  parent?: string
   [key: string]: string
 }
 
@@ -145,18 +169,7 @@ export default function MutateDocument(props: Props): JSX.Element {
     type_id: selectedType ? getIdFromNodeId(selectedType.value) : null,
   })
 
-  const [commit, _] = useMutation<AddRecentDocumentViewMutation>(mutation)
-
-  useEffect(() => {
-    const mutationConfig: UseMutationConfig<AddRecentDocumentViewMutation> = {
-      variables: {
-        workspace_id: workspace.id,
-        document_id: props.documentId,
-      },
-    }
-
-    commit(mutationConfig)
-  }, [props.documentId])
+  const [commit, _] = useMutation<MutateDocumentMutation>(mutation)
 
   const typeData =
     data.document_type_connection.edges.length === 1
@@ -180,7 +193,12 @@ export default function MutateDocument(props: Props): JSX.Element {
     )
   )
 
-  const initialFormValues: FormValues = { parent: null }
+  const initialFormValues: FormValues = {
+    name: "",
+    description: "",
+    external_id: "",
+    parent: null,
+  }
 
   allFields.forEach(field => {
     if (field.node.field.field_type.type === "string") {
@@ -189,6 +207,7 @@ export default function MutateDocument(props: Props): JSX.Element {
       initialFormValues[field.node.field.id] = null
     }
   })
+
   fieldValues.forEach(
     fieldValue =>
       (initialFormValues[fieldValue.node.field.id] = fieldValue.node.value)
@@ -202,7 +221,30 @@ export default function MutateDocument(props: Props): JSX.Element {
     const errors = {}
   }
 
-  function submit(values: FormValues) {}
+  function submit(values: FormValues) {
+    const fieldValues: field_value_insert_input[] = Object.entries(values)
+      .filter(
+        ([fieldId, fieldValue]) =>
+          ["name", "description", "parent"].indexOf(fieldId) === -1
+      )
+      .map(([fieldId, fieldValue]) => {
+        return { field_id: fieldId, value: fieldValue }
+      })
+
+    const mutationConfig: UseMutationConfig<MutateDocumentMutation> = {
+      variables: {
+        id: documentData ? getIdFromNodeId(documentData.id) : null,
+        external_id: values["external_id"],
+        name: values["name"],
+        description: values["description"],
+        type_id: selectedType.value,
+        parent_id: values["parent"],
+        field_values: fieldValues,
+      },
+    }
+
+    commit(mutationConfig)
+  }
 
   return (
     <React.Fragment>
@@ -231,6 +273,16 @@ export default function MutateDocument(props: Props): JSX.Element {
                   value={formikProps.values["name"]}
                   handleChange={value =>
                     formikProps.setFieldValue("name", value)
+                  }
+                />
+                <Field
+                  id="external_id"
+                  name="External ID"
+                  fieldType="string"
+                  fieldTypeMetadata={{ maxLength: 24 }}
+                  value={formikProps.values["external_id"]}
+                  handleChange={value =>
+                    formikProps.setFieldValue("external_id", value)
                   }
                 />
                 <Field
@@ -301,8 +353,9 @@ export default function MutateDocument(props: Props): JSX.Element {
                   ))}
                 </React.Fragment>
               )}
-              <Button name="form-submit" type="submit" disabled={!selectedType}>
-                Create
+              <GroupLineBreak />
+              <Button name="form-submit" type="submit" className="w-1/3" disabled={!selectedType}>
+                <h4>Create</h4>
               </Button>
             </div>
           )}
