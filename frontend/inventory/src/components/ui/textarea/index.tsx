@@ -5,21 +5,23 @@ import * as textareaStyle from "./Textarea.module.css"
 interface Props {
   name: string
   value: string
-  handleChange?: (text: string) => void
+  onChange?: (text: string) => void
+  onBlur?: () => void
   className?: string
 }
 
 export default function Textarea(props: Props): JSX.Element {
-  const { value, name, handleChange, className } = props
+  const { value, name, onChange, onBlur, className } = props
 
   return (
     <textarea
       name={name}
       className={cx(textareaStyle.input, className)}
       onChange={event => {
-        if (handleChange) handleChange(event.target.value)
+        if (onChange) onChange(event.target.value)
         event.preventDefault()
       }}
+      onBlur={onBlur}
       value={value}
     />
   )

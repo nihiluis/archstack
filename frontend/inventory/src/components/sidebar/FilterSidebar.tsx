@@ -124,7 +124,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
           <Input
             name="name"
             value={nameFilter}
-            handleChange={name => {
+            onChange={name => {
               setNameFilter(name)
             }}
             type="text"
@@ -135,7 +135,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
           <Input
             name="parentName"
             value={parentNameFilter}
-            handleChange={name => {
+            onChange={name => {
               setParentNameFilter(name)
             }}
             type="text"
@@ -146,7 +146,7 @@ export default function FilterSidebar(props: Props): JSX.Element {
           <Input
             name="description"
             value={descriptionFilter}
-            handleChange={name => {
+            onChange={name => {
               setDescriptionFilter(name)
             }}
             type="text"

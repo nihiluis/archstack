@@ -14,7 +14,8 @@ interface Props {
   value: string
   metadata: unknown
   relationObjects: RelationObject[]
-  handleChange: (value: string) => void
+  onChange: (text: string) => void
+  onBlur: () => void
 }
 
 interface EnumMetadataItem {
@@ -31,7 +32,7 @@ function formatOptionLabel({
 }
 
 export default function RelationEditor(props: Props) {
-  const { id, relationObjects, handleChange, value } = props
+  const { id, relationObjects, onChange, onBlur, value } = props
 
   const options: { [key: string]: Option } = {}
 
@@ -54,7 +55,8 @@ export default function RelationEditor(props: Props) {
       formatOptionLabel={formatOptionLabel}
       options={Object.values(options)}
       value={nullValue}
-      onChange={option => handleChange(option.value)}
+      onBlur={onBlur}
+      onChange={option => onChange(option.value)}
     />
   )
 }

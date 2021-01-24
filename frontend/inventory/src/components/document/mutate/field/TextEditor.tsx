@@ -5,7 +5,8 @@ import Textarea from "../../../ui/textarea"
 interface Props {
   id: string
   value: string
-  handleChange: (text: string) => void
+  onChange: (text: string) => void
+  onBlur: () => void
   metadata?: unknown
 }
 
@@ -14,7 +15,7 @@ interface Metadata {
 }
 
 export default function TextEditor(props: Props) {
-  const { id, value, handleChange, metadata } = props
+  const { id, value, onChange, onBlur, metadata } = props
 
   if (metadata && typeof metadata !== "object") {
     console.error(
@@ -28,8 +29,20 @@ export default function TextEditor(props: Props) {
   const isTextArea = (tmpMetadata?.maxLength ?? 0) > 28
 
   return isTextArea ? (
-    <Textarea className="w-128 h-32" name={id} value={value} handleChange={handleChange} />
+    <Textarea
+      className="w-128 h-32"
+      name={id}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+    />
   ) : (
-    <Input type="text" name={id} value={value} handleChange={handleChange} />
+    <Input
+      type="text"
+      name={id}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+    />
   )
 }

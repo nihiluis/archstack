@@ -12,7 +12,8 @@ interface Props {
   value: string
   metadata: unknown
   fieldId: string
-  handleChange: (value: string) => void
+  onChange: (text: string) => void
+  onBlur: () => void
 }
 
 interface EnumMetadataItem {
@@ -21,7 +22,7 @@ interface EnumMetadataItem {
 }
 
 export default function EnumEditor(props: Props) {
-  const { id, metadata, handleChange, fieldId, value } = props
+  const { id, metadata, onChange, onBlur, fieldId, value } = props
 
   if (!Array.isArray(metadata)) {
     console.error(
@@ -48,7 +49,8 @@ export default function EnumEditor(props: Props) {
       className="w-48"
       options={Object.values(options)}
       value={nullValue}
-      onChange={option => handleChange(option.value)}
+      onBlur={onBlur}
+      onChange={option => onChange(option.value)}
     />
   )
 }

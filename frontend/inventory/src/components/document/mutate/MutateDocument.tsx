@@ -6,6 +6,7 @@ import React, {
   PropsWithChildren,
 } from "react"
 import Select from "react-select"
+import * as Yup from "yup"
 
 import { graphql, useLazyLoadQuery, useMutation } from "react-relay/hooks"
 import { getIdFromNodeId } from "../../../lib/hasura"
@@ -23,131 +24,24 @@ import {
   MutateDocumentMutation,
 } from "./__generated__/MutateDocumentMutation.graphql"
 import { UseMutationConfig } from "react-relay/lib/relay-experimental/useMutation"
+import { mutation, query } from "./gql"
+import { createSchema } from "./schema"
+import ErrorText from "../../error/ErrorText"
 
 interface Props {
   documentId?: string
 }
 
-const query = graphql`
-  query MutateDocumentQuery($document_id: uuid, $type_id: uuid) {
-    document_connection(where: { id: { _eq: $document_id } }) {
-      edges {
-        node {
-          id
-          name
-          field_values_connection {
-            edges {
-              node {
-                id
-                value
-                field {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    parentData: document_connection(
-      where: { type: { id: { _eq: $type_id } } }
-    ) {
-      edges {
-        node {
-          id
-          name
-          parent {
-            id
-            name
-          }
-        }
-      }
-    }
-    document_type_connection(where: { id: { _eq: $type_id } }) {
-      edges {
-        node {
-          groups_connection {
-            edges {
-              node {
-                id
-                name
-                sections_connection {
-                  edges {
-                    node {
-                      id
-                      name
-                      fields_connection {
-                        edges {
-                          node {
-                            field {
-                              id
-                              name
-                              field_type {
-                                id
-                                metadata
-                                type
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`
-
-const mutation = graphql`
-  mutation MutateDocumentMutation(
-    $id: uuid!
-    $name: String!
-    $description: String!
-    $external_id: String!
-    $parent_id: uuid!
-    $type_id: uuid!
-    $field_values: [field_value_insert_input!]!
-  ) {
-    insert_document_one(
-      object: {
-        id: $id
-        name: $name
-        description: $description
-        external_id: $external_id
-        parent_id: $parent_id
-        type_id: $type_id
-        field_values: {
-          data: $field_values
-          on_conflict: {
-            constraint: document_field_values_field_id_document_id_key
-            update_columns: value
-          }
-        }
-      }
-      on_conflict: {
-        constraint: document_pkey
-        update_columns: [name, description, external_id, parent_id]
-      }
-    ) {
-      id
-    }
-  }
-`
-
 type Groups = MutateDocumentQueryResponse["document_type_connection"]["edges"][number]["node"]["groups_connection"]["edges"]
+export type Fields = Groups[number]["node"]["sections_connection"]["edges"][number]["node"]["fields_connection"]["edges"]
 type FieldValues = MutateDocumentQueryResponse["document_connection"]["edges"][number]["node"]["field_values_connection"]["edges"]
 
-interface FormValues {
+export interface FormValues {
   name: string
   description: string
   external_id: string
   parent?: string
-  [key: string]: string
+  [key: string]: any
 }
 
 /**
@@ -160,13 +54,14 @@ export default function MutateDocument(props: Props): JSX.Element {
   const { workspace } = useContext(WorkspaceContext)
   const { types } = useContext(DocumentTypesContext)
 
+  const [validationSchema, setValidationSchema] = useState<Yup.BaseSchema>(null)
   const [selectedType, setSelectedType] = useState<{
     value: string
     label: string
   } | null>(null)
   const data = useLazyLoadQuery<MutateDocumentQuery>(query, {
     document_id: props.documentId || null,
-    type_id: selectedType ? getIdFromNodeId(selectedType.value) : null,
+    type_id: selectedType?.value,
   })
 
   const [commit, _] = useMutation<MutateDocumentMutation>(mutation)
@@ -193,39 +88,52 @@ export default function MutateDocument(props: Props): JSX.Element {
     )
   )
 
-  const initialFormValues: FormValues = {
-    name: "",
-    description: "",
-    external_id: "",
-    parent: null,
-  }
-
-  allFields.forEach(field => {
-    if (field.node.field.field_type.type === "string") {
-      initialFormValues[field.node.field.id] = ""
-    } else {
-      initialFormValues[field.node.field.id] = null
+  function getInitialFormValues(): FormValues {
+    const initialFormValues: FormValues = {
+      name: "",
+      description: "",
+      external_id: "",
+      parent: null,
     }
-  })
 
-  fieldValues.forEach(
-    fieldValue =>
-      (initialFormValues[fieldValue.node.field.id] = fieldValue.node.value)
-  )
+    allFields.forEach(field => {
+      const fieldId = getIdFromNodeId(field.node.field.id)
+      const typeString = field.node.field.field_type.type
+
+      if (
+        typeString === "string" ||
+        typeString === "enum" ||
+        typeString === "number"
+      ) {
+        initialFormValues[fieldId] = ""
+      } else {
+        initialFormValues[fieldId] = null
+      }
+    })
+
+    fieldValues.forEach(fieldValue => {
+      initialFormValues[getIdFromNodeId(fieldValue.node.field.id)] =
+        fieldValue.node.value
+    })
+
+    return initialFormValues
+  }
 
   const options = types.map(type => {
-    return { value: type.node.id, label: type.node.name }
+    return { value: getIdFromNodeId(type.node.id), label: type.node.name }
   })
 
-  function validate(values: FormValues): any {
-    const errors = {}
-  }
+  useEffect(() => {
+    const schema = createSchema(allFields)
+    setValidationSchema(schema)
+  }, [data])
 
   function submit(values: FormValues) {
     const fieldValues: field_value_insert_input[] = Object.entries(values)
       .filter(
-        ([fieldId, fieldValue]) =>
-          ["name", "description", "parent"].indexOf(fieldId) === -1
+        ([fieldId]) =>
+          ["name", "description", "parent", "external_id"].indexOf(fieldId) ===
+          -1
       )
       .map(([fieldId, fieldValue]) => {
         return { field_id: fieldId, value: fieldValue }
@@ -259,8 +167,9 @@ export default function MutateDocument(props: Props): JSX.Element {
         />
         <Line className="mt-4 mb-2" />
         <Formik<FormValues>
-          initialValues={initialFormValues}
-          validate={validate}
+          initialValues={getInitialFormValues()}
+          validationSchema={validationSchema}
+          enableReinitialize
           onSubmit={submit}>
           {formikProps => (
             <div>
@@ -270,30 +179,21 @@ export default function MutateDocument(props: Props): JSX.Element {
                   name="Name"
                   fieldType="string"
                   fieldTypeMetadata={{ maxLength: 24 }}
-                  value={formikProps.values["name"]}
-                  handleChange={value =>
-                    formikProps.setFieldValue("name", value)
-                  }
+                  formikProps={formikProps}
                 />
                 <Field
                   id="external_id"
                   name="External ID"
                   fieldType="string"
                   fieldTypeMetadata={{ maxLength: 24 }}
-                  value={formikProps.values["external_id"]}
-                  handleChange={value =>
-                    formikProps.setFieldValue("external_id", value)
-                  }
+                  formikProps={formikProps}
                 />
                 <Field
                   id="description"
                   name="Description"
                   fieldType="string"
                   fieldTypeMetadata={{ maxLength: 240 }}
-                  value={formikProps.values["description"]}
-                  handleChange={value =>
-                    formikProps.setFieldValue("description", value)
-                  }
+                  formikProps={formikProps}
                 />
               </Group>
               <GroupLineBreak />
@@ -304,10 +204,7 @@ export default function MutateDocument(props: Props): JSX.Element {
                   fieldType="relation"
                   relationObjects={selectedType ? possibleParents : []}
                   fieldTypeMetadata={{}}
-                  value={formikProps.values["parent"]}
-                  handleChange={value =>
-                    formikProps.setFieldValue("parent", value)
-                  }
+                  formikProps={formikProps}
                 />
               </Group>
               {selectedType && (
@@ -325,11 +222,15 @@ export default function MutateDocument(props: Props): JSX.Element {
                             id={section.node.id}
                             name={section.node.name}>
                             {section.node.fields_connection.edges.map(field => {
-                              const id = field.node.field.id
+                              const id = getIdFromNodeId(field.node.field.id)
                               const name = field.node.field.name
                               const fieldType = field.node.field.field_type.type
                               const fieldTypeMetadata =
                                 field.node.field.field_type.metadata
+
+                              if (formikProps.values[id] === undefined) {
+                                return null
+                              }
 
                               return (
                                 <Field
@@ -338,10 +239,7 @@ export default function MutateDocument(props: Props): JSX.Element {
                                   fieldType={fieldType}
                                   fieldTypeMetadata={fieldTypeMetadata}
                                   name={name}
-                                  value={formikProps.values[id]}
-                                  handleChange={value =>
-                                    formikProps.setFieldValue(id, value)
-                                  }
+                                  formikProps={formikProps}
                                 />
                               )
                             })}
@@ -354,7 +252,11 @@ export default function MutateDocument(props: Props): JSX.Element {
                 </React.Fragment>
               )}
               <GroupLineBreak />
-              <Button name="form-submit" type="submit" className="w-1/3" disabled={!selectedType}>
+              <Button
+                name="form-submit"
+                type="submit"
+                className="w-1/3"
+                disabled={!selectedType}>
                 <h4>Create</h4>
               </Button>
             </div>

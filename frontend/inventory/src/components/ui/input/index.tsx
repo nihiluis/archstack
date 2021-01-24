@@ -6,12 +6,16 @@ interface Props {
   type: string
   name: string
   value: string
-  handleChange?: (text: string) => void
+  onChange?: (text: string) => void
+  onBlur?: () => void
   className?: string
 }
 
 export default function Input(props: Props): JSX.Element {
-  const { value, type, name, handleChange, className } = props
+  const { value, type, name, onChange, onBlur, className } = props
+
+  console.log("name " + name)
+  console.log("value " + value)
 
   return (
     <input
@@ -19,9 +23,10 @@ export default function Input(props: Props): JSX.Element {
       name={name}
       className={cx(inputStyle.input, className)}
       onChange={event => {
-        if (handleChange) handleChange(event.target.value)
+        if (onChange) onChange(event.target.value)
         event.preventDefault()
       }}
+      onBlur={onBlur}
       value={value}
     />
   )

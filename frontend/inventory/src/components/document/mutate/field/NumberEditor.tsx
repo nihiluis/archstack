@@ -5,7 +5,8 @@ import Input from "../../../ui/input"
 interface Props {
   id: string
   value?: string
-  handleChange: (text: string) => void
+  onChange: (text: string) => void
+  onBlur: () => void
 }
 
 export default function NumberEditor(props: Props) {
@@ -14,7 +15,10 @@ export default function NumberEditor(props: Props) {
       type="number"
       name={props.id}
       value={props.value}
-      handleChange={props.handleChange}
+      onChange={props.onChange}
+      onBlur={() => {
+        props.onBlur()
+      }}
     />
   )
 }
