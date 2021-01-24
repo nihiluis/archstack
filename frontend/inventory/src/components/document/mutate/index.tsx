@@ -24,7 +24,7 @@ import {
   MutateDocumentMutation,
 } from "./__generated__/MutateDocumentMutation.graphql"
 import { UseMutationConfig } from "react-relay/lib/relay-experimental/useMutation"
-import { mutation, query } from "./gql"
+import { mutation, query } from "./MutateDocument"
 import { createSchema } from "./schema"
 import ErrorText from "../../error/ErrorText"
 
@@ -93,7 +93,7 @@ export default function MutateDocument(props: Props): JSX.Element {
       name: "",
       description: "",
       external_id: "",
-      parent: null,
+      parent: "",
     }
 
     allFields.forEach(field => {
@@ -103,7 +103,8 @@ export default function MutateDocument(props: Props): JSX.Element {
       if (
         typeString === "string" ||
         typeString === "enum" ||
-        typeString === "number"
+        typeString === "number" ||
+        typeString === "relation"
       ) {
         initialFormValues[fieldId] = ""
       } else {
@@ -129,6 +130,8 @@ export default function MutateDocument(props: Props): JSX.Element {
   }, [data])
 
   function submit(values: FormValues) {
+    console.log("submitting form")
+
     const fieldValues: field_value_insert_input[] = Object.entries(values)
       .filter(
         ([fieldId]) =>
@@ -172,7 +175,7 @@ export default function MutateDocument(props: Props): JSX.Element {
           enableReinitialize
           onSubmit={submit}>
           {formikProps => (
-            <div>
+            <form onSubmit={formikProps.handleSubmit}>
               <Group id="general" name="General">
                 <Field
                   id="name"
@@ -259,7 +262,7 @@ export default function MutateDocument(props: Props): JSX.Element {
                 disabled={!selectedType}>
                 <h4>Create</h4>
               </Button>
-            </div>
+            </form>
           )}
         </Formik>
       </div>

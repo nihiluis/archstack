@@ -14,9 +14,6 @@ interface Props {
 export default function Input(props: Props): JSX.Element {
   const { value, type, name, onChange, onBlur, className } = props
 
-  console.log("name " + name)
-  console.log("value " + value)
-
   return (
     <input
       type={type}

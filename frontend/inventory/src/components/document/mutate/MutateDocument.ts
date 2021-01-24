@@ -78,11 +78,11 @@ export const query = graphql`
 
 export const mutation = graphql`
   mutation MutateDocumentMutation(
-    $id: uuid!
+    $id: uuid
     $name: String!
     $description: String!
     $external_id: String!
-    $parent_id: uuid!
+    $parent_id: uuid
     $type_id: uuid!
     $field_values: [field_value_insert_input!]!
   ) {

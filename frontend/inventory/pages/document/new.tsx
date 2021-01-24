@@ -6,7 +6,7 @@ import Workspace, { WorkspaceContext } from "../../src/components/Workspace"
 import Layout from "../../src/components/ui/Layout"
 import { useRouter } from "next/router"
 import RightSidebar from "../../src/components/sidebar/RightSidebar"
-import MutateDocument from "../../src/components/document/mutate/MutateDocument"
+import MutateDocument from "../../src/components/document/mutate"
 
 export default function NewDocument() {
   const { workspace } = useContext(WorkspaceContext)

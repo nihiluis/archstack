@@ -1,5 +1,5 @@
 import React from "react"
-import { Section, FormValues } from "../MutateDocument"
+import { Section, FormValues } from ".."
 import EnumEditor from "./EnumEditor"
 import NumberEditor from "./NumberEditor"
 import TextEditor from "./TextEditor"

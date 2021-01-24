@@ -1,6 +1,6 @@
 import * as Yup from "yup"
 import { getIdFromNodeId } from "../../../lib/hasura"
-import { Fields } from "./MutateDocument"
+import { Fields } from "."
 
 function mapFieldsToSchema(
   fields: Fields
