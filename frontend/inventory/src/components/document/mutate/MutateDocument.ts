@@ -2,7 +2,11 @@ import { graphql } from "relay-runtime"
 
 export const query = graphql`
   query MutateDocumentQuery($document_id: uuid, $type_id: uuid) {
-    document_connection(where: { id: { _eq: $document_id } }) {
+    document_connection(
+      first: 1
+      order_by: { name: desc }
+      where: { id: { _eq: $document_id } }
+    ) @connection(key: "MutateDocumentQuery_document_connection") {
       edges {
         node {
           id

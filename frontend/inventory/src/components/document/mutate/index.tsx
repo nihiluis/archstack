@@ -7,7 +7,7 @@ import React, {
 } from "react"
 import Select from "react-select"
 import * as Yup from "yup"
-
+import { v4 as uuidv4 } from "uuid"
 import { graphql, useLazyLoadQuery, useMutation } from "react-relay/hooks"
 import { getIdFromNodeId } from "../../../lib/hasura"
 import { DocumentTypesContext, WorkspaceContext } from "../../Workspace"
@@ -27,6 +27,8 @@ import { UseMutationConfig } from "react-relay/lib/relay-experimental/useMutatio
 import { mutation, query } from "./MutateDocument"
 import { createSchema } from "./schema"
 import ErrorText from "../../error/ErrorText"
+import { useRouter } from "next/router"
+import { ConnectionHandler, ROOT_ID } from "relay-runtime"
 
 interface Props {
   documentId?: string
@@ -53,6 +55,8 @@ export interface FormValues {
 export default function MutateDocument(props: Props): JSX.Element {
   const { workspace } = useContext(WorkspaceContext)
   const { types } = useContext(DocumentTypesContext)
+
+  const router = useRouter()
 
   const [validationSchema, setValidationSchema] = useState<Yup.BaseSchema>(null)
   const [selectedType, setSelectedType] = useState<{
@@ -144,13 +148,56 @@ export default function MutateDocument(props: Props): JSX.Element {
 
     const mutationConfig: UseMutationConfig<MutateDocumentMutation> = {
       variables: {
-        id: documentData ? getIdFromNodeId(documentData.id) : null,
+        id: documentData ? getIdFromNodeId(documentData.id) : uuidv4(),
         external_id: values["external_id"],
         name: values["name"],
         description: values["description"],
         type_id: selectedType.value,
-        parent_id: values["parent"],
+        parent_id: values["parent"] || null,
         field_values: fieldValues,
+      },
+      onCompleted: (response, errors) => {
+        console.log("completed mutation")
+
+        if (errors && errors.length !== 0) {
+          console.error("found errors " + JSON.stringify(errors))
+          return
+        }
+
+        router.push("/")
+      },
+      updater: store => {
+        const baseRecord = store.get(ROOT_ID)
+
+        const connectionName = "MutateDocumentQuery_document_connection"
+
+        const connectionRecord = ConnectionHandler.getConnection(
+          baseRecord,
+          connectionName,
+          {
+            order_by: { name: "desc" },
+            where: { id: { _eq: props.documentId || null } },
+          }
+        )
+
+        if (!connectionRecord) {
+          throw Error("connectionRecord may not be empty")
+        }
+
+        const payload = store.getRootField("insert_document_one")
+
+        //const newRecord = store.create(id, "recently_viewed_document")
+
+        const newEdge = ConnectionHandler.createEdge(
+          store,
+          connectionRecord,
+          payload,
+          "documentEdge"
+        )
+
+        newEdge.setValue(uuidv4().toString(), "cursor")
+
+        ConnectionHandler.insertEdgeBefore(connectionRecord, newEdge)
       },
     }
 
