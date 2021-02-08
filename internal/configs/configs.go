@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"os"
 	"time"
 
 	"gitlab.com/archstack/core-api/lib/datastore"
@@ -15,13 +16,13 @@ type Configs struct {
 // Datastore returns datastore configuration
 func (cfg *Configs) Datastore() (*datastore.Config, error) {
 	return &datastore.Config{
-		Host:   "localhost",
-		Port:   "5432",
+		Host:   os.Getenv("DB_HOST"),
+		Port:   os.Getenv("DB_PORT"),
 		Driver: "postgres",
 
-		StoreName: "archstack",
-		Username:  "",
-		Password:  "",
+		StoreName: os.Getenv("DB_STORE"), // archstack
+		Username:  os.Getenv("DB_USER"),
+		Password:  os.Getenv("DB_PASSWORD"),
 
 		SSLMode: "",
 
@@ -36,11 +37,16 @@ func (cfg *Configs) Datastore() (*datastore.Config, error) {
 // API returns API configuration
 func (cfg *Configs) API() (*api.Config, error) {
 	return &api.Config{
-		GraphQLEndpointURL:     "http://localhost:8081/v1/graphql",
-		GraphQLWorkspaceHeader: "X-Hasura-Workspace",
-		GraphQLRoleHeader:      "X-Hasura-Role",
-		GraphQLRoleName:        "workspace",
-		WorkspaceContextKey:    "workspace",
+		GraphQLSecret:           os.Getenv("HASURA_SECRET_KEY"),
+		GraphQLSecretHeader:     "X-Hasura-Admin-Secret",
+		GraphQLEndpointURL:      os.Getenv("HASURA_GQL_ENDPOINT_URL"),
+		GraphQLRelayEndpointURL: os.Getenv("HASURA_RELAY_ENDPOINT_URL"),
+		GraphQLWorkspaceHeader:  "X-Hasura-Workspace",
+		GraphQLUserHeader:       "X-Hasura-User",
+		GraphQLRoleHeader:       "X-Hasura-Role",
+		GraphQLRoleName:         "workspace",
+		WorkspaceContextKey:     "workspace",
+		UserIDContextKey:        "dataUserID",
 	}, nil
 }
 

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"gitlab.com/archstack/core-api/lib/datastore"
+	"github.com/joho/godotenv"
 	"gitlab.com/archstack/core-api/lib/logger"
-	"gitlab.com/archstack/core-api/lib/models"
 	"gitlab.com/archstack/core-api/lib/server/http"
 	"gitlab.com/archstack/inventory-api/internal/api"
 	"gitlab.com/archstack/inventory-api/internal/configs"
@@ -11,6 +10,8 @@ import (
 )
 
 func main() {
+	err := godotenv.Load(".env")
+
 	configs, err := configs.NewService()
 	if err != nil {
 		panic(err)
@@ -18,26 +19,8 @@ func main() {
 
 	logger := logger.NewService()
 
-	pgConfig, err := configs.Datastore()
 	httpConfig, err := configs.HTTP()
 	apiConfig, err := configs.API()
-
-	datastore, err := datastore.NewService(pgConfig)
-	if err != nil {
-		panic(err)
-	}
-	defer datastore.DB.Close()
-
-	models := []interface{}{
-		(*models.Document)(nil),
-		(*models.DocumentType)(nil),
-		(*models.DocumentField)(nil),
-		(*models.DocumentFieldValue)(nil),
-	}
-	err = datastore.CreateSchema(models)
-	if err != nil {
-		panic(err)
-	}
 
 	server, err := http.NewEchoService(logger, httpConfig)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/dghubble/sling"
 	"github.com/go-playground/validator"
+	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"gitlab.com/archstack/core-api/lib/logger"
@@ -22,11 +23,16 @@ type API struct {
 }
 
 type Config struct {
-	GraphQLEndpointURL     string
-	GraphQLWorkspaceHeader string
-	GraphQLRoleHeader      string
-	GraphQLRoleName        string
-	WorkspaceContextKey    string
+	GraphQLSecret           string
+	GraphQLSecretHeader     string
+	GraphQLEndpointURL      string
+	GraphQLRelayEndpointURL string
+	GraphQLWorkspaceHeader  string
+	GraphQLUserHeader       string
+	GraphQLRoleHeader       string
+	GraphQLRoleName         string
+	WorkspaceContextKey     string
+	UserIDContextKey        string
 }
 
 func NewService(logger *logger.Logger, config *Config) (*API, error) {
@@ -60,7 +66,8 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 
 	s.Echo.Use(workspaceMiddleware)
 
-	s.Echo.POST("/graphql", api.handleGraphQLQuery)
+	s.Echo.POST("/v1/graphql", api.handleGraphQLQuery)
+	s.Echo.POST("/v1/relay", api.handleGraphQLRelayQuery)
 }
 
 // GraphQLQueryRequestBody contains the graphql query.
@@ -75,11 +82,34 @@ type GraphQLQueryRequestBody struct {
 func (api *API) handleGraphQLQuery(c echo.Context) error {
 	var data map[string]interface{}
 
-	//workspaceID := c.Get(api.config.WorkspaceContextKey).(uuid.UUID)
+	workspaceID := c.Get(api.config.WorkspaceContextKey).(uuid.UUID)
 
 	s := sling.New().Post(api.config.GraphQLEndpointURL).
-		Set(api.config.GraphQLWorkspaceHeader, "04c5198e-8eea-43e1-b3bc-a6fcdc73b064").
+		Set(api.config.GraphQLWorkspaceHeader, workspaceID.String()).
+		Set(api.config.GraphQLSecretHeader, api.config.GraphQLSecret).
 		Set(api.config.GraphQLRoleHeader, api.config.GraphQLRoleName)
+	_, err := s.Body(c.Request().Body).ReceiveSuccess(&data)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, data)
+}
+
+// handleGraphQLQuery handles a wrapper endpoint for the Hasura GraphQL engine. This imposes some performance penalties,
+// but allows for greater developer productivity as no dabbling with the token claims in Keycloak is needed. Furthermore,
+// the keycloak-hasura-connector can be omitted.
+// At some point this endpoint might become legacy.
+func (api *API) handleGraphQLRelayQuery(c echo.Context) error {
+	var data map[string]interface{}
+
+	workspaceID := c.Get(api.config.WorkspaceContextKey).(uuid.UUID)
+	userID := c.Get(api.config.UserIDContextKey).(uuid.UUID)
+
+	s := sling.New().Post(api.config.GraphQLRelayEndpointURL).
+		Set(api.config.GraphQLSecretHeader, api.config.GraphQLSecret).
+		Set(api.config.GraphQLWorkspaceHeader, workspaceID.String()).
+		Set(api.config.GraphQLRoleHeader, api.config.GraphQLRoleName).
+		Set(api.config.GraphQLUserHeader, userID.String())
 	_, err := s.Body(c.Request().Body).ReceiveSuccess(&data)
 	if err != nil {
 		return err
