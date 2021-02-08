@@ -1,6 +1,8 @@
 package configs
 
 import (
+	"os"
+	"strings"
 	"time"
 
 	"gitlab.com/archstack/core-api/lib/datastore"
@@ -14,9 +16,13 @@ type Configs struct {
 
 // HTTP returns the configuration required for HTTP package
 func (cfg *Configs) HTTP() (*http.Config, error) {
+	allowOrigins := []string{"http://localhost:3000", "http://localhost:3001"}
+
+	allowOrigins = append(allowOrigins, strings.Split(os.Getenv("ALLOW_ORIGINS"), "|")...)
+
 	return &http.Config{
-		Port:         "3334",
-		AllowOrigins: []string{"http://localhost:3000", "http://localhost:3001"},
+		Port:         os.Getenv("PORT"),
+		AllowOrigins: allowOrigins,
 	}, nil
 }
 
@@ -30,13 +36,13 @@ func (cfg *Configs) API() (*api.Config, error) {
 // Datastore returns datastore configuration
 func (cfg *Configs) Datastore() (*datastore.Config, error) {
 	return &datastore.Config{
-		Host:   "localhost",
-		Port:   "5432",
+		Host:   os.Getenv("DB_HOST"),
+		Port:   os.Getenv("DB_PORT"),
 		Driver: "postgres",
 
-		StoreName: "archstack",
-		Username:  "",
-		Password:  "",
+		StoreName: os.Getenv("DB_STORE"),
+		Username:  os.Getenv("DB_USER"),
+		Password:  os.Getenv("DB_PASSWORD"),
 
 		SSLMode: "",
 

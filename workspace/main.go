@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"gitlab.com/archstack/core-api/lib/datastore"
 	"gitlab.com/archstack/core-api/lib/logger"
 	"gitlab.com/archstack/core-api/lib/models"
@@ -14,6 +15,8 @@ import (
 )
 
 func main() {
+	err := godotenv.Load(".env")
+
 	configs, err := configs.NewService()
 	if err != nil {
 		panic(err)
