@@ -56,7 +56,7 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 	s.Echo.Use(userCookieAuthMiddleware)
 
 	userAuthConfig := &userMiddleware.UserAuthConfig{
-		AuthEndpointURL: "http://localhost:3333",
+		AuthEndpointURL: api.config.AuthEndpointUrl,
 	}
 	userAuthMiddleware := userMiddleware.UserAuthWithConfig(userAuthConfig)
 

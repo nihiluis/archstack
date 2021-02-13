@@ -54,7 +54,7 @@ func (cfg *Configs) API() (*api.Config, error) {
 // HTTP returns the configuration required for HTTP package
 func (cfg *Configs) HTTP() (*http.Config, error) {
 	return &http.Config{
-		Port:         "3335",
+		Port:         os.Getenv("PORT"),
 		AllowOrigins: []string{"http://localhost:3000", "http://localhost:3001"},
 	}, nil
 }
