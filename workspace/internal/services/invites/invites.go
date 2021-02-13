@@ -4,7 +4,7 @@ import (
 	"time"
 
 	uuid "github.com/gofrs/uuid"
-	"gitlab.com/archstack/workspace-api/internal/services/users"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 type Invite struct {
@@ -19,6 +19,6 @@ type Invite struct {
 	CreatedAt time.Time `json:"createdAt" pg:",notnull"`
 	UpdatedAt time.Time `json:"updatedAt" pg:",notnull"`
 
-	InvitedBy   *users.User `json:"invitedBy" pg:"-"`
-	InvitedByID uuid.UUID   `json:"-" pg:",notnull"`
+	InvitedBy   *models.User `json:"invitedBy" pg:"-"`
+	InvitedByID uuid.UUID    `json:"-" pg:",notnull"`
 }
