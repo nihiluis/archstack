@@ -8,7 +8,7 @@ ENV WORKSPACE_HOME /go/src/workspace-api
 RUN groupadd $APP_USER && useradd -m -g $APP_USER -l $APP_USER
 RUN mkdir -p $APP_HOME
 RUN mkdir -p $CORE_HOME
-RUN mkdir -p $WORKSPACe_HOME
+RUN mkdir -p $WORKSPACE_HOME
 
 COPY ./inventory-api $APP_HOME
 COPY ./workspace-api $WORKSPACE_HOME
