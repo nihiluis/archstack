@@ -33,6 +33,7 @@ type Config struct {
 	GraphQLRoleName         string
 	WorkspaceContextKey     string
 	UserIDContextKey        string
+	AuthEndpointUrl         string
 }
 
 func NewService(logger *logger.Logger, config *Config) (*API, error) {

@@ -47,6 +47,7 @@ func (cfg *Configs) API() (*api.Config, error) {
 		GraphQLRoleName:         "workspace",
 		WorkspaceContextKey:     "workspace",
 		UserIDContextKey:        "dataUserID",
+		AuthEndpointUrl:         os.Getenv("AUTH_URL"),
 	}, nil
 }
 
