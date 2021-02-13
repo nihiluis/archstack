@@ -30,6 +30,7 @@ func (cfg *Configs) HTTP() (*http.Config, error) {
 func (cfg *Configs) API() (*api.Config, error) {
 	return &api.Config{
 		WorkspaceHeader: "Archstack-Workspace",
+		AuthEndpointURL: os.Getenv("AUTH_URL"),
 	}, nil
 }
 

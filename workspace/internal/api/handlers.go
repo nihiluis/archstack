@@ -32,6 +32,7 @@ type API struct {
 
 type Config struct {
 	WorkspaceHeader string
+	AuthEndpointURL string
 }
 
 func NewService(logger *logger.Logger,
@@ -55,7 +56,7 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 	userCookieAuthMiddleware := middleware.UserCookieAuth()
 
 	userAuthConfig := &middleware.UserAuthConfig{
-		AuthEndpointURL: "http://localhost:3333",
+		AuthEndpointURL: api.config.AuthEndpointURL,
 	}
 	userAuthMiddleware := middleware.UserAuthWithConfig(userAuthConfig)
 
