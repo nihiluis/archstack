@@ -33,7 +33,7 @@ func main() {
 		panic(err)
 	}
 
-	models := []interface{}{(*models.Workspace)(nil), (*models.User)(nil), (*relationships.WorkspaceAndUser)(nil)}
+	models := []interface{}{(*models.Workspace)(nil), (*models.User)(nil), (*models.WorkspaceAndUser)(nil)}
 	err = datastore.CreateSchema(models)
 	if err != nil {
 		panic(err)

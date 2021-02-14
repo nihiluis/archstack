@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-pg/pg/v10/orm"
 	"gitlab.com/archstack/core-api/lib/datastore"
+	"gitlab.com/archstack/core-api/lib/models"
 )
 
 type RelationshipRepository struct {
@@ -12,11 +13,11 @@ type RelationshipRepository struct {
 }
 
 func init() {
-	orm.RegisterTable((*WorkspaceAndUser)(nil))
+	orm.RegisterTable((*models.WorkspaceAndUser)(nil))
 }
 
-func (r *RelationshipRepository) AddWorkspaceUser(workspaceAndUser *WorkspaceAndUser) error {
-	rel := new(WorkspaceAndUser)
+func (r *RelationshipRepository) AddWorkspaceUser(workspaceAndUser *models.WorkspaceAndUser) error {
+	rel := new(models.WorkspaceAndUser)
 
 	count, err := r.datastore.DB.Model(rel).
 		Where("workspace_id = ?", workspaceAndUser.WorkspaceID).
@@ -36,12 +37,12 @@ func (r *RelationshipRepository) AddWorkspaceUser(workspaceAndUser *WorkspaceAnd
 	return nil
 }
 
-func (r *RelationshipRepository) DeleteWorkspaceUser(workspaceAndUser *WorkspaceAndUser) error {
+func (r *RelationshipRepository) DeleteWorkspaceUser(workspaceAndUser *models.WorkspaceAndUser) error {
 	_, err := r.datastore.DB.Model(workspaceAndUser).Delete()
 
 	return err
 }
 
-func (r *RelationshipRepository) IsUserAssignedToWorkspace(workspaceAndUser *WorkspaceAndUser) (bool, error) {
+func (r *RelationshipRepository) IsUserAssignedToWorkspace(workspaceAndUser *models.WorkspaceAndUser) (bool, error) {
 	return r.datastore.DB.Model(workspaceAndUser).Exists()
 }

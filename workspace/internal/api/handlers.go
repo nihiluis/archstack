@@ -53,7 +53,7 @@ func (api *API) AddHandlers(s *archhttp.EchoServer) {
 		AllowMethods:     []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 	}))
 
-	userCookieAuthMiddleware := middleware.UserCookieAuth()
+	userCookieAuthMiddleware := middleware.UserCookieAuth(api.logger)
 
 	userAuthConfig := &middleware.UserAuthConfig{
 		AuthEndpointURL: api.config.AuthEndpointURL,
