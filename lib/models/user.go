@@ -13,7 +13,7 @@ type User struct {
 
 	Level int `json:"level" pg:",notnull,default:0"`
 
-	Workspaces []*Workspace `json:"workspaces" pg:"many2many:workspace_user"`
+	Workspaces []Workspace `json:"workspaces" pg:"many2many:workspace_user"`
 
 	InvitedBy   *User         `json:"invitedBy" pg:"-"`
 	InvitedByID uuid.NullUUID `json:"-" pg:",type:uuid"`

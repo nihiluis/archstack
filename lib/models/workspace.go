@@ -19,3 +19,11 @@ type Workspace struct {
 	CreatedAt time.Time `json:"createdAt" pg:",default:now()"`
 	UpdatedAt time.Time `json:"updatedAt" pg:",default:now()"`
 }
+
+// WorkspaceAndUser represents a many to many relationship between workspaces and users
+type WorkspaceAndUser struct {
+	tableName struct{} `pg:"workspace_user"`
+
+	WorkspaceID uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
+	UserID      uuid.UUID `pg:",type:uuid,unique:idx_workspace_id_user_id"`
+}
