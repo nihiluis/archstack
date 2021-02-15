@@ -26,7 +26,7 @@ export default function Index() {
     const fetchData = async () => {
       setWorkspacesLoading(true)
 
-      const { workspaces, error } = await getWorkspaces()
+      const { workspaces, error } = await getWorkspaces("")
 
       setWorkspacesLoading(false)
 
