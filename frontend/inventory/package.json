@@ -10,7 +10,7 @@
     "relay": "yarn run relay-compiler --schema schema.graphql --language typescript --src ."
   },
   "dependencies": {
-    "archstack-core": "git://gitlab.com/archstack/core-app.git",
+    "archstack-core": "https://gitlab.com/archstack/core-app",
     "await-protect": "^1.0.13",
     "axios": "^0.20.0",
     "formik": "^2.2.6",
