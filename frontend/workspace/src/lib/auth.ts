@@ -10,7 +10,7 @@ interface AuthResult {
 
 export async function checkAuth(): Promise<AuthResult> {
   const [res, error] = await protect(
-    axios.get(ENDPOINT_AUTH_URL, { withCredentials: true })
+    axios.get(ENDPOINT_AUTH_URL, { withCredentials: true, headers: { "Accept": "application/json"} })
   )
 
   if (error || !res.data.hasOwnProperty("token")) {

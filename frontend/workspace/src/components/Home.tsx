@@ -27,7 +27,7 @@ export default function Home() {
     const fetchData = async () => {
       setWorkspacesLoading(true)
 
-      const { workspaces, error } = await getWorkspaces()
+      const { workspaces, error } = await getWorkspaces(auth.token)
 
       setWorkspacesLoading(false)
 
@@ -79,7 +79,7 @@ export default function Home() {
               onChange={value => setSelectedWorkspace(value)}
             />
           </div>
-          <button className="btn btn-primary" onClick={handleRedirect}>
+          <button className="btn btn-secondary" onClick={handleRedirect}>
             Select
           </button>
           {workspace.error && <p className="error">{workspace.error}</p>}

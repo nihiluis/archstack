@@ -19,9 +19,11 @@ interface WorkspacesResult {
   workspaces: Workspace[]
 }
 
-export async function getWorkspaces(): Promise<WorkspacesResult> {
+export async function getWorkspaces(token: string): Promise<WorkspacesResult> {
   const [res, error] = await protect(
-    axios.get(ENDPOINT_WORKSPACES_URL, { withCredentials: true })
+    axios.get(ENDPOINT_WORKSPACES_URL, { withCredentials: true, headers: {
+      "Authorization": `Bearer ${token}`
+    } })
   )
 
   if (error) {
