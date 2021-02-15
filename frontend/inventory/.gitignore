@@ -34,4 +34,5 @@ yarn-error.log*
 .vercel
 
 *.graphql.ts
-schema.graphql
+
+download_schema.sh

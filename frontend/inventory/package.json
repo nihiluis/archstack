@@ -1,10 +1,11 @@
 {
-  "name": "archstack-workspace-selection-app",
+  "name": "archstack-inventory-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "start:dev": "next dev -p 3001",
     "build": "next build",
+    "export": "next export",
     "start:prod": "next start",
     "relay": "yarn run relay-compiler --schema schema.graphql --language typescript --src ."
   },

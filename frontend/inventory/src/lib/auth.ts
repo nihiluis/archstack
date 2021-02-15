@@ -14,8 +14,11 @@ export async function checkAuth(
 ): Promise<AuthResult> {
   const headers: any = {}
   if (existingToken) {
-    headers["Authorization"] = `Bearer ${existingToken}`
+    //this seems to break Chrome, but not firefox. uga uga
+    //headers["Authorization"] = `Bearer ${existingToken}`
   }
+
+  console.log("checking auth")
 
   const [res, error] = await protect(
     axios.get(ENDPOINT_AUTH_URL, { headers, withCredentials: true })

@@ -16,6 +16,7 @@ function Login() {
     router.asPath.indexOf("workspaceId") === -1 ||
     router.asPath.indexOf("token") === -1
   ) {
+    console.log("redirecting to auth")
     if (window) {
       window.location.href = LOGIN_URL
     }
@@ -24,6 +25,7 @@ function Login() {
   useEffect(() => {
     if (workspaceId && token) {
       if (typeof workspaceId !== "string" || typeof token !== "string") {
+        console.log("redirecting to auth")
         window.location.href = LOGIN_URL
       }
     }

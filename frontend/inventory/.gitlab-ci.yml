@@ -1,0 +1,20 @@
+image: node
+
+cache:
+  paths:
+    - node_modules/
+
+pages:
+  script:
+    - yarn install
+    - yarn relay
+    - yarn run build
+    - yarn run export
+    - mv public public2
+    - mkdir public
+    - mv out/* public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

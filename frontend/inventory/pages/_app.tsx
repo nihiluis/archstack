@@ -21,6 +21,7 @@ function InventoryApp({ Component, pageProps }) {
     authenticated: false,
     error: "",
     token: "",
+    userId: "",
   })
 
   const authContextValue = { auth, setAuth }

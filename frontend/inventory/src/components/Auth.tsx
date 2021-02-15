@@ -40,6 +40,8 @@ export default function Auth(props: PropsWithChildren<Props>) {
   const [initialized, setInitialized] = useState<boolean>(false)
 
   useEffect(() => {
+    console.log("doing initial auth with token " + initialToken)
+
     let isCancelled = false
 
     const fetchData = async () => {
