@@ -65,7 +65,7 @@ function LoginForm(): JSX.Element {
             {loginError && <p className="error">{loginError}</p>}
             <button
               type="submit"
-              className="btn btn-primary form-btn"
+              className="btn btn-secondary form-btn"
               disabled={formikProps.isSubmitting || loginLoading}>
               Submit
             </button>
