@@ -2,6 +2,7 @@ package configs
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"gitlab.com/archstack/core-api/lib/datastore"
@@ -53,9 +54,13 @@ func (cfg *Configs) API() (*api.Config, error) {
 
 // HTTP returns the configuration required for HTTP package
 func (cfg *Configs) HTTP() (*http.Config, error) {
+	allowOrigins := []string{"http://localhost:3000", "http://localhost:3001"}
+
+	allowOrigins = append(allowOrigins, strings.Split(os.Getenv("ALLOW_ORIGINS"), "|")...)
+
 	return &http.Config{
 		Port:         os.Getenv("PORT"),
-		AllowOrigins: []string{"http://localhost:3000", "http://localhost:3001"},
+		AllowOrigins: allowOrigins,
 	}, nil
 }
 
