@@ -1,0 +1,43 @@
+.tabMenu {
+  @apply table;
+  @apply rounded;
+}
+
+.tabContainer {
+	background-color: var(--bg-content);
+	@apply px-3;
+	@apply py-1
+}
+
+.tabMenuItem {
+  display: inline-block;
+  @apply py-1;
+  @apply px-2;
+  padding: 0.4rem 0.8rem;
+  @apply rounded-t;
+}
+
+.tabMenuItem:hover {
+	cursor:pointer;
+}
+
+.tabMenuItem:not(:first-child) {
+  margin-left: 0.6rem;
+}
+
+.tabMenuItem:global(.active) {
+  background-color: var(--bg-content);
+}
+
+.tabMenuItem:global(.active) a {
+  color: var(--focused-color);
+}
+
+.tabMenuItem:global(.active)::after {
+  content: "";
+  display: block;
+  width: 75%;
+  height: 1px;
+  @apply bg-gray-600;
+  margin: 5px auto 0 auto;
+}

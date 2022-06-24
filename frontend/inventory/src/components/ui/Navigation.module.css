@@ -1,0 +1,19 @@
+.nav {
+	@apply flex;
+	@apply items-center;
+	height: var(--header-height);
+}
+
+.nav li {
+	@apply mx-4;
+}
+
+.itemActive p::after {
+	height: 1px;
+	width: 90%;
+	content: "";
+	display: table;
+	@apply bg-gray-300;
+	@apply mt-1;
+	@apply mx-auto;
+}
