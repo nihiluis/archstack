@@ -1,9 +1,9 @@
-git clone https://github.com/archstackapp/workspace-selection-app
-cd workspace-selection-app
-git filter-repo --to-subdirectory-filter frontend/workspace
+git clone https://github.com/archstackapp/inventory-app
+cd inventory-app
+git filter-repo --to-subdirectory-filter frontend/inventory
 
 cd ..
-git remote add workspace workspace-selection-app
-git fetch workspace --tags
-git merge --allow-unrelated-histories workspace/master # or whichever branch you want to merge
-git remote remove workspace
+git remote add inventoryapp inventory-app
+git fetch inventoryapp --tags
+git merge --allow-unrelated-histories inventoryapp/master # or whichever branch you want to merge
+git remote remove inventoryapp
