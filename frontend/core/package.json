@@ -1,0 +1,20 @@
+{
+  "bundleDependencies": false,
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "microtip": "^0.2.2",
+    "moment": "^2.24.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "deprecated": false,
+  "devDependencies": {
+    "@types/classnames": "^2.2.7",
+    "@types/node": "^11.13.7",
+    "@types/react": "^16.8.10",
+    "next": "^9.1.6"
+  },
+  "main": "src/index.js",
+  "name": "archstack-core",
+  "version": "0.0.1"
+}
