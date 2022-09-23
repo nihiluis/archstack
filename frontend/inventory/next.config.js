@@ -2,7 +2,7 @@ const DEV = process.env.NODE_ENV !== "production"
 
 
 module.exports = {
-  basePath: DEV ? "" : "/inventory-app",
+  basePath: DEV ? "" : "",
   node: {
     fs: "empty",
   },

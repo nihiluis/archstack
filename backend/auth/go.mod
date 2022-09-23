@@ -2,7 +2,7 @@ module gitlab.com/archstack/auth-api
 
 go 1.14
 
-replace gitlab.com/archstack/core-api => ../core-api
+replace gitlab.com/archstack/core-api => ../core
 
 require (
 	github.com/Nerzal/gocloak v1.0.0

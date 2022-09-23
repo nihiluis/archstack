@@ -4,7 +4,7 @@ go 1.14
 
 replace gitlab.com/archstack/workspace-api => ./
 
-replace gitlab.com/archstack/core-api => ../core-api
+replace gitlab.com/archstack/core-api => ../core
 
 require (
 	github.com/go-pg/pg/v10 v10.7.6

@@ -2,9 +2,9 @@ module gitlab.com/archstack/inventory-api
 
 go 1.14
 
-replace gitlab.com/archstack/core-api => ../core-api
+replace gitlab.com/archstack/core-api => ../core
 
-replace gitlab.com/archstack/workspace-api => ../workspace-api
+replace gitlab.com/archstack/workspace-api => ../workspace
 
 require (
 	github.com/dghubble/sling v1.3.0
