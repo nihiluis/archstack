@@ -1,6 +1,7 @@
 import axios from "axios"
 import { ENDPOINT_AUTH_URL, ENDPOINT_LOGIN_URL } from "../constants/env"
 import protect from "await-protect"
+import { getDefaultHeaders } from "./defaultHttpHeaders"
 
 interface AuthResult {
   success: boolean
@@ -10,7 +11,10 @@ interface AuthResult {
 
 export async function checkAuth(): Promise<AuthResult> {
   const [res, error] = await protect(
-    axios.get(ENDPOINT_AUTH_URL, { withCredentials: true, headers: { "Accept": "application/json"} })
+    axios.get(ENDPOINT_AUTH_URL, {
+      withCredentials: true,
+      headers: { ...getDefaultHeaders(), Accept: "application/json" },
+    })
   )
 
   if (error || !res.data.hasOwnProperty("token")) {
@@ -32,6 +36,7 @@ export async function login(
       { mail, password },
       {
         withCredentials: true,
+        headers: getDefaultHeaders(),
       }
     )
   )

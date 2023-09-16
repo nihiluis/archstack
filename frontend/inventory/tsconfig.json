@@ -17,5 +17,5 @@
     "types": ["react/experimental"]
   },
   "exclude": ["out", ".next"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "node_modules/archstack-core/**/*.ts"]
 }

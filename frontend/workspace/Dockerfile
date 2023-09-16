@@ -19,6 +19,13 @@ FROM node:16.3.0-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ARG PROXY_AUTHORIZATION_HEADER
+ENV PROXY_AUTHORIZATION_HEADER $PROXY_AUTHORIZATION_HEADER
+
+# might not be needed yet in this version
+RUN touch .env.local
+RUN echo "NEXT_PUBLIC_API_URL=$API_URL" > .env.local
+RUN echo "NEXT_PUBLIC_PROXY_AUTHORIZATION_HEADER=$PROXY_AUTHORIZATION_HEADER" >> .env.local
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001

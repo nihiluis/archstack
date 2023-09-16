@@ -1,6 +1,7 @@
 import axios from "axios"
 import { ENDPOINT_AUTH_URL, ENDPOINT_LOGIN_URL } from "../constants/env"
 import protect from "await-protect"
+import { getDefaultHeaders } from "./defaultHttpHeaders"
 
 interface AuthResult {
   success: boolean
@@ -12,13 +13,11 @@ interface AuthResult {
 export async function checkAuth(
   existingToken: string = ""
 ): Promise<AuthResult> {
-  const headers: any = {}
+  const headers = getDefaultHeaders()
   if (existingToken) {
     //this seems to break Chrome, but not firefox. uga uga
     //headers["Authorization"] = `Bearer ${existingToken}`
   }
-
-  console.log("checking auth")
 
   const [res, error] = await protect(
     axios.get(ENDPOINT_AUTH_URL, { headers, withCredentials: true })
@@ -44,6 +43,7 @@ export async function login(
       { mail, password },
       {
         withCredentials: true,
+        headers: getDefaultHeaders(),
       }
     )
   )

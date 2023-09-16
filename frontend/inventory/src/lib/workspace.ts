@@ -2,6 +2,8 @@ import axios from "axios"
 import { ENDPOINT_GET_WORKSPACE_URL, WORKSPACE_API_URL } from "../constants/env"
 import protect from "await-protect"
 import { Workspace } from "archstack-core/lib/@types"
+import { getDefaultHeaders } from "./defaultHttpHeaders"
+
 
 interface GetWorkspaceResult {
   id: string
@@ -10,7 +12,7 @@ interface GetWorkspaceResult {
 }
 
 export async function getWorkspace(id: string): Promise<GetWorkspaceResult> {
-  const headers: any = { "Archstack-Workspace": id }
+  const headers: any = { ...getDefaultHeaders(), "Archstack-Workspace": id }
 
   const [res, error] = await protect(
     axios.get(ENDPOINT_GET_WORKSPACE_URL, { headers, withCredentials: true })

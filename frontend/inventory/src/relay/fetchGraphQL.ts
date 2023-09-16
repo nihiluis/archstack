@@ -1,6 +1,7 @@
 import { getLocalWorkspaceId } from "../lib/workspace"
 import { WORKSPACE_HEADER, ENDPOINT_RELAY_URL } from "../constants/env"
 import { getSessionToken } from "../lib/auth"
+import { getDefaultHeaders } from "../lib/defaultHttpHeaders"
 
 async function fetchGraphQL(text: any, variables: any) {
   const workspace = getLocalWorkspaceId()
@@ -12,6 +13,7 @@ async function fetchGraphQL(text: any, variables: any) {
     headers: {
       "Content-Type": "application/json",
       [WORKSPACE_HEADER]: workspace,
+      ...getDefaultHeaders(),
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({

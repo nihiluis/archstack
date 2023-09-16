@@ -1666,9 +1666,8 @@ aproba@^1.1.1:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
   integrity sha512-Y9J6ZjXtoYh8RnXVCMOU/ttDmk1aBjunq9vO0ta5x85WDQiQfUF9sIPBITdbiiIVcBo03Hi3jMxigBtsddlXRw==
 
-"archstack-core@https://gitlab.com/archstack/core-app":
+"archstack-core@file:../core":
   version "0.0.1"
-  resolved "https://gitlab.com/archstack/core-app#e081a55fdf4afc734200cfe3d883df85567bd461"
   dependencies:
     classnames "^2.2.6"
     microtip "^0.2.2"

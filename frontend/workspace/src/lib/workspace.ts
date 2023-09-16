@@ -1,6 +1,7 @@
 import protect from "await-protect"
 import axios from "axios"
 import { ENDPOINT_WORKSPACES_URL } from "../constants/env"
+import { getDefaultHeaders } from "./defaultHttpHeaders"
 
 export interface Workspace {
   id: string
@@ -22,6 +23,7 @@ interface WorkspacesResult {
 export async function getWorkspaces(token: string): Promise<WorkspacesResult> {
   const [res, error] = await protect(
     axios.get(ENDPOINT_WORKSPACES_URL, { withCredentials: true, headers: {
+      headers: getDefaultHeaders(),
       "Authorization": `Bearer ${token}`
     } })
   )
