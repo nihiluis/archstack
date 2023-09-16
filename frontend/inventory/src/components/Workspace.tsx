@@ -8,7 +8,7 @@ import React, {
 import Head from "next/head"
 //import graphql from "babel-plugin-relay/macro"
 import Loading from "./Loading"
-import { Workspace } from "archstack-core/lib/@types"
+import { Workspace } from "../lib/workspace"
 import {
   getWorkspace,
   getLocalWorkspaceId,

@@ -1,9 +1,22 @@
 import axios from "axios"
 import { ENDPOINT_GET_WORKSPACE_URL, WORKSPACE_API_URL } from "../constants/env"
 import protect from "await-protect"
-import { Workspace } from "archstack-core/lib/@types"
 import { getDefaultHeaders } from "./defaultHttpHeaders"
 
+export interface Workspace {
+  id: string
+  name: string
+  active: boolean
+  users?: WorkspaceUser[]
+  createdAt: number
+  updatedAt: number
+}
+
+export interface WorkspaceUser {
+  id: string
+  
+  workspaces?: Workspace[]
+}
 
 interface GetWorkspaceResult {
   id: string

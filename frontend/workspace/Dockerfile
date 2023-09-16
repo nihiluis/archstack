@@ -12,6 +12,15 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat git
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
+
+ARG PROXY_AUTHORIZATION_HEADER
+ENV PROXY_AUTHORIZATION_HEADER $PROXY_AUTHORIZATION_HEADER
+
+RUN touch .env.local
+RUN touch .env
+RUN echo "NEXT_PUBLIC_API_URL=$API_URL" > .env.local
+RUN echo "NEXT_PUBLIC_PROXY_AUTHORIZATION_HEADER=$PROXY_AUTHORIZATION_HEADER" >> .env.local
+
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
 # Production image, copy all the files and run next
@@ -22,8 +31,8 @@ ENV NODE_ENV production
 ARG PROXY_AUTHORIZATION_HEADER
 ENV PROXY_AUTHORIZATION_HEADER $PROXY_AUTHORIZATION_HEADER
 
-# might not be needed yet in this version
 RUN touch .env.local
+RUN touch .env
 RUN echo "NEXT_PUBLIC_API_URL=$API_URL" > .env.local
 RUN echo "NEXT_PUBLIC_PROXY_AUTHORIZATION_HEADER=$PROXY_AUTHORIZATION_HEADER" >> .env.local
 
