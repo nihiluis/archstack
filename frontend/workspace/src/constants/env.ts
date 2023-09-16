@@ -5,11 +5,11 @@ export const BASE_PATH = "/workspace-selection-app"
 export const SITE_TITLE = "Archstack"
 export const PRODUCT_NAME = "Archstack"
 
-export const AUTH_API_URL = !DEV ? "https://auth-api.archstack.nihiluis.com" : "https://auth-api.archstack.nihiluis.com"
+export const AUTH_API_URL = !DEV ? "https://auth-api.archstack.demo.nihiluis.com" : "https://auth-api.archstack.demo.nihiluis.com"
 
-export const WORKSPACE_API_URL = !DEV ? "https://workspace-api.archstack.nihiluis.com" : "https://workspace-api.archstack.nihiluis.com"
+export const WORKSPACE_API_URL = !DEV ? "https://workspace-api.archstack.demo.nihiluis.com" : "https://workspace-api.archstack.demo.nihiluis.com"
 
-export const INVENTORY_URL = !DEV ? "https://inventory.archstack.nihiluis.com" : "http://localhost:3001"
+export const INVENTORY_URL = !DEV ? "https://inventory.archstack.demo.nihiluis.com" : "http://localhost:3001"
 
 export const ENDPOINT_AUTH_URL = `${AUTH_API_URL}/auth`
 export const ENDPOINT_LOGIN_URL = `${AUTH_API_URL}/login`

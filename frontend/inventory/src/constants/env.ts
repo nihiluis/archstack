@@ -7,11 +7,11 @@ export const BASE_PATH = "/inventory-app"
 export const SITE_TITLE = "IT repo"
 export const PRODUCT_NAME = "IT repo"
 
-export const AUTH_API_URL = !DEV ? "https://auth-api.archstack.nihiluis.com" : "https://auth-api.archstack.nihiluis.com"
+export const AUTH_API_URL = !DEV ? "https://auth-api.archstack.demo.nihiluis.com" : "https://auth-api.archstack.demo.nihiluis.com"
 
-export const WORKSPACE_API_URL = !DEV ? "https://workspace-api.archstack.nihiluis.com" : "https://workspace-api.archstack.nihiluis.com"
+export const WORKSPACE_API_URL = !DEV ? "https://workspace-api.archstack.demo.nihiluis.com" : "https://workspace-api.archstack.demo.nihiluis.com"
 
-export const INVENTORY_API_URL = !DEV ? "https://inventory-api.archstack.nihiluis.com" : "https://inventory-api.archstack.nihiluis.com"
+export const INVENTORY_API_URL = !DEV ? "https://inventory-api.archstack.demo.nihiluis.com" : "https://inventory-api.archstack.demo.nihiluis.com"
 
 export const LOGIN_URL = !DEV ? "https://archstack.gitlab.io/workspace-selection-app" : "http://localhost:3000/login"
 export const WORKSPACE_SELECTION_URL = !DEV ? "https://archstack.gitlab.io/workspace-selection-app" : "http://localhost:3000"

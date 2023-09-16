@@ -14,6 +14,9 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 RUN yarn run relay-compiler --schema schema.graphql --language typescript --src . --watchman false $@
 
+ARG PROXY_AUTHORIZATION_HEADER
+ENV PROXY_AUTHORIZATION_HEADER $PROXY_AUTHORIZATION_HEADER
+
 RUN touch .env.local
 RUN echo "NEXT_PUBLIC_API_URL=$API_URL" > .env.local
 RUN echo "NEXT_PUBLIC_PROXY_AUTHORIZATION_HEADER=$PROXY_AUTHORIZATION_HEADER" >> .env.local
